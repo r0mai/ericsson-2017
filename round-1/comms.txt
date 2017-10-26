@@ -1,0 +1,49 @@
+< login
+> ( status = "Let\'s get started. The bugs are waiting for you.",
+  bugfix = (
+    bugs = 10,
+    message = "Fix all the bugs, one by one, with this message: \"Fixed\"" ) )
+< fixing #9
+> (status = "Keep going", end = false)
+< fixing #8
+> ( status = "Oh no, something went wrong!",
+  bugfix = (
+    bugs = 20,
+    message = "The previous fix created other bugs :(" ) )
+< fixing #19
+> ( status = "It was difficult, but you made it!",
+  end = false )
+< fixing #18
+> ( status = "I believe in you! <3",
+  end = false )
+< fixing #17
+> ( status = "Look out, maybe the message is not a message!" )
+< fixing #16
+> ( status = "You\'re going to make it!",
+  bugfix = (
+    bugs = 3,
+    message = "Cool, this helped a lot! Thanks" ) )
+< fixing #2
+> ( status = "You\'re going to make it!",
+  bugfix = (
+    bugs = 3,
+    message = "Cool, this helped a lot! Thanks" ) )
+< fixing #2
+> ( bugfix = (
+    bugs = 3,
+    message = "Cool, this helped a lot! Thanks" ) )
+< fixing #2
+> (status = "Almost... ")
+< fixing #1
+> ( status = "Not yet, but closer :)",
+  end = false )
+< fixing #0
+> ()
+< fixing #255
+> ( status = "Congratulation! You fixed all the bugs!",
+  bugfix = (
+    bugs = 3,
+    message = "Send back a message which tells how many bugs you fixed really. You need to attach it with the following message: \"I solved a huge amount of bug. I am proud of myself.\"" ) )
+< fixing #12
+> ( status = "You\'re in! Thanks for the game. You can close your client now.",
+  end = true )
