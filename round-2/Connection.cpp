@@ -48,7 +48,7 @@ bool Connection::Connect() {
 }
 
 protocol::Response::Reader Connection::Communicate(capnp::MallocMessageBuilder& message) {
-    capnp::writePackedMessageToFd(sockfd, message);
+    capnp::writeMessageToFd(sockfd, message);
 
     capnp::StreamFdMessageReader reader(sockfd);
     auto response = reader.getRoot<protocol::Response>();
