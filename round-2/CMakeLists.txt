@@ -7,10 +7,11 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(Boost)
+find_package(CapnProto REQUIRED)
 find_package(SFML 2 REQUIRED system window graphics network)
 
 include_directories(${SFML_INCLUDE_DIR})
-
+include_directories(${CAPNP_INCLUDE_DIRS})
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
 add_executable(xonix
@@ -20,4 +21,4 @@ add_executable(xonix
     protocol/Response.capnp.c++
 )
 
-target_link_libraries(xonix ${SFML_LIBRARIES})
+target_link_libraries(xonix ${SFML_LIBRARIES} ${CAPNP_LIBRARIES})
