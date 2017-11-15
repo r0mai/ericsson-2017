@@ -1,10 +1,15 @@
 cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules" ${CMAKE_MODULE_PATH})
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(Boost)
+find_package(SFML 2 REQUIRED system window graphics network)
+
+include_directories(${SFML_INCLUDE_DIR})
 
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
@@ -15,3 +20,4 @@ add_executable(xonix
     protocol/Response.capnp.c++
 )
 
+target_link_libraries(xonix ${SFML_LIBRARIES})
