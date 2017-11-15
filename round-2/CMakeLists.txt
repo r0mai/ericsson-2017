@@ -16,6 +16,7 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
 add_executable(xonix
     main.cpp
+    Connection.cpp
     protocol/Common.capnp.c++
     protocol/Command.capnp.c++
     protocol/Response.capnp.c++
