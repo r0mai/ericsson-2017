@@ -7,6 +7,17 @@
 
 namespace evil {
 
-protocol::Response::Reader Communicate(capnp::MallocMessageBuilder& message);
+class Connection {
+public:
+    bool Connect();
+    protocol::Response::Reader Communicate(capnp::MallocMessageBuilder& message);
+
+private:
+    const char* host = "ecovpn.dyndns.org";
+    const int port = 11224;
+
+    int sockfd = -1;
+};
+
 
 } // namespace evil

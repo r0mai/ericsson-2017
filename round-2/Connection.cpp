@@ -15,20 +15,20 @@
 
 namespace evil {
 
-protocol::Response::Reader Communicate(capnp::MallocMessageBuilder& message) {
+bool Connection::Connect() {
     const char* host = "ecovpn.dyndns.org";
     const int port = 11224;
 
-    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) {
         std::cerr << "socket() failed " << sockfd << std::endl;
-        return {};
+        return false;
     }
 
     auto* server = gethostbyname(host);
     if (!server) {
         std::cerr << "gethostbyname() failed " << std::endl;
-        return {};
+        return false;
     }
 
     sockaddr_in serv_addr{};
@@ -42,9 +42,12 @@ protocol::Response::Reader Communicate(capnp::MallocMessageBuilder& message) {
 
     if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
         std::cerr << "connect() failed " << std::endl;
-        return {};
+        return false;
     }
+    return true;
+}
 
+protocol::Response::Reader Connection::Communicate(capnp::MallocMessageBuilder& message) {
     capnp::writePackedMessageToFd(sockfd, message);
 
     capnp::StreamFdMessageReader reader(sockfd);
