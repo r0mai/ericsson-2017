@@ -47,17 +47,9 @@ protocol::Response::Reader Communicate(capnp::MallocMessageBuilder& message) {
 
     capnp::writePackedMessageToFd(sockfd, message);
 
-    char buffer[1024];
-    auto n = read(sockfd, buffer, 1023);
-
-
-    std::cout.write(buffer, n);
-
-    // capnp::PackedFdMessageReader reader(sockfd);
-
-    // auto response = reader.getRoot<protocol::Response>();
-
-    // std::cout << "Response = " << response.getStatus().cStr() << std::endl;
+    capnp::StreamFdMessageReader reader(sockfd);
+    auto response = reader.getRoot<protocol::Response>();
+    std::cout << "Response = " << response.getStatus().cStr() << std::endl;
 
     return {};
 }
