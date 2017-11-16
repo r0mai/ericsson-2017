@@ -5,6 +5,7 @@
 #include "Connection.h"
 #include "Utils.h"
 #include "Matrix.h"
+#include "gui.h"
 
 #include <iostream>
 #include <memory>
@@ -52,6 +53,7 @@ void step(std::unique_ptr<capnp::StreamFdMessageReader> reader) {
 int main() {
     evil::Connection connection;
     connection.Connect();
+	evil::gui::Init();
 
     {
         auto message = std::make_unique<capnp::MallocMessageBuilder>();
@@ -64,13 +66,17 @@ int main() {
         std::cout << reader->getRoot<protocol::Response>().getStatus().cStr() << std::endl;
     }
 
-    while (true) {
-        auto message = std::make_unique<capnp::MallocMessageBuilder>();
-        auto command = message->initRoot<protocol::Command>();
-        auto commands = command.initCommands();
-        auto moves = commands.initMoves(0);
-        auto reader = connection.Communicate(std::move(message));
-
-        step(std::move(reader));
-    }
+	while (true) {
+		auto message = std::make_unique<capnp::MallocMessageBuilder>();
+		auto command = message->initRoot<protocol::Command>();
+		auto future = connection.CommunicateAsync(std::move(message));
+		for (int i = 0; ; ++i) {
+			if (IsFutureReady(future)) {
+				auto reader = future.get();
+				auto response = reader->getRoot<protocol::Response>();
+				evil::gui::DrawGameState(response);
+				break;
+			}
+		}
+	}
 }
