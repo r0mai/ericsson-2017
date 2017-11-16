@@ -48,10 +48,10 @@ bool Gui::update() {
 		if (event.type == sf::Event::KeyPressed) {
 			switch (event.key.code) {
 				default: break;
-				case sf::Keyboard::Up: last_direction_ = Direction::UP; break;
-				case sf::Keyboard::Down: last_direction_ = Direction::DOWN; break;
-				case sf::Keyboard::Right: last_direction_ = Direction::RIGHT; break;
-				case sf::Keyboard::Left: last_direction_ = Direction::LEFT; break;
+				case sf::Keyboard::Up: dir_ = Direction::kUp; break;
+				case sf::Keyboard::Down: dir_ = Direction::kDown; break;
+				case sf::Keyboard::Right: dir_ = Direction::kRight; break;
+				case sf::Keyboard::Left: dir_ = Direction::kLeft; break;
 				case sf::Keyboard::Escape: window_.close(); break;
 			}
 		}
@@ -79,8 +79,8 @@ bool Gui::pollEvent(sf::Event& event) {
 	return window_.pollEvent(event);
 }
 
-Direction Gui::getLastDirection() const {
-	return last_direction_;
+Direction Gui::getDirection() const {
+	return dir_;
 }
 
 } // namespace evil

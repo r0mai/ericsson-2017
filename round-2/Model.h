@@ -27,14 +27,24 @@ struct Pos {
 	int col = 0;
 };
 
+enum class Direction {
+	kNone,
+	kUp,
+	kDown,
+	kLeft,
+	kRight
+};
+
 struct Unit {
 	Pos pos;
-	Pos dir;
+	Direction dir;
 };
 
 struct Enemy {
 	Pos pos;
-	Pos dir;
+
+	Direction h_dir;
+	Direction v_dir;
 };
 
 struct Cell {
@@ -46,9 +56,10 @@ struct Cell {
 };
 
 
-Pos& operator+=(Pos& lhs, const Pos& rhs);
-Pos operator+(const Pos& lhs, const Pos& rhs);
+Direction opposite(Direction dir);
+Pos neighbor(const Pos& pos, Direction dir);
 std::ostream& operator<<(std::ostream& out, const Pos& pos);
+Direction fromDirection(protocol::Direction dir);
 
 
 class Model {
@@ -63,9 +74,12 @@ public:
 	int getTick() const;
 	int getLevel() const;
 	int getOwns() const;
+	Direction adjustDirection(int unit_index, Direction dir);
 
 private:
 	void colorize();
+	Cell& getCell(const Pos& pos);
+	bool isValid(const Pos& pos);
 
 	Grid grid_ {80, 100};
 	std::vector<Unit> units_;

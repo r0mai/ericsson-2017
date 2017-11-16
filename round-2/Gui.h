@@ -7,9 +7,6 @@
 
 namespace evil {
 
-using protocol::Direction;
-
-
 class Gui {
 public:
 	bool init();
@@ -17,7 +14,7 @@ public:
 	void draw();
 	void setModel(Model model);
 	bool pollEvent(sf::Event& event);
-	Direction getLastDirection() const;
+	Direction getDirection() const;
 
 private:
 	static constexpr int map_w = 100;
@@ -34,7 +31,7 @@ private:
 	sf::RenderWindow window_ {sf::VideoMode(window_w, window_h), "Window"};
 
 	Model model_;
-	Direction last_direction_ = Direction::DOWN;
+	Direction dir_ = Direction::kNone;
 };
 
 } // namespace evil

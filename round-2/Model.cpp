@@ -2,33 +2,40 @@
 
 
 namespace evil {
-namespace {
 
-Pos fromDirection(protocol::Direction dir) {
-    Pos pos;
+Direction fromDirection(protocol::Direction dir) {
     switch(dir) {
-        case protocol::Direction::LEFT: pos.col = -1; break;
-        case protocol::Direction::RIGHT: pos.col = 1; break;
-        case protocol::Direction::UP: pos.row = -1; break;
-        case protocol::Direction::DOWN: pos.row = 1; break;
+        case protocol::Direction::LEFT: return Direction::kLeft;
+        case protocol::Direction::RIGHT: return Direction::kRight;
+        case protocol::Direction::UP: return Direction::kUp;
+        case protocol::Direction::DOWN: return Direction::kDown;
         default: break;
     }
 
-    return pos;
+    return Direction::kNone;
 }
 
-} // namespace
+Direction opposite(Direction dir) {
+    switch (dir) {
+        case Direction::kLeft: return Direction::kRight;
+        case Direction::kRight: return Direction::kLeft;
+        case Direction::kUp: return Direction::kDown;
+        case Direction::kDown: return Direction::kUp;
+        default: return dir;
+    }
 
-
-Pos& operator+=(Pos& lhs, const Pos& rhs) {
-    lhs.row += rhs.row;
-    lhs.col += rhs.col;
-    return lhs;
+    return dir;
 }
 
-Pos operator+(const Pos& lhs, const Pos& rhs) {
-    Pos pos = lhs;
-    pos += rhs;
+Pos neighbor(const Pos& pos, Direction dir) {
+    switch(dir) {
+        case Direction::kLeft: return {pos.row, pos.col - 1};
+        case Direction::kRight: return {pos.row, pos.col + 1};
+        case Direction::kUp: return {pos.row - 1, pos.col};
+        case Direction::kDown: return {pos.row + 1, pos.col};
+        default: break;
+    }
+
     return pos;
 }
 
@@ -86,8 +93,8 @@ void Model::update(protocol::Response::Reader response) {
         auto pos = enemy.getPosition();
 		Enemy e;
 		e.pos = Pos{pos.getRow(), pos.getCol()};
-        e.dir = fromDirection(enemy.getDirection().getVertical()) +
-            fromDirection(enemy.getDirection().getHorizontal());
+        e.v_dir = fromDirection(enemy.getDirection().getVertical());
+        e.h_dir = fromDirection(enemy.getDirection().getHorizontal());
 		enemies_.push_back(e);
     }
 
@@ -120,23 +127,44 @@ void Model::colorize() {
 
     for (auto& unit : units_) {
         auto pos = unit.pos;
-        grid_(pos.row, pos.col).color = 3;
+        getCell(pos).color = 3;
     }
 
     for (auto& enemy : enemies_) {
         auto pos = enemy.pos;
-        auto* cell = &grid_(pos.row, pos.col);
-        while (cell->owner != 1) {
-            cell->color = 5;
-            pos += enemy.dir;
-            cell = &grid_(pos.row, pos.col);
+        while (getCell(pos).owner != 1) {
+            getCell(pos).color = 5;
+            pos = neighbor(pos, enemy.v_dir);
+            pos = neighbor(pos, enemy.h_dir);
         }
     }
 
     for (auto& enemy : enemies_) {
         auto pos = enemy.pos;
-        grid_(pos.row, pos.col).color = 4;
+        getCell(pos).color = 4;
     }
+}
+
+Direction Model::adjustDirection(int unit_index, Direction dir) {
+    auto& unit = units_[unit_index];
+    auto pos = neighbor(unit.pos, dir);
+
+    if (isValid(pos)) {
+        return dir;
+    }
+
+    return opposite(dir);
+
+}
+
+Cell& Model::getCell(const Pos& pos) {
+    return grid_(pos.row, pos.col);
+}
+
+bool Model::isValid(const Pos& pos) {
+    return
+        pos.row >= 0 && pos.row < grid_.height() &&
+        pos.col >= 0 && pos.col < grid_.width();
 }
 
 } // namespace evil

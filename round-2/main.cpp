@@ -15,6 +15,16 @@ protocol::Response::Reader getResponse(
 	return reader->getRoot<protocol::Response>();
 }
 
+protocol::Direction toDirection(evil::Direction dir) {
+	switch (dir) {
+		case evil::Direction::kUp: return protocol::Direction::UP;
+		case evil::Direction::kDown: return protocol::Direction::DOWN;
+		case evil::Direction::kLeft: return protocol::Direction::LEFT;
+		case evil::Direction::kRight: return protocol::Direction::RIGHT;
+		case evil::Direction::kNone: return protocol::Direction(-1);
+	}
+	return protocol::Direction(-1);
+}
 
 void show(std::unique_ptr<capnp::StreamFdMessageReader> reader) {
 	auto response = reader->getRoot<protocol::Response>();
@@ -84,8 +94,12 @@ int main() {
 			auto commands = command.initCommands();
 			auto moves = commands.initMoves(1);
 			auto move = moves[0];
-			move.setDirection(gui.getLastDirection());
+
+			auto next = gui.getDirection();
+			next = model.adjustDirection(0, next);
+			move.setDirection(toDirection(next));
 			move.setUnit(0);
+
 			future = connection.communicateAsync(std::move(message));
 			if (!model.getStatus().empty()) {
 				std::cerr << "Status (" <<
