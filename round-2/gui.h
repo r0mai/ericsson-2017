@@ -11,6 +11,7 @@ public:
 
 	bool Init();
 	bool Update();
+	void Draw();
 	void SetModel(Model model);
 	bool PollEvent(sf::Event& event);
 private:

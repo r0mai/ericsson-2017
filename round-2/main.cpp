@@ -125,7 +125,7 @@ int main() {
 				auto reader = future.get();
 				model.update(getResponse(reader));
 				gui.SetModel(model);
-				gui.Update();
+				gui.Draw();
 				break;
 			}
 		}

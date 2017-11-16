@@ -73,9 +73,12 @@ bool Gui::Update() {
 					break;
 			}
 		}
-
 	}
 
+	return window.isOpen();
+}
+
+void Gui::Draw() {
 	window.clear(sf::Color::Black);
 
 	auto& grid = model_.getGrid();
@@ -99,8 +102,6 @@ bool Gui::Update() {
 	}
 
 	window.display();
-
-	return window.isOpen();
 }
 
 bool Gui::PollEvent(sf::Event& event) {
