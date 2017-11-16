@@ -11,7 +11,7 @@ enum Direction {
 }
 
 struct Position {
-    x @0 : Int32;
-    y @1 : Int32;
+    row @0 : Int32;
+    col @1 : Int32;
 }
 

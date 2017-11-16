@@ -65,9 +65,9 @@ public:
   }
 #endif  // !CAPNP_LITE
 
-  inline  ::int32_t getX() const;
+  inline  ::int32_t getRow() const;
 
-  inline  ::int32_t getY() const;
+  inline  ::int32_t getCol() const;
 
 private:
   ::capnp::_::StructReader _reader;
@@ -97,11 +97,11 @@ public:
   inline ::kj::StringTree toString() const { return asReader().toString(); }
 #endif  // !CAPNP_LITE
 
-  inline  ::int32_t getX();
-  inline void setX( ::int32_t value);
+  inline  ::int32_t getRow();
+  inline void setRow( ::int32_t value);
 
-  inline  ::int32_t getY();
-  inline void setY( ::int32_t value);
+  inline  ::int32_t getCol();
+  inline void setCol( ::int32_t value);
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -131,30 +131,30 @@ private:
 
 // =======================================================================================
 
-inline  ::int32_t Position::Reader::getX() const {
+inline  ::int32_t Position::Reader::getRow() const {
   return _reader.getDataField< ::int32_t>(
       ::capnp::bounded<0>() * ::capnp::ELEMENTS);
 }
 
-inline  ::int32_t Position::Builder::getX() {
+inline  ::int32_t Position::Builder::getRow() {
   return _builder.getDataField< ::int32_t>(
       ::capnp::bounded<0>() * ::capnp::ELEMENTS);
 }
-inline void Position::Builder::setX( ::int32_t value) {
+inline void Position::Builder::setRow( ::int32_t value) {
   _builder.setDataField< ::int32_t>(
       ::capnp::bounded<0>() * ::capnp::ELEMENTS, value);
 }
 
-inline  ::int32_t Position::Reader::getY() const {
+inline  ::int32_t Position::Reader::getCol() const {
   return _reader.getDataField< ::int32_t>(
       ::capnp::bounded<1>() * ::capnp::ELEMENTS);
 }
 
-inline  ::int32_t Position::Builder::getY() {
+inline  ::int32_t Position::Builder::getCol() {
   return _builder.getDataField< ::int32_t>(
       ::capnp::bounded<1>() * ::capnp::ELEMENTS);
 }
-inline void Position::Builder::setY( ::int32_t value) {
+inline void Position::Builder::setCol( ::int32_t value) {
   _builder.setDataField< ::int32_t>(
       ::capnp::bounded<1>() * ::capnp::ELEMENTS, value);
 }
