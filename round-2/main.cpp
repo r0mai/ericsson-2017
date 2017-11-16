@@ -63,7 +63,6 @@ int main() {
 		login.setHash("stzq8jm94kf9iyw7353j9semae2sjorjvthakhzw");
 		auto reader = connection.Communicate(std::move(message));
 		model.update(getResponse(reader));
-		model.dump();
 	}
 
 	while (true) {
@@ -124,8 +123,9 @@ int main() {
 		for (int i = 0; ; ++i) {
 			if (IsFutureReady(future)) {
 				auto reader = future.get();
-				auto response = reader->getRoot<protocol::Response>();
-				gui.DrawGameState(response);
+				model.update(getResponse(reader));
+				gui.SetModel(model);
+				gui.Update();
 				break;
 			}
 		}

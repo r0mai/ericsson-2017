@@ -52,7 +52,11 @@ bool Gui::Init() {
 	return true;
 }
 
-void Gui::DrawGameState(protocol::Response::Reader& state) {
+void Gui::SetModel(Model model) {
+	model_ = std::move(model);
+}
+
+bool Gui::Update() {
 	sf::Event event;
 	while (window.pollEvent(event))
 	{
@@ -72,27 +76,31 @@ void Gui::DrawGameState(protocol::Response::Reader& state) {
 
 	}
 
-
 	window.clear(sf::Color::Black);
-	for (int row_idx=0; row_idx < state.getCells().size(); ++row_idx) {
-		auto row = state.getCells()[row_idx];
-		for (int coll_idx = 0; coll_idx < row.size(); ++coll_idx) {
-			auto cell = row[coll_idx];
-			DrawCell(row_idx, coll_idx, cell.getOwner());
-			if (cell.getAttack().isUnit()) {
-				DrawAttack(row_idx, coll_idx, cell.getOwner());
-			}
+
+	auto& grid = model_.getGrid();
+
+	for (int r=0; r < grid.height(); ++r) {
+		for (int c=0; c < grid.width(); ++c) {
+			DrawCell(r, c, grid.at(r, c));
+
+			// if (cell.getAttack().isUnit()) {
+			// 	DrawAttack(r, c, cell.getOwner());
+			// }
 		}
 	}
 
-	for (auto enemy : state.getEnemies()) {
-		DrawEnemy(enemy);
-	}
+	// for (auto enemy : state.getEnemies()) {
+	// 	DrawEnemy(enemy);
+	// }
 
-	for (auto unit : state.getUnits()) {
-		DrawUnit(unit);
-	}
+	// for (auto unit : state.getUnits()) {
+	// 	DrawUnit(unit);
+	// }
+
 	window.display();
+
+	return window.isOpen();
 }
 
 bool Gui::PollEvent(sf::Event& event) {

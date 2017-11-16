@@ -36,7 +36,9 @@ public:
 	using Grid = Matrix<int>;
 	void update(protocol::Response::Reader response);;
 	void dump();
-	const Grid& getGrid();
+	const Grid& getGrid() const;
+	const std::vector<Unit>& getUnits() const;
+	const std::vector<Enemy>& getEnemies() const;
 
 private:
 	Grid grid_ {80, 100};

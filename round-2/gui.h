@@ -1,7 +1,8 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include "protocol/Response.capnp.h"
+
+#include "Model.h"
 
 namespace evil {
 
@@ -9,7 +10,8 @@ class Gui {
 public:
 
 	bool Init();
-	void DrawGameState(protocol::Response::Reader& response_reader);
+	bool Update();
+	void SetModel(Model model);
 	bool PollEvent(sf::Event& event);
 private:
 	static constexpr int map_w = 100;
@@ -28,6 +30,8 @@ private:
 	void DrawUnit(protocol::Unit::Reader& unit);
 
 	sf::RenderWindow window{sf::VideoMode(window_w, window_h), "Your window"};
+
+	Model model_;
 };
 
 } // namespace evil

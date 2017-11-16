@@ -3,8 +3,16 @@
 
 namespace evil {
 
-const Model::Grid& Model::getGrid() {
+const Model::Grid& Model::getGrid() const {
 	return grid_;
+}
+
+const std::vector<Unit>& Model::getUnits() const {
+	return units_;
+}
+
+const std::vector<Enemy>& Model::getEnemies() const {
+	return enemies_;
 }
 
 void Model::update(protocol::Response::Reader response) {
