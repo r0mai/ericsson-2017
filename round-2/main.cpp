@@ -89,6 +89,7 @@ int main() {
 			auto reader = future.get();
 			model.update(getResponse(reader));
 			gui.setModel(model);
+			gui.updateStatus();
 			auto message = std::make_unique<capnp::MallocMessageBuilder>();
 			auto command = message->initRoot<protocol::Command>();
 			auto commands = command.initCommands();
@@ -99,8 +100,6 @@ int main() {
 			next = model.adjustDirection(0, next);
 			move.setDirection(toDirection(next));
 			move.setUnit(0);
-
-			std::cout << "D " << int(next) << std::endl;
 
 			future = connection.communicateAsync(std::move(message));
 			if (!model.getStatus().empty()) {

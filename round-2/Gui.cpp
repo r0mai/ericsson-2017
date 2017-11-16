@@ -1,6 +1,9 @@
 #include "gui.h"
 
 #include <iostream>
+#include <sstream>
+#include <iomanip>
+
 
 namespace evil {
 
@@ -81,6 +84,15 @@ bool Gui::pollEvent(sf::Event& event) {
 
 Direction Gui::getDirection() const {
 	return dir_;
+}
+
+void Gui::updateStatus() {
+	std::stringstream ss;
+	float coverage = model_.getCoverage() / 80.0f;
+	ss << "Level " << model_.getLevel();
+	ss << " - Tick " << model_.getTick();
+	ss << " - Coverage " << std::setprecision(2) << coverage << "%";
+	window_.setTitle(ss.str());
 }
 
 } // namespace evil

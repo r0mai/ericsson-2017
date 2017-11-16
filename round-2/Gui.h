@@ -11,6 +11,7 @@ class Gui {
 public:
 	bool init();
 	bool update();
+	void updateStatus();
 	void draw();
 	void setModel(Model model);
 	bool pollEvent(sf::Event& event);

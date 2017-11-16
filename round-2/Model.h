@@ -59,12 +59,17 @@ struct Cell {
 
 Direction opposite(Direction dir);
 Pos neighbor(const Pos& pos, Direction dir);
-std::ostream& operator<<(std::ostream& out, const Pos& pos);
 Direction fromDirection(protocol::Direction dir);
+
+std::ostream& operator<<(std::ostream& out, const Pos& pos);
+std::ostream& operator<<(std::ostream& out, Direction dir);
 
 
 class Model {
 public:
+	static constexpr int kMaxRows = 80;
+	static constexpr int kMaxCols = 100;
+
 	using Grid = Matrix<Cell>;
 	void update(protocol::Response::Reader response);;
 
@@ -75,14 +80,15 @@ public:
 	int getTick() const;
 	int getLevel() const;
 	int getOwns() const;
+	int getCoverage() const;
 	Direction adjustDirection(int unit_index, Direction dir);
 
 private:
 	void colorize();
 	Cell& getCell(const Pos& pos);
-	bool isValid(const Pos& pos);
+	bool isValid(const Pos& pos) const;
 
-	Grid grid_ {80, 100};
+	Grid grid_ {kMaxRows, kMaxCols};
 	std::vector<Unit> units_;
 	std::vector<Enemy> enemies_;
 

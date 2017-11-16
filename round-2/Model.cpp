@@ -53,6 +53,17 @@ std::ostream& operator<<(std::ostream& out, const Pos& pos) {
     return out;
 }
 
+std::ostream& operator<<(std::ostream& out, Direction dir) {
+    switch (dir) {
+        case Direction::kLeft: out << '<'; break;
+        case Direction::kRight: out << '>'; break;
+        case Direction::kUp: out << '^'; break;
+        case Direction::kDown: out << 'V'; break;
+        default: out << '.'; break;
+    }
+    return out;
+}
+
 
 const Model::Grid& Model::getGrid() const {
 	return grid_;
@@ -161,9 +172,7 @@ Direction Model::adjustDirection(int unit_index, Direction dir) {
         for (int i = 0; i < 4; ++i) {
             auto nb_dir = toDirection(i);
             auto nb_pos = neighbor(unit.pos, nb_dir);
-            std::cout << "C " << nb_pos << " " << int(nb_dir) << std::endl;
             if (isValid(nb_pos)) {
-                std::cout << "Y " << int(nb_dir) << std::endl;
                 return nb_dir;
             }
         }
@@ -184,10 +193,21 @@ Cell& Model::getCell(const Pos& pos) {
     return grid_(pos.row, pos.col);
 }
 
-bool Model::isValid(const Pos& pos) {
+bool Model::isValid(const Pos& pos)const {
+    // Note: grid width - height is reversed
     return
-        pos.row >= 0 && pos.row < grid_.height() &&
-        pos.col >= 0 && pos.col < grid_.width();
+        pos.row >= 0 && pos.row < kMaxRows &&
+        pos.col >= 0 && pos.col < kMaxCols;
+}
+
+int Model::getCoverage() const {
+    int count = 0;
+    for (auto& cell : grid_) {
+        if (cell.owner == 1) {
+            ++count;
+        }
+    }
+    return count;
 }
 
 } // namespace evil
