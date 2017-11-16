@@ -1,29 +1,22 @@
-#include <capnp/serialize.h>
-
-#include "protocol/Command.capnp.h"
-#include "protocol/Response.capnp.h"
+#include "Protocol.h"
 #include "Connection.h"
 #include "Utils.h"
 #include "Matrix.h"
 #include "gui.h"
-
+#include "Model.h"
+#include "Client.h"
 #include <iostream>
 #include <memory>
 
 
-template<typename T>
-std::ostream& operator<<(std::ostream& out, const Matrix<T>& mat) {
-    for (int row = 0; row < mat.width(); ++row) {
-        for (int col = 0; col < mat.height(); ++col) {
-            out << mat(row, col);
-        }
-        out << std::endl;
-    }
-    return out;
+protocol::Response::Reader getResponse(
+    std::unique_ptr<capnp::StreamFdMessageReader>& reader)
+{
+    return reader->getRoot<protocol::Response>();
 }
 
 
-void step(std::unique_ptr<capnp::StreamFdMessageReader> reader) {
+void show(std::unique_ptr<capnp::StreamFdMessageReader> reader) {
     auto response = reader->getRoot<protocol::Response>();
 
     int row = 0;
@@ -42,16 +35,21 @@ void step(std::unique_ptr<capnp::StreamFdMessageReader> reader) {
         mat(pos.getRow(), pos.getCol()) = 2;
     }
 
+    for (auto unit : response.getUnits()) {
+        auto pos = unit.getPosition();
+        mat(pos.getRow(), pos.getCol()) = 3;
+    }
+
     std::cout << mat << std::endl;
 
     std::cout << "TICK " << response.getInfo().getTick();
     std::cout << " | owns = " << response.getInfo().getOwns();
     std::cout << " | level = " << response.getInfo().getLevel() << std::endl;
-
 }
 
 int main() {
     evil::Connection connection;
+    evil::Model model;
     connection.Connect();
 	evil::gui::Init();
 
@@ -63,7 +61,8 @@ int main() {
         login.setTeam("prezident_evil");
         login.setHash("stzq8jm94kf9iyw7353j9semae2sjorjvthakhzw");
         auto reader = connection.Communicate(std::move(message));
-        std::cout << reader->getRoot<protocol::Response>().getStatus().cStr() << std::endl;
+        model.update(getResponse(reader));
+        model.dump();
     }
 
 	while (true) {
@@ -129,4 +128,13 @@ int main() {
 			}
 		}
 	}
+
+#if 0
+    while (true) {
+        auto message = step(model);
+        auto reader = connection.Communicate(std::move(message));
+        model.update(getResponse(reader));
+        model.dump();
+    }
+#endif
 }

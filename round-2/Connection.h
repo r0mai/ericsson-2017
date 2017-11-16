@@ -1,11 +1,8 @@
 #pragma once
 #include <future>
 #include <memory>
+#include "Protocol.h"
 
-#include "protocol/Command.capnp.h"
-#include "protocol/Response.capnp.h"
-
-#include <capnp/serialize.h>
 
 namespace evil {
 
