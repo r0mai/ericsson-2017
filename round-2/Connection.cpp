@@ -47,14 +47,12 @@ bool Connection::Connect() {
     return true;
 }
 
-protocol::Response::Reader Connection::Communicate(capnp::MallocMessageBuilder& message) {
+std::unique_ptr<capnp::StreamFdMessageReader> Connection::Communicate(
+    capnp::MallocMessageBuilder& message)
+{
     capnp::writeMessageToFd(sockfd, message);
 
-    capnp::StreamFdMessageReader reader(sockfd);
-    auto response = reader.getRoot<protocol::Response>();
-    std::cout << "Response = " << response.getStatus().cStr() << std::endl;
-
-    return {};
+    return std::make_unique<capnp::StreamFdMessageReader>(sockfd);
 }
 
 } // namespace evil

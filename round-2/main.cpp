@@ -3,6 +3,8 @@
 #include "protocol/Command.capnp.h"
 #include "Connection.h"
 
+#include <iostream>
+
 int main() {
     evil::Connection connection;
     connection.Connect();
@@ -14,6 +16,7 @@ int main() {
         auto login = commands.initLogin();
         login.setTeam("prezident_evil");
         login.setHash("stzq8jm94kf9iyw7353j9semae2sjorjvthakhzw");
-        connection.Communicate(message);
+        auto reader = connection.Communicate(message);
+        std::cout << reader->getRoot<protocol::Response>().getStatus().cStr() << std::endl;
     }
 }
