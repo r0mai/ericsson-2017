@@ -38,9 +38,14 @@ struct Enemy {
 	Pos dir;
 };
 
+struct Cell {
+	int owner = 0;
+	bool is_unit = false;
+};
+
 class Model {
 public:
-	using Grid = Matrix<int>;
+	using Grid = Matrix<Cell>;
 	void update(protocol::Response::Reader response);;
 	void dump();
 	const Grid& getGrid() const;

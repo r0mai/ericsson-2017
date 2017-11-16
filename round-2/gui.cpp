@@ -85,11 +85,12 @@ void Gui::Draw() {
 
 	for (int r=0; r < grid.width(); ++r) {
 		for (int c=0; c < grid.height(); ++c) {
-			DrawCell(r, c, grid.at(r, c));
+			auto& cell = grid.at(r, c);
+			DrawCell(r, c, cell.owner);
 
-			// if (cell.getAttack().isUnit()) {
-			// 	DrawAttack(r, c, cell.getOwner());
-			// }
+			if (cell.is_unit) {
+				DrawAttack(r, c, cell.owner);
+			}
 		}
 	}
 

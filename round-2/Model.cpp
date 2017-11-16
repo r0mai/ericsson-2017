@@ -21,7 +21,8 @@ void Model::update(protocol::Response::Reader response) {
     for (auto cells : response.getCells()) {
         int col = 0;
         for (auto cell : cells) {
-            mat(row, col) = cell.getOwner();
+            mat(row, col).owner = cell.getOwner();
+            mat(row, col).is_unit = cell.getAttack().isUnit();
             ++col;
         }
         ++row;
@@ -45,7 +46,7 @@ void Model::update(protocol::Response::Reader response) {
 }
 
 void Model::dump() {
-    std::cout << grid_ << std::endl;
+    // std::cout << grid_ << std::endl;
     // std::cout << "TICK " << response.getInfo().getTick();
     // std::cout << " | owns = " << response.getInfo().getOwns();
     // std::cout << " | level = " << response.getInfo().getLevel() << std::endl;
