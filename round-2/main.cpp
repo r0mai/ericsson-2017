@@ -100,6 +100,8 @@ int main() {
 			move.setDirection(toDirection(next));
 			move.setUnit(0);
 
+			std::cout << "D " << int(next) << std::endl;
+
 			future = connection.communicateAsync(std::move(message));
 			if (!model.getStatus().empty()) {
 				std::cerr << "Status (" <<

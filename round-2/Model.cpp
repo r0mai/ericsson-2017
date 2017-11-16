@@ -1,7 +1,16 @@
 #include "Model.h"
+#include <cassert>
 
 
 namespace evil {
+namespace {
+
+Direction toDirection(int i) {
+    assert(i >= 0 && i < 4);
+    return Direction(i);
+}
+
+} // namespace
 
 Direction fromDirection(protocol::Direction dir) {
     switch(dir) {
@@ -147,14 +156,28 @@ void Model::colorize() {
 
 Direction Model::adjustDirection(int unit_index, Direction dir) {
     auto& unit = units_[unit_index];
-    auto pos = neighbor(unit.pos, dir);
 
+    if (dir == Direction::kNone) {
+        for (int i = 0; i < 4; ++i) {
+            auto nb_dir = toDirection(i);
+            auto nb_pos = neighbor(unit.pos, nb_dir);
+            std::cout << "C " << nb_pos << " " << int(nb_dir) << std::endl;
+            if (isValid(nb_pos)) {
+                std::cout << "Y " << int(nb_dir) << std::endl;
+                return nb_dir;
+            }
+        }
+
+        assert(false && "Could not adjust direction");
+        return Direction::kNone;
+    }
+
+    auto pos = neighbor(unit.pos, dir);
     if (isValid(pos)) {
         return dir;
     }
 
     return opposite(dir);
-
 }
 
 Cell& Model::getCell(const Pos& pos) {

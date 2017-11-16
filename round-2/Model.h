@@ -28,11 +28,12 @@ struct Pos {
 };
 
 enum class Direction {
-	kNone,
 	kUp,
+	kRight,
 	kDown,
 	kLeft,
-	kRight
+
+	kNone
 };
 
 struct Unit {
