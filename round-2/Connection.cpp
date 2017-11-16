@@ -27,7 +27,7 @@ bool Connection::Connect() {
 
     auto* server = gethostbyname(host);
     if (!server) {
-        std::cerr << "gethostbyname() failed " << std::endl;
+        std::cerr << "gethostbyname() failed" << std::endl;
         return false;
     }
 
@@ -41,7 +41,7 @@ bool Connection::Connect() {
     serv_addr.sin_port = htons(port);
 
     if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
-        std::cerr << "connect() failed " << std::endl;
+        std::cerr << "connect() failed" << std::endl;
         return false;
     }
     return true;
