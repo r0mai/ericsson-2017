@@ -2,7 +2,7 @@
 #include "Connection.h"
 #include "Utils.h"
 #include "Matrix.h"
-#include "gui.h"
+#include "Gui.h"
 #include "Model.h"
 #include "Client.h"
 #include <iostream>
