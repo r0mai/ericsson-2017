@@ -1,12 +1,11 @@
 #pragma once
-
 #include <future>
 #include <memory>
 
 #include "protocol/Command.capnp.h"
 #include "protocol/Response.capnp.h"
 
-#include <capnp/serialize-packed.h>
+#include <capnp/serialize.h>
 
 namespace evil {
 
@@ -20,10 +19,10 @@ public:
         std::unique_ptr<capnp::MallocMessageBuilder> message);
 
 private:
-    const char* host = "ecovpn.dyndns.org";
-    const int port = 11224;
+    const char* host_ = "ecovpn.dyndns.org";
+    const int port_ = 11224;
 
-    int sockfd = -1;
+    int sockfd_ = -1;
 };
 
 

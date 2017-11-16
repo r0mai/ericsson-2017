@@ -6,22 +6,22 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <unistd.h>
-
-#include <capnp/serialize-packed.h>
-
 #include <iostream>
 
+#include <capnp/serialize.h>
+
 #include <SFML/Network.hpp>
+
 
 namespace evil {
 
 bool Connection::Connect() {
-    const char* host = "ecovpn.dyndns.org";
-    const int port = 11224;
+    const char* host = host_;
+    const int port = port_;
 
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0) {
-        std::cerr << "socket() failed " << sockfd << std::endl;
+    sockfd_ = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd_ < 0) {
+        std::cerr << "socket() failed " << sockfd_ << std::endl;
         return false;
     }
 
@@ -40,8 +40,8 @@ bool Connection::Connect() {
 
     serv_addr.sin_port = htons(port);
 
-    if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
-        std::cerr << "connect() failed" << std::endl;
+    if (connect(sockfd_, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
+        std::cerr << "connect() failed " << std::endl;
         return false;
     }
     return true;
@@ -50,9 +50,9 @@ bool Connection::Connect() {
 std::unique_ptr<capnp::StreamFdMessageReader> Connection::Communicate(
     std::unique_ptr<capnp::MallocMessageBuilder> message)
 {
-    capnp::writeMessageToFd(sockfd, *message);
+    capnp::writeMessageToFd(sockfd_, *message);
 
-    return std::make_unique<capnp::StreamFdMessageReader>(sockfd);
+    return std::make_unique<capnp::StreamFdMessageReader>(sockfd_);
 }
 
 std::future<std::unique_ptr<capnp::StreamFdMessageReader>> Connection::CommunicateAsync(
