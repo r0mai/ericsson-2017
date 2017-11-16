@@ -72,6 +72,7 @@ bool Gui::Update() {
 				case sf::Keyboard::Down: last_direction_ = Direction::DOWN; break;
 				case sf::Keyboard::Right: last_direction_ = Direction::RIGHT; break;
 				case sf::Keyboard::Left: last_direction_ = Direction::LEFT; break;
+				case sf::Keyboard::Escape: window.close(); break;
 			}
 		}
 	}
