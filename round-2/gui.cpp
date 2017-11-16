@@ -1,28 +1,16 @@
 #include "gui.h"
 
 #include <iostream>
-#include <SFML/Graphics.hpp>
 
 namespace evil {
-namespace gui {
 
 namespace {
 
-constexpr int map_w = 100;
-constexpr int map_h = 80;
-
-constexpr int window_w = 1024 * 2;
-constexpr int window_h = 768 * 2;
-
-constexpr float cell_w = (float)window_w / map_w;
-constexpr float cell_h = (float)window_h / map_h;
-
 sf::Color owner_colors[] = {sf::Color::White, sf::Color::Blue, sf::Color::Green, sf::Color::Red};
 
-sf::RenderWindow window{sf::VideoMode(window_w, window_h), "My window"};
+} // anonymous namespace
 
-
-void DrawCell(int row_idx, int coll_idx, sf::Color color) {
+void Gui::DrawCell(int row_idx, int coll_idx, sf::Color color) {
 	sf::RectangleShape rectangle;
 	rectangle.setSize(sf::Vector2f(cell_w, cell_h));
 	rectangle.setFillColor(color);
@@ -31,27 +19,25 @@ void DrawCell(int row_idx, int coll_idx, sf::Color color) {
 	window.draw(rectangle);
 }
 
-void DrawCell(int row_idx, int coll_idx, int owner) {
+void Gui::DrawCell(int row_idx, int coll_idx, int owner) {
 	DrawCell(row_idx, coll_idx, owner_colors[owner]);
 }
 
-void DrawAttack(int row_idx, int coll_idx, int owner) {
+void Gui::DrawAttack(int row_idx, int coll_idx, int owner) {
 	auto color = owner_colors[2];
 	color.a = 100;
 	DrawCell(row_idx, coll_idx, color);
 }
 
-void DrawEnemy(protocol::Enemy::Reader& enemy) {
+void Gui::DrawEnemy(protocol::Enemy::Reader& enemy) {
 	DrawCell(enemy.getPosition().getRow(), enemy.getPosition().getCol(), 3);
 }
 
-void DrawUnit(protocol::Unit::Reader& unit) {
+void Gui::DrawUnit(protocol::Unit::Reader& unit) {
 	DrawCell(unit.getPosition().getRow(), unit.getPosition().getCol(), 2);
 }
 
-}
-
-bool Init() {
+bool Gui::Init() {
 //	while (window->isOpen()) {
 //		sf::Event event;
 //		while (window->pollEvent(event))
@@ -66,7 +52,7 @@ bool Init() {
 	return true;
 }
 
-void DrawGameState(protocol::Response::Reader& state) {
+void Gui::DrawGameState(protocol::Response::Reader& state) {
 	sf::Event event;
 	while (window.pollEvent(event))
 	{
@@ -77,6 +63,7 @@ void DrawGameState(protocol::Response::Reader& state) {
 
 		if (event.type == sf::Event::KeyPressed) {
 			switch (event.key.code) {
+				default: break;
 				case sf::Keyboard::Up:
 
 					break;
@@ -108,9 +95,8 @@ void DrawGameState(protocol::Response::Reader& state) {
 	window.display();
 }
 
-bool PollEvent(sf::Event& event) {
+bool Gui::PollEvent(sf::Event& event) {
 	return window.pollEvent(event);
 }
 
-}
-}
+} // namespace evil
