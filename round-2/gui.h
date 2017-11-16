@@ -26,8 +26,8 @@ private:
 	void DrawCell(int row_idx, int coll_idx, sf::Color color);
 	void DrawCell(int row_idx, int coll_idx, int owner);
 	void DrawAttack(int row_idx, int coll_idx, int owner);
-	void DrawEnemy(protocol::Enemy::Reader& enemy);
-	void DrawUnit(protocol::Unit::Reader& unit);
+	void DrawEnemy(const Enemy& enemy);
+	void DrawUnit(const Unit& unit);
 
 	sf::RenderWindow window{sf::VideoMode(window_w, window_h), "Your window"};
 

@@ -20,16 +20,23 @@ std::ostream& operator<<(std::ostream& out, const Matrix<T>& mat) {
 
 namespace evil {
 
+struct Pos {
+	Pos() = default;
+	Pos(int row, int col) : row(row), col(col) {}
+
+	int row = 0;
+	int col = 0;
+};
+
 struct Unit {
-	sf::Vector2i pos;
-	sf::Vector2i dir;
+	Pos pos;
+	Pos dir;
 };
 
 struct Enemy {
-	sf::Vector2i pos;
-	sf::Vector2i dir;
+	Pos pos;
+	Pos dir;
 };
-
 
 class Model {
 public:

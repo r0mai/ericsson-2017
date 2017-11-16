@@ -26,15 +26,21 @@ void Model::update(protocol::Response::Reader response) {
         }
         ++row;
     }
+	units_.clear();
+	enemies_.clear();
 
     for (auto enemy : response.getEnemies()) {
         auto pos = enemy.getPosition();
-        mat(pos.getRow(), pos.getCol()) = 2;
+		Enemy e;
+		e.pos = Pos{pos.getRow(), pos.getCol()};
+		enemies_.push_back(e);
     }
 
     for (auto unit : response.getUnits()) {
         auto pos = unit.getPosition();
-        mat(pos.getRow(), pos.getCol()) = 3;
+		Unit u;
+		u.pos = Pos{pos.getRow(), pos.getCol()};
+		units_.push_back(u);
     }
 }
 

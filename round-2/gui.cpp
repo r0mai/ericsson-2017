@@ -29,12 +29,12 @@ void Gui::DrawAttack(int row_idx, int coll_idx, int owner) {
 	DrawCell(row_idx, coll_idx, color);
 }
 
-void Gui::DrawEnemy(protocol::Enemy::Reader& enemy) {
-	DrawCell(enemy.getPosition().getRow(), enemy.getPosition().getCol(), 3);
+void Gui::DrawEnemy(const Enemy& enemy) {
+	DrawCell(enemy.pos.row, enemy.pos.col, 3);
 }
 
-void Gui::DrawUnit(protocol::Unit::Reader& unit) {
-	DrawCell(unit.getPosition().getRow(), unit.getPosition().getCol(), 2);
+void Gui::DrawUnit(const Unit& unit) {
+	DrawCell(unit.pos.row, unit.pos.col, 2);
 }
 
 bool Gui::Init() {
@@ -80,8 +80,8 @@ bool Gui::Update() {
 
 	auto& grid = model_.getGrid();
 
-	for (int r=0; r < grid.height(); ++r) {
-		for (int c=0; c < grid.width(); ++c) {
+	for (int r=0; r < grid.width(); ++r) {
+		for (int c=0; c < grid.height(); ++c) {
 			DrawCell(r, c, grid.at(r, c));
 
 			// if (cell.getAttack().isUnit()) {
@@ -90,13 +90,13 @@ bool Gui::Update() {
 		}
 	}
 
-	// for (auto enemy : state.getEnemies()) {
-	// 	DrawEnemy(enemy);
-	// }
+	for (auto enemy : model_.getEnemies()) {
+		DrawEnemy(enemy);
+	}
 
-	// for (auto unit : state.getUnits()) {
-	// 	DrawUnit(unit);
-	// }
+	for (auto unit : model_.getUnits()) {
+		DrawUnit(unit);
+	}
 
 	window.display();
 
