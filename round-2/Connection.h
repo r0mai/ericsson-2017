@@ -8,11 +8,11 @@ namespace evil {
 
 class Connection {
 public:
-	bool Connect();
-	std::unique_ptr<capnp::StreamFdMessageReader> Communicate(
+	bool connect();
+	std::unique_ptr<capnp::StreamFdMessageReader> communicate(
 		std::unique_ptr<capnp::MallocMessageBuilder> message);
 
-	std::future<std::unique_ptr<capnp::StreamFdMessageReader>> CommunicateAsync(
+	std::future<std::unique_ptr<capnp::StreamFdMessageReader>> communicateAsync(
 		std::unique_ptr<capnp::MallocMessageBuilder> message);
 
 private:

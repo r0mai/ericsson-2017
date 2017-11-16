@@ -15,7 +15,7 @@
 
 namespace evil {
 
-bool Connection::Connect() {
+bool Connection::connect() {
 	const char* host = host_;
 	const int port = port_;
 
@@ -40,14 +40,14 @@ bool Connection::Connect() {
 
 	serv_addr.sin_port = htons(port);
 
-	if (connect(sockfd_, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
+	if (::connect(sockfd_, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
 		std::cerr << "connect() failed " << std::endl;
 		return false;
 	}
 	return true;
 }
 
-std::unique_ptr<capnp::StreamFdMessageReader> Connection::Communicate(
+std::unique_ptr<capnp::StreamFdMessageReader> Connection::communicate(
 	std::unique_ptr<capnp::MallocMessageBuilder> message)
 {
 	capnp::writeMessageToFd(sockfd_, *message);
@@ -55,11 +55,11 @@ std::unique_ptr<capnp::StreamFdMessageReader> Connection::Communicate(
 	return std::make_unique<capnp::StreamFdMessageReader>(sockfd_);
 }
 
-std::future<std::unique_ptr<capnp::StreamFdMessageReader>> Connection::CommunicateAsync(
+std::future<std::unique_ptr<capnp::StreamFdMessageReader>> Connection::communicateAsync(
 	std::unique_ptr<capnp::MallocMessageBuilder> message)
 {
 	return std::async([this, m = std::move(message)]() mutable {
-		return Communicate(std::move(m));
+		return communicate(std::move(m));
 	});
 }
 

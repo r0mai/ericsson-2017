@@ -50,9 +50,9 @@ void show(std::unique_ptr<capnp::StreamFdMessageReader> reader) {
 int main() {
 	evil::Connection connection;
 	evil::Model model;
-	connection.Connect();
+	connection.connect();
 	evil::Gui gui;
-	gui.Init();
+	gui.init();
 
 	{
 		auto message = std::make_unique<capnp::MallocMessageBuilder>();
@@ -61,47 +61,38 @@ int main() {
 		auto login = commands.initLogin();
 		login.setTeam("prezident_evil");
 		login.setHash("stzq8jm94kf9iyw7353j9semae2sjorjvthakhzw");
-		auto reader = connection.Communicate(std::move(message));
+		auto reader = connection.communicate(std::move(message));
 		model.update(getResponse(reader));
 	}
 
 	auto message = std::make_unique<capnp::MallocMessageBuilder>();
 	auto command = message->initRoot<protocol::Command>();
-	auto future = connection.CommunicateAsync(std::move(message));
+	auto future = connection.communicateAsync(std::move(message));
 
 	while (true) {
 
-		if (!gui.Update()) {
+		if (!gui.update()) {
 			break;
 		}
 
-		if (IsFutureReady(future)) {
+		if (isFutureReady(future)) {
 			auto reader = future.get();
 			model.update(getResponse(reader));
-			gui.SetModel(model);
+			gui.setModel(model);
 			auto message = std::make_unique<capnp::MallocMessageBuilder>();
 			auto command = message->initRoot<protocol::Command>();
 			auto commands = command.initCommands();
 			auto moves = commands.initMoves(1);
 			auto move = moves[0];
-			move.setDirection(gui.GetLastDirection());
+			move.setDirection(gui.getLastDirection());
 			move.setUnit(0);
-			future = connection.CommunicateAsync(std::move(message));
+			future = connection.communicateAsync(std::move(message));
 			if (!model.getStatus().empty()) {
 				std::cerr << "Status (" <<
 					model.getLevel() << ":" << model.getTick() <<
 					", " << model.getOwns() << "): " << model.getStatus() << std::endl;
 			}
 		}
-		gui.Draw();
+		gui.draw();
 	}
-
-#if 0
-	while (true) {
-		auto message = step(model);
-		auto reader = connection.Communicate(std::move(message));
-		model.update(getResponse(reader));
-		model.dump();
-	}
-#endif
 }
