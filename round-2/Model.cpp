@@ -32,6 +32,12 @@ Pos operator+(const Pos& lhs, const Pos& rhs) {
     return pos;
 }
 
+std::ostream& operator<<(std::ostream& out, const Pos& pos) {
+    out << "(" << pos.row << ", " << pos.col << ")";
+    return out;
+}
+
+
 const Model::Grid& Model::getGrid() const {
 	return grid_;
 }
@@ -67,7 +73,7 @@ void Model::update(protocol::Response::Reader response) {
         int col = 0;
         for (auto cell : cells) {
             mat(row, col).owner = cell.getOwner();
-            mat(row, col).is_unit = cell.getAttack().isUnit();
+            mat(row, col).is_attacked = cell.getAttack().isUnit();
             ++col;
         }
         ++row;
@@ -97,13 +103,40 @@ void Model::update(protocol::Response::Reader response) {
 	tick_ = response.getInfo().getTick();
 	level_ = response.getInfo().getLevel();
 	owns_ = response.getInfo().getOwns();
+
+    colorize();
 }
 
-void Model::dump() {
-    // std::cout << grid_ << std::endl;
-    // std::cout << "TICK " << response.getInfo().getTick();
-    // std::cout << " | owns = " << response.getInfo().getOwns();
-    // std::cout << " | level = " << response.getInfo().getLevel() << std::endl;
+void Model::colorize() {
+    for (auto& cell : grid_) {
+        cell.color = 0;
+        if (cell.owner == 1) {
+            cell.color = 1;
+        }
+        if (cell.is_attacked) {
+            cell.color = 2;
+        }
+    }
+
+    for (auto& unit : units_) {
+        auto pos = unit.pos;
+        grid_(pos.row, pos.col).color = 3;
+    }
+
+    for (auto& enemy : enemies_) {
+        auto pos = enemy.pos;
+        auto* cell = &grid_(pos.row, pos.col);
+        while (cell->owner != 1) {
+            cell->color = 5;
+            pos += enemy.dir;
+            cell = &grid_(pos.row, pos.col);
+        }
+    }
+
+    for (auto& enemy : enemies_) {
+        auto pos = enemy.pos;
+        grid_(pos.row, pos.col).color = 4;
+    }
 }
 
 } // namespace evil

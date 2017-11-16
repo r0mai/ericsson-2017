@@ -39,18 +39,23 @@ struct Enemy {
 
 struct Cell {
 	int owner = 0;
-	bool is_unit = false;
+	bool is_attacked = false;
+
+	// algo
+	int color = 0;
 };
 
 
 Pos& operator+=(Pos& lhs, const Pos& rhs);
 Pos operator+(const Pos& lhs, const Pos& rhs);
+std::ostream& operator<<(std::ostream& out, const Pos& pos);
+
 
 class Model {
 public:
 	using Grid = Matrix<Cell>;
 	void update(protocol::Response::Reader response);;
-	void dump();
+
 	const Grid& getGrid() const;
 	const std::vector<Unit>& getUnits() const;
 	const std::vector<Enemy>& getEnemies() const;
@@ -60,6 +65,8 @@ public:
 	int getOwns() const;
 
 private:
+	void colorize();
+
 	Grid grid_ {80, 100};
 	std::vector<Unit> units_;
 	std::vector<Enemy> enemies_;

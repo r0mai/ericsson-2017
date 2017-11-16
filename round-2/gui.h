@@ -29,8 +29,7 @@ private:
 	static constexpr float cell_w = (float)window_w / map_w;
 	static constexpr float cell_h = (float)window_h / map_h;
 
-	void DrawCell(int row_idx, int coll_idx, sf::Color color);
-	void DrawCell(int row_idx, int coll_idx, int owner);
+	void DrawCell(int row_idx, int coll_idx, const Cell& cell);
 	void DrawAttack(int row_idx, int coll_idx, int owner);
 	void DrawEnemy(const Enemy& enemy);
 	void DrawUnit(const Unit& unit);

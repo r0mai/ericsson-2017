@@ -6,12 +6,20 @@ namespace evil {
 
 namespace {
 
-sf::Color owner_colors[] = {sf::Color::White, sf::Color::Blue, sf::Color::Green, sf::Color::Red};
+sf::Color owner_colors[] = {
+	sf::Color::White,
+	sf::Color::Blue,
+	sf::Color(200, 250, 200),
+	sf::Color::Green,
+	sf::Color::Red,
+	sf::Color(255, 200, 200)
+};
 
 } // anonymous namespace
 
-void Gui::DrawCell(int row_idx, int coll_idx, sf::Color color) {
+void Gui::DrawCell(int row_idx, int coll_idx, const Cell& cell) {
 	sf::RectangleShape rectangle;
+	auto color = owner_colors[cell.color];
 	rectangle.setSize(sf::Vector2f(cell_w, cell_h));
 	rectangle.setFillColor(color);
 	rectangle.setPosition(coll_idx * cell_w, row_idx * cell_h);
@@ -19,22 +27,18 @@ void Gui::DrawCell(int row_idx, int coll_idx, sf::Color color) {
 	window.draw(rectangle);
 }
 
-void Gui::DrawCell(int row_idx, int coll_idx, int owner) {
-	DrawCell(row_idx, coll_idx, owner_colors[owner]);
-}
-
 void Gui::DrawAttack(int row_idx, int coll_idx, int owner) {
-	auto color = owner_colors[2];
-	color.a = 100;
-	DrawCell(row_idx, coll_idx, color);
+	// auto color = owner_colors[2];
+	// color.a = 100;
+	// DrawCell(row_idx, coll_idx, color);
 }
 
 void Gui::DrawEnemy(const Enemy& enemy) {
-	DrawCell(enemy.pos.row, enemy.pos.col, 3);
+	// DrawCell(enemy.pos.row, enemy.pos.col, 3);
 }
 
 void Gui::DrawUnit(const Unit& unit) {
-	DrawCell(unit.pos.row, unit.pos.col, 2);
+	// DrawCell(unit.pos.row, unit.pos.col, 2);
 }
 
 bool Gui::Init() {
@@ -88,21 +92,21 @@ void Gui::Draw() {
 	for (int r=0; r < grid.width(); ++r) {
 		for (int c=0; c < grid.height(); ++c) {
 			auto& cell = grid.at(r, c);
-			DrawCell(r, c, cell.owner);
+			DrawCell(r, c, cell);
 
-			if (cell.is_unit) {
-				DrawAttack(r, c, cell.owner);
-			}
+			// if (cell.is_attacked) {
+			// 	DrawAttack(r, c, cell.owner);
+			// }
 		}
 	}
 
-	for (auto enemy : model_.getEnemies()) {
-		DrawEnemy(enemy);
-	}
+	// for (auto enemy : model_.getEnemies()) {
+	// 	DrawEnemy(enemy);
+	// }
 
-	for (auto unit : model_.getUnits()) {
-		DrawUnit(unit);
-	}
+	// for (auto unit : model_.getUnits()) {
+	// 	DrawUnit(unit);
+	// }
 
 	window.display();
 }
