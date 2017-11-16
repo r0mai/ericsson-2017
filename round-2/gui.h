@@ -2,9 +2,12 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "Protocol.h"
 #include "Model.h"
 
 namespace evil {
+
+using protocol::Direction;
 
 class Gui {
 public:
@@ -14,6 +17,8 @@ public:
 	void Draw();
 	void SetModel(Model model);
 	bool PollEvent(sf::Event& event);
+
+	Direction GetLastDirection() const;
 private:
 	static constexpr int map_w = 100;
 	static constexpr int map_h = 80;
@@ -33,6 +38,7 @@ private:
 	sf::RenderWindow window{sf::VideoMode(window_w, window_h), "Your window"};
 
 	Model model_;
+	Direction last_direction_ = Direction::DOWN;
 };
 
 } // namespace evil

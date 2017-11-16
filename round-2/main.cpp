@@ -65,70 +65,30 @@ int main() {
 		model.update(getResponse(reader));
 	}
 
+	auto message = std::make_unique<capnp::MallocMessageBuilder>();
+	auto command = message->initRoot<protocol::Command>();
+	auto future = connection.CommunicateAsync(std::move(message));
+
 	while (true) {
-		auto message = std::make_unique<capnp::MallocMessageBuilder>();
-		auto command = message->initRoot<protocol::Command>();
 
-		sf::Event event;
-		while (gui.PollEvent(event))
-		{
-			if (event.type == sf::Event::KeyPressed) {
-				switch (event.key.code) {
-					default: break;
-					case sf::Keyboard::Up:
-					{
-						auto commands = command.initCommands();
-						auto moves = commands.initMoves(1);
-						auto move = moves[0];
-						move.setDirection(protocol::Direction::UP);
-						move.setUnit(0);
-						break;
-					}
-
-					case sf::Keyboard::Down:
-					{
-						auto commands = command.initCommands();
-						auto moves = commands.initMoves(1);
-						auto move = moves[0];
-						move.setDirection(protocol::Direction::DOWN);
-						move.setUnit(0);
-						break;
-					}
-
-					case sf::Keyboard::Left:
-					{
-						auto commands = command.initCommands();
-						auto moves = commands.initMoves(1);
-						auto move = moves[0];
-						move.setDirection(protocol::Direction::LEFT);
-						move.setUnit(0);
-						break;
-					}
-
-					case sf::Keyboard::Right:
-					{
-						auto commands = command.initCommands();
-						auto moves = commands.initMoves(1);
-						auto move = moves[0];
-						move.setDirection(protocol::Direction::RIGHT);
-						move.setUnit(0);
-						break;
-					}
-				}
-			}
-
+		if (!gui.Update()) {
+			break;
 		}
 
-		auto future = connection.CommunicateAsync(std::move(message));
-		for (int i = 0; ; ++i) {
-			if (IsFutureReady(future)) {
-				auto reader = future.get();
-				model.update(getResponse(reader));
-				gui.SetModel(model);
-				gui.Draw();
-				break;
-			}
+		if (IsFutureReady(future)) {
+			auto reader = future.get();
+			model.update(getResponse(reader));
+			gui.SetModel(model);
+			auto message = std::make_unique<capnp::MallocMessageBuilder>();
+			auto command = message->initRoot<protocol::Command>();
+			auto commands = command.initCommands();
+			auto moves = commands.initMoves(1);
+			auto move = moves[0];
+			move.setDirection(gui.GetLastDirection());
+			move.setUnit(0);
+			future = connection.CommunicateAsync(std::move(message));
 		}
+		gui.Draw();
 	}
 
 #if 0
