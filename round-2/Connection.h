@@ -1,5 +1,6 @@
 #pragma once
 
+#include <future>
 #include <memory>
 
 #include "protocol/Command.capnp.h"
@@ -13,7 +14,10 @@ class Connection {
 public:
     bool Connect();
     std::unique_ptr<capnp::StreamFdMessageReader> Communicate(
-        capnp::MallocMessageBuilder& message);
+        std::unique_ptr<capnp::MallocMessageBuilder> message);
+
+    std::future<std::unique_ptr<capnp::StreamFdMessageReader>> CommunicateAsync(
+        std::unique_ptr<capnp::MallocMessageBuilder> message);
 
 private:
     const char* host = "ecovpn.dyndns.org";

@@ -48,11 +48,19 @@ bool Connection::Connect() {
 }
 
 std::unique_ptr<capnp::StreamFdMessageReader> Connection::Communicate(
-    capnp::MallocMessageBuilder& message)
+    std::unique_ptr<capnp::MallocMessageBuilder> message)
 {
-    capnp::writeMessageToFd(sockfd, message);
+    capnp::writeMessageToFd(sockfd, *message);
 
     return std::make_unique<capnp::StreamFdMessageReader>(sockfd);
+}
+
+std::future<std::unique_ptr<capnp::StreamFdMessageReader>> Connection::CommunicateAsync(
+    std::unique_ptr<capnp::MallocMessageBuilder> message)
+{
+    return std::async([this, m = std::move(message)]() mutable {
+        return Communicate(std::move(m));
+    });
 }
 
 } // namespace evil
