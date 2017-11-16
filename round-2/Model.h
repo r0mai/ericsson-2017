@@ -1,7 +1,6 @@
 #pragma once
 #include "Matrix.h"
 #include "Protocol.h"
-#include <SFML/System/Vector2.hpp>
 #include <vector>
 #include <iostream>
 
@@ -42,6 +41,10 @@ struct Cell {
 	int owner = 0;
 	bool is_unit = false;
 };
+
+
+Pos& operator+=(Pos& lhs, const Pos& rhs);
+Pos operator+(const Pos& lhs, const Pos& rhs);
 
 class Model {
 public:

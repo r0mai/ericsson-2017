@@ -2,6 +2,35 @@
 
 
 namespace evil {
+namespace {
+
+Pos fromDirection(protocol::Direction dir) {
+    Pos pos;
+    switch(dir) {
+        case protocol::Direction::LEFT: pos.col = -1; break;
+        case protocol::Direction::RIGHT: pos.col = 1; break;
+        case protocol::Direction::UP: pos.row = -1; break;
+        case protocol::Direction::DOWN: pos.row = 1; break;
+        default: break;
+    }
+
+    return pos;
+}
+
+} // namespace
+
+
+Pos& operator+=(Pos& lhs, const Pos& rhs) {
+    lhs.row += rhs.row;
+    lhs.col += rhs.col;
+    return lhs;
+}
+
+Pos operator+(const Pos& lhs, const Pos& rhs) {
+    Pos pos = lhs;
+    pos += rhs;
+    return pos;
+}
 
 const Model::Grid& Model::getGrid() const {
 	return grid_;
@@ -34,6 +63,8 @@ void Model::update(protocol::Response::Reader response) {
         auto pos = enemy.getPosition();
 		Enemy e;
 		e.pos = Pos{pos.getRow(), pos.getCol()};
+        e.dir = fromDirection(enemy.getDirection().getVertical()) +
+            fromDirection(enemy.getDirection().getHorizontal());
 		enemies_.push_back(e);
     }
 
@@ -41,6 +72,7 @@ void Model::update(protocol::Response::Reader response) {
         auto pos = unit.getPosition();
 		Unit u;
 		u.pos = Pos{pos.getRow(), pos.getCol()};
+        u.dir = fromDirection(unit.getDirection());
 		units_.push_back(u);
     }
 }
