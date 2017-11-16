@@ -69,6 +69,56 @@ int main() {
 	while (true) {
 		auto message = std::make_unique<capnp::MallocMessageBuilder>();
 		auto command = message->initRoot<protocol::Command>();
+
+		sf::Event event;
+		while (evil::gui::PollEvent(event))
+		{
+			if (event.type == sf::Event::KeyPressed) {
+				switch (event.key.code) {
+					case sf::Keyboard::Up:
+					{
+						auto commands = command.initCommands();
+						auto moves = commands.initMoves(1);
+						auto move = moves[0];
+						move.setDirection(protocol::Direction::UP);
+						move.setUnit(0);
+						break;
+					}
+
+					case sf::Keyboard::Down:
+					{
+						auto commands = command.initCommands();
+						auto moves = commands.initMoves(1);
+						auto move = moves[0];
+						move.setDirection(protocol::Direction::DOWN);
+						move.setUnit(0);
+						break;
+					}
+
+					case sf::Keyboard::Left:
+					{
+						auto commands = command.initCommands();
+						auto moves = commands.initMoves(1);
+						auto move = moves[0];
+						move.setDirection(protocol::Direction::LEFT);
+						move.setUnit(0);
+						break;
+					}
+
+					case sf::Keyboard::Right:
+					{
+						auto commands = command.initCommands();
+						auto moves = commands.initMoves(1);
+						auto move = moves[0];
+						move.setDirection(protocol::Direction::RIGHT);
+						move.setUnit(0);
+						break;
+					}
+				}
+			}
+
+		}
+
 		auto future = connection.CommunicateAsync(std::move(message));
 		for (int i = 0; ; ++i) {
 			if (IsFutureReady(future)) {
