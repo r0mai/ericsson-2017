@@ -54,11 +54,20 @@ public:
 	const Grid& getGrid() const;
 	const std::vector<Unit>& getUnits() const;
 	const std::vector<Enemy>& getEnemies() const;
+	const std::string& getStatus() const;
+	int getTick() const;
+	int getLevel() const;
+	int getOwns() const;
 
 private:
 	Grid grid_ {80, 100};
 	std::vector<Unit> units_;
 	std::vector<Enemy> enemies_;
+
+	std::string status_;
+	int tick_ = -1;
+	int level_ = -1;
+	int owns_ = -1;
 };
 
 } // namespace evil

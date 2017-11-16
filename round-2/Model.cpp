@@ -44,6 +44,22 @@ const std::vector<Enemy>& Model::getEnemies() const {
 	return enemies_;
 }
 
+const std::string& Model::getStatus() const {
+	return status_;
+}
+
+int Model::getTick() const {
+	return tick_;
+}
+
+int Model::getLevel() const {
+	return level_;
+}
+
+int Model::getOwns() const {
+	return owns_;
+}
+
 void Model::update(protocol::Response::Reader response) {
 	auto& mat = grid_;
     int row = 0;
@@ -58,6 +74,7 @@ void Model::update(protocol::Response::Reader response) {
     }
 	units_.clear();
 	enemies_.clear();
+	status_.clear();
 
     for (auto enemy : response.getEnemies()) {
         auto pos = enemy.getPosition();
@@ -75,6 +92,11 @@ void Model::update(protocol::Response::Reader response) {
         u.dir = fromDirection(unit.getDirection());
 		units_.push_back(u);
     }
+
+	status_ = response.getStatus().cStr();
+	tick_ = response.getInfo().getTick();
+	level_ = response.getInfo().getLevel();
+	owns_ = response.getInfo().getOwns();
 }
 
 void Model::dump() {

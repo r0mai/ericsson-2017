@@ -87,6 +87,11 @@ int main() {
 			move.setDirection(gui.GetLastDirection());
 			move.setUnit(0);
 			future = connection.CommunicateAsync(std::move(message));
+			if (!model.getStatus().empty()) {
+				std::cerr << "Status (" <<
+					model.getLevel() << ":" << model.getTick() <<
+					", " << model.getOwns() << "): " << model.getStatus() << std::endl;
+			}
 		}
 		gui.Draw();
 	}
