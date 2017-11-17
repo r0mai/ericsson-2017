@@ -64,6 +64,13 @@ std::ostream& operator<<(std::ostream& out, Direction dir) {
 	return out;
 }
 
+bool operator==(const Pos& lhs, const Pos& rhs) {
+	return lhs.row == rhs.row && lhs.col == rhs.col;
+}
+
+bool operator!=(const Pos& lhs, const Pos& rhs) {
+	return !(lhs == rhs);
+}
 
 const Model::Grid& Model::getGrid() const {
 	return grid_;

@@ -163,6 +163,9 @@ int main(int argc, char* argv[]) {
 			move.setDirection(toProtocol(next));
 			move.setUnit(0);
 
+			auto next_pos = neighbor(model.getUnits().at(0).pos, next);
+			gui.setNextPos(next_pos);
+
 			if (next != prev) {
 				prev = next;
 				std::cout

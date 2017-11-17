@@ -22,17 +22,28 @@ sf::Color owner_colors[] = {
 } // anonymous namespace
 
 
-void Gui::drawCell(int row_idx, int coll_idx, sf::Color color) {
+void Gui::drawCell(const Pos& pos, sf::Color color) {
 	sf::RectangleShape rectangle;
 	rectangle.setSize(sf::Vector2f(cell_w, cell_h));
 	rectangle.setFillColor(color);
-	rectangle.setPosition(coll_idx * cell_w, row_idx * cell_h);
+	rectangle.setPosition(pos.col * cell_w, pos.row * cell_h);
 	window_.draw(rectangle);
 }
 
-void Gui::drawCell(int row_idx, int coll_idx, const Cell& cell) {
+void Gui::drawDot(const Pos& pos, sf::Color color) {
+    sf::CircleShape circ;
+    float r = 3.0f;
+
+    circ.setRadius(r);
+    circ.setOrigin(r, r);
+	circ.setFillColor(color);
+	circ.setPosition((pos.col + 0.5f) * cell_w, (pos.row + 0.5f) * cell_h);
+	window_.draw(circ);
+}
+
+void Gui::drawCell(const Pos& pos, const Cell& cell) {
 	auto color = owner_colors[cell.color];
-	drawCell(row_idx, coll_idx, color);
+	drawCell(pos, color);
 }
 
 
@@ -65,7 +76,7 @@ bool Gui::update() {
 		}
 		if (event.type == sf::Event::MouseMoved) {
 			auto& ev = event.mouseMove;
-			last_pos_ = windowToPos(ev.x, ev.y);
+			mouse_pos_ = windowToPos(ev.x, ev.y);
 		}
 	}
 
@@ -85,11 +96,14 @@ void Gui::draw() {
 	for (int r=0; r < grid.width(); ++r) {
 		for (int c=0; c < grid.height(); ++c) {
 			auto& cell = grid.at(r, c);
-			drawCell(r, c, cell);
+			drawCell({r, c}, cell);
 		}
 	}
 
-	drawCell(last_pos_.row, last_pos_.col, sf::Color(50, 230, 250, 100));
+	drawDot(next_pos_, sf::Color::Black);
+	drawDot(neighbor(next_pos_, dir_), sf::Color::Black);
+
+	drawCell(mouse_pos_, sf::Color(50, 230, 250, 100));
 	window_.display();
 }
 
@@ -112,6 +126,10 @@ void Gui::updateStatus() {
 
 void Gui::close() {
 	window_.close();
+}
+
+void Gui::setNextPos(const Pos& pos) {
+	next_pos_ = pos;
 }
 
 } // namespace evil

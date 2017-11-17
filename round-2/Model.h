@@ -61,8 +61,12 @@ Direction opposite(Direction dir);
 Pos neighbor(const Pos& pos, Direction dir);
 Direction fromDirection(protocol::Direction dir);
 
+bool operator==(const Pos& lhs, const Pos& rhs);
+bool operator!=(const Pos& lhs, const Pos& rhs);
+
 std::ostream& operator<<(std::ostream& out, const Pos& pos);
 std::ostream& operator<<(std::ostream& out, Direction dir);
+
 
 
 class Model {

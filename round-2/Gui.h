@@ -17,6 +17,7 @@ public:
 	void setModel(Model model);
 	bool pollEvent(sf::Event& event);
 	Direction getDirection() const;
+	void setNextPos(const Pos& pos);
 
 private:
 	static constexpr int map_w = 100;
@@ -28,15 +29,17 @@ private:
 	static constexpr float cell_w = (float)window_w / map_w;
 	static constexpr float cell_h = (float)window_h / map_h;
 
-	void drawCell(int row_idx, int coll_idx, const Cell& cell);
-	void drawCell(int row_idx, int coll_idx, sf::Color color);
+	void drawCell(const Pos& pos, const Cell& cell);
+	void drawCell(const Pos& pos, sf::Color color);
+	void drawDot(const Pos& pos, sf::Color color);
 	Pos windowToPos(int x, int y) const;
 
 	sf::RenderWindow window_ {sf::VideoMode(window_w, window_h), "Window"};
 
 	Model model_;
 	Direction dir_ = Direction::kNone;
-	Pos last_pos_;
+	Pos mouse_pos_;
+	Pos next_pos_;
 };
 
 } // namespace evil
