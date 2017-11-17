@@ -67,20 +67,25 @@ std::ostream& operator<<(std::ostream& out, Direction dir);
 
 class Model {
 public:
+	using Grid = Matrix<Cell>;
+
 	static constexpr int kMaxRows = 80;
 	static constexpr int kMaxCols = 100;
 
-	using Grid = Matrix<Cell>;
-	bool update(protocol::Response::Reader response);
+	static Model fromResponse(protocol::Response::Reader response);
+
+	bool isValid() const;
 
 	const Grid& getGrid() const;
 	const std::vector<Unit>& getUnits() const;
 	const std::vector<Enemy>& getEnemies() const;
 	const std::string& getStatus() const;
+
 	int getTick() const;
 	int getLevel() const;
 	int getOwns() const;
 	int getCoverage() const;
+
 	Direction adjustDirection(int unit_index, Direction dir);
 
 private:

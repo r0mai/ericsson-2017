@@ -93,18 +93,19 @@ int Model::getOwns() const {
 	return owns_;
 }
 
-bool Model::update(protocol::Response::Reader response) {
-	auto& mat = grid_;
+Model Model::fromResponse(protocol::Response::Reader response) {
+	if (response.getCells().size() == 0) {
+		return {};
+	}
+
+	Model m;
+	auto& mat = m.grid_;
 	int row = 0;
 
-	status_ = response.getStatus().cStr();
-	tick_ = response.getInfo().getTick();
-	level_ = response.getInfo().getLevel();
-	owns_ = response.getInfo().getOwns();
-
-	if (response.getCells().size() == 0) {
-		return false;
-	}
+	m.status_ = response.getStatus().cStr();
+	m.tick_ = response.getInfo().getTick();
+	m.level_ = response.getInfo().getLevel();
+	m.owns_ = response.getInfo().getOwns();
 
 	for (auto cells : response.getCells()) {
 		int col = 0;
@@ -115,8 +116,8 @@ bool Model::update(protocol::Response::Reader response) {
 		}
 		++row;
 	}
-	units_.clear();
-	enemies_.clear();
+	m.units_.clear();
+	m.enemies_.clear();
 
 	for (auto enemy : response.getEnemies()) {
 		auto pos = enemy.getPosition();
@@ -124,7 +125,7 @@ bool Model::update(protocol::Response::Reader response) {
 		e.pos = Pos{pos.getRow(), pos.getCol()};
 		e.v_dir = fromDirection(enemy.getDirection().getVertical());
 		e.h_dir = fromDirection(enemy.getDirection().getHorizontal());
-		enemies_.push_back(e);
+		m.enemies_.push_back(e);
 	}
 
 	for (auto unit : response.getUnits()) {
@@ -132,11 +133,15 @@ bool Model::update(protocol::Response::Reader response) {
 		Unit u;
 		u.pos = Pos{pos.getRow(), pos.getCol()};
 		u.dir = fromDirection(unit.getDirection());
-		units_.push_back(u);
+		m.units_.push_back(u);
 	}
 
-	colorize();
-	return true;
+	m.colorize();
+	return m;
+}
+
+bool Model::isValid() const {
+	return getUnits().size() > 0;
 }
 
 void Model::colorize() {

@@ -75,8 +75,6 @@ std::vector<Command> load(const char* filename) {
 
 int main(int argc, char* argv[]) {
 	evil::Connection connection;
-	evil::Model model;
-
 	int save_arg_index = 1;
 	std::vector<Command> cmds;
 
@@ -111,7 +109,8 @@ int main(int argc, char* argv[]) {
 		login.setTeam("prezident_evil");
 		login.setHash("stzq8jm94kf9iyw7353j9semae2sjorjvthakhzw");
 		auto reader = connection.communicate(std::move(message));
-		if (!model.update(getResponse(reader))) {
+		auto model = evil::Model::fromResponse(getResponse(reader));
+		if (!model.isValid()) {
 			std::cerr << model.getStatus() << std::endl;
 			return 0;
 		}
@@ -130,7 +129,8 @@ int main(int argc, char* argv[]) {
 
 		if (isFutureReady(future)) {
 			auto reader = future.get();
-			if (!model.update(getResponse(reader))) {
+			auto model = evil::Model::fromResponse(getResponse(reader));
+			if (!model.isValid()) {
 				std::cerr << model.getStatus() << std::endl;
 				gui.close();
 				break;

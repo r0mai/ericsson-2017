@@ -3,6 +3,7 @@
 #include <memory>
 #include <iostream>
 
+#include "Model.h"
 #include "Protocol.h"
 
 namespace evil {
@@ -27,6 +28,7 @@ private:
 	bool AcceptLogin();
 
 	ServerConnection connection_;
+	Model model_;
 };
 
 } // namespace evil
