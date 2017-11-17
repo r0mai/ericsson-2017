@@ -22,7 +22,7 @@ bool ServerConnection::Accept() {
 	sockaddr_in serv_addr{};
 	sockaddr_in cli_addr{};
 
-	int portno = 25552;
+	int portno = 11224;
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_addr.s_addr = INADDR_ANY;
 	serv_addr.sin_port = htons(portno);

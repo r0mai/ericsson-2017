@@ -15,10 +15,7 @@
 
 namespace evil {
 
-bool Connection::connect() {
-	const char* host = host_;
-	const int port = port_;
-
+bool Connection::connect(const char* host, int port) {
 	sockfd_ = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockfd_ < 0) {
 		std::cerr << "socket() failed " << sockfd_ << std::endl;
