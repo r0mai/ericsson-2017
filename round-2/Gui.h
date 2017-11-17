@@ -10,6 +10,7 @@ namespace evil {
 class Gui {
 public:
 	bool init();
+	void close();
 	bool update();
 	void updateStatus();
 	void draw();

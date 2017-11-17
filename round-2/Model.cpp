@@ -58,7 +58,7 @@ std::ostream& operator<<(std::ostream& out, Direction dir) {
         case Direction::kLeft: out << '<'; break;
         case Direction::kRight: out << '>'; break;
         case Direction::kUp: out << '^'; break;
-        case Direction::kDown: out << 'V'; break;
+        case Direction::kDown: out << 'v'; break;
         default: out << '.'; break;
     }
     return out;
@@ -117,7 +117,6 @@ bool Model::update(protocol::Response::Reader response) {
     }
 	units_.clear();
 	enemies_.clear();
-	status_.clear();
 
     for (auto enemy : response.getEnemies()) {
         auto pos = enemy.getPosition();
@@ -158,10 +157,28 @@ void Model::colorize() {
 
     for (auto& enemy : enemies_) {
         auto pos = enemy.pos;
+        auto last_pos = pos;
         while (getCell(pos).owner != 1) {
             getCell(pos).color = 5;
+            last_pos = pos;
             pos = neighbor(pos, enemy.v_dir);
             pos = neighbor(pos, enemy.h_dir);
+        }
+
+        pos = last_pos;
+        while (getCell(pos).owner != 1) {
+            auto& cc = getCell(pos).color;
+            if (cc == 0) { cc = 6; }
+            pos = neighbor(pos, opposite(enemy.v_dir));
+            pos = neighbor(pos, enemy.h_dir);
+        }
+
+        pos = last_pos;
+        while (getCell(pos).owner != 1) {
+            auto& cc = getCell(pos).color;
+            if (cc == 0) { cc = 6; }
+            pos = neighbor(pos, enemy.v_dir);
+            pos = neighbor(pos, opposite(enemy.h_dir));
         }
     }
 

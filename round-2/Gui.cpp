@@ -11,11 +11,12 @@ namespace {
 
 sf::Color owner_colors[] = {
 	sf::Color::White,
-	sf::Color::Blue,
+	sf::Color(60, 90, 180),
 	sf::Color(200, 250, 200),
-	sf::Color::Green,
+	sf::Color(140, 240, 40),
 	sf::Color::Red,
-	sf::Color(255, 200, 200)
+	sf::Color(255, 200, 200),
+	sf::Color(255, 230, 230),
 };
 
 } // anonymous namespace
@@ -93,6 +94,10 @@ void Gui::updateStatus() {
 	ss << " - Tick " << model_.getTick();
 	ss << " - Coverage " << std::setprecision(2) << coverage << "%";
 	window_.setTitle(ss.str());
+}
+
+void Gui::close() {
+	window_.close();
 }
 
 } // namespace evil
