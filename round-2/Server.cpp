@@ -123,14 +123,22 @@ bool Server::RunGame() {
 
 	model_.addBorder();
 
+	bool model_invalid = false;
 	while (true) {
 		connection_.Write(model_.toCapnp());
+		if (model_invalid) {
+			return false;
+		}
 		auto reader = connection_.Read();
 		auto cmd = reader->getRoot<protocol::Command>();
 
 		if (!cmd.getCommands().isMoves()) {
 			std::cerr << "Login received. Expected Moves" << std::endl;
 			break;
+		}
+
+		if (!model_.stepAsServer()) {
+			model_invalid = true;
 		}
 	}
 

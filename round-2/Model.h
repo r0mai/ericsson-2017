@@ -59,7 +59,6 @@ struct Cell {
 	int color = 0;
 };
 
-
 Direction opposite(Direction dir);
 Pos neighbor(const Pos& pos, Direction dir);
 Direction fromDirection(protocol::Direction dir);
@@ -97,6 +96,7 @@ public:
 
 	void addBorder(int owner = 1, int thickness = 2);
 	void addUnit(Unit unit);
+	bool stepAsServer();
 
 	Direction adjustDirection(int unit_index, Direction dir) const;
 

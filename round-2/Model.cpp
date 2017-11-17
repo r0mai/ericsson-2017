@@ -163,7 +163,7 @@ std::unique_ptr<capnp::MallocMessageBuilder> Model::toCapnp() const {
 	auto response = builder->initRoot<protocol::Response>();
 	auto info = response.initInfo();
 
-	response.setStatus("status from localhost");
+	response.setStatus(status_);
 
 	info.setTick(tick_);
 	info.setLevel(level_);
@@ -287,6 +287,21 @@ void Model::addBorder(int owner, int thickness) {
 
 void Model::addUnit(Unit unit) {
 	units_.push_back(unit);
+}
+
+bool Model::stepAsServer() {
+	status_ = {};
+
+	for (auto& unit : units_) {
+		auto new_pos = neighbor(unit.pos, unit.dir);
+		if (!isValid(new_pos)) {
+			status_ = "Unit out of bounds";
+			return false;
+		}
+		unit.pos = new_pos;
+	}
+
+	return true;
 }
 
 Direction Model::adjustDirection(int unit_index, Direction dir) const {
