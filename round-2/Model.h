@@ -7,13 +7,13 @@
 
 template<typename T>
 std::ostream& operator<<(std::ostream& out, const Matrix<T>& mat) {
-    for (int row = 0; row < mat.width(); ++row) {
-        for (int col = 0; col < mat.height(); ++col) {
-            out << mat(row, col);
-        }
-        out << std::endl;
-    }
-    return out;
+	for (int row = 0; row < mat.width(); ++row) {
+		for (int col = 0; col < mat.height(); ++col) {
+			out << mat(row, col);
+		}
+		out << std::endl;
+	}
+	return out;
 }
 
 
