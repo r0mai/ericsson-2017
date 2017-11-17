@@ -12,11 +12,11 @@ namespace {
 sf::Color owner_colors[] = {
 	sf::Color::White,
 	sf::Color(60, 90, 180),
-	sf::Color(200, 250, 200),
+	sf::Color(200, 255, 180),
 	sf::Color(140, 240, 40),
-	sf::Color::Red,
+	sf::Color(255, 20, 40),
 	sf::Color(255, 200, 200),
-	sf::Color(255, 230, 230),
+	sf::Color(255, 240, 240),
 };
 
 } // anonymous namespace

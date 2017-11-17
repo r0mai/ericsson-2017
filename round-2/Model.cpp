@@ -165,6 +165,14 @@ void Model::colorize() {
             pos = neighbor(pos, enemy.h_dir);
         }
 
+        pos = enemy.pos;
+        while (getCell(pos).owner != 1) {
+            auto& cc = getCell(pos).color;
+            if (cc == 0) { cc = 6; }
+            pos = neighbor(pos, opposite(enemy.v_dir));
+            pos = neighbor(pos, opposite(enemy.h_dir));
+        }
+
         pos = last_pos;
         while (getCell(pos).owner != 1) {
             auto& cc = getCell(pos).color;
