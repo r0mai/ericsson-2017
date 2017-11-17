@@ -27,6 +27,7 @@ public:
 
 private:
 	bool AcceptLogin();
+	bool RunGame();
 
 	ServerConnection connection_;
 	Model model_;

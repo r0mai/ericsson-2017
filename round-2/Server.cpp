@@ -88,31 +88,18 @@ void Server::Run() {
 	while (true) {
 		try {
 			if (!connection_.Accept()) {
-				return;
+				continue;
 			}
 
 			if (!AcceptLogin()) {
-				return;
+				continue;
 			}
 
-			{
-				Unit unit;
-				unit.health = 6;
-				unit.killer = 3;
-				unit.owner = 1;
-				unit.pos = {0, 0};
-				unit.dir = Direction::kDown;
-
-				model_.addUnit(unit);
-			};
-
-			model_.addBorder();
-
-			while (true) {
-				connection_.Write(model_.toCapnp());
-				auto reader = connection_.Read();
-				auto cmd = reader->getRoot<protocol::Command>();
+			if (!RunGame()) {
+				continue;
 			}
+
+
 		} catch (std::exception& ex) {
 			std::cerr << "Exception caught " << ex.what() << std::endl;
 		} catch (...) {
@@ -120,6 +107,34 @@ void Server::Run() {
 			return;
 		}
 	}
+}
+
+bool Server::RunGame() {
+	{
+		Unit unit;
+		unit.health = 6;
+		unit.killer = 3;
+		unit.owner = 1;
+		unit.pos = {0, 0};
+		unit.dir = Direction::kDown;
+
+		model_.addUnit(unit);
+	};
+
+	model_.addBorder();
+
+	while (true) {
+		connection_.Write(model_.toCapnp());
+		auto reader = connection_.Read();
+		auto cmd = reader->getRoot<protocol::Command>();
+
+		if (!cmd.getCommands().isMoves()) {
+			std::cerr << "Login received. Expected Moves" << std::endl;
+			break;
+		}
+	}
+
+	return false;
 }
 
 } // namespace evil
