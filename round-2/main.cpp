@@ -72,7 +72,11 @@ int main() {
 		login.setTeam("prezident_evil");
 		login.setHash("stzq8jm94kf9iyw7353j9semae2sjorjvthakhzw");
 		auto reader = connection.communicate(std::move(message));
-		model.update(getResponse(reader));
+		auto response = getResponse(reader);
+		if (!model.update(response)) {
+			std::cerr << model.getStatus() << std::endl;
+			return 0;
+		}
 	}
 
 	auto message = std::make_unique<capnp::MallocMessageBuilder>();

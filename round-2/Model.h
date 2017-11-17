@@ -71,7 +71,7 @@ public:
 	static constexpr int kMaxCols = 100;
 
 	using Grid = Matrix<Cell>;
-	void update(protocol::Response::Reader response);;
+	bool update(protocol::Response::Reader response);
 
 	const Grid& getGrid() const;
 	const std::vector<Unit>& getUnits() const;

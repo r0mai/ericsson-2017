@@ -93,9 +93,19 @@ int Model::getOwns() const {
 	return owns_;
 }
 
-void Model::update(protocol::Response::Reader response) {
+bool Model::update(protocol::Response::Reader response) {
 	auto& mat = grid_;
     int row = 0;
+
+    status_ = response.getStatus().cStr();
+    tick_ = response.getInfo().getTick();
+    level_ = response.getInfo().getLevel();
+    owns_ = response.getInfo().getOwns();
+
+    if (response.getCells().size() == 0) {
+        return false;
+    }
+
     for (auto cells : response.getCells()) {
         int col = 0;
         for (auto cell : cells) {
@@ -126,12 +136,8 @@ void Model::update(protocol::Response::Reader response) {
 		units_.push_back(u);
     }
 
-	status_ = response.getStatus().cStr();
-	tick_ = response.getInfo().getTick();
-	level_ = response.getInfo().getLevel();
-	owns_ = response.getInfo().getOwns();
-
     colorize();
+    return true;
 }
 
 void Model::colorize() {
