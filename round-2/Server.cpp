@@ -12,7 +12,7 @@
 
 namespace evil {
 
-bool ServerConnection::Accept() {
+bool ServerConnection::Bind() {
 	sockfd_ = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockfd_ < 0) {
 		perror("ERROR opening socket");
@@ -25,7 +25,6 @@ bool ServerConnection::Accept() {
 	}
 
 	sockaddr_in serv_addr{};
-	sockaddr_in cli_addr{};
 
 	int portno = 11224;
 	serv_addr.sin_family = AF_INET;
@@ -37,6 +36,11 @@ bool ServerConnection::Accept() {
 		return false;
 	}
 
+	return true;
+}
+
+bool ServerConnection::Accept() {
+	sockaddr_in cli_addr{};
 	listen(sockfd_, 5);
 	socklen_t clilen = sizeof(cli_addr);
 	newsockfd_ = accept(sockfd_, (struct sockaddr *) &cli_addr, &clilen);
@@ -77,33 +81,45 @@ bool Server::AcceptLogin() {
 }
 
 void Server::Run() {
-	if (!connection_.Accept()) {
+	if (!connection_.Bind()) {
 		return;
 	}
-
-	if (!AcceptLogin()) {
-		return;
-	}
-
-	{
-		Unit unit;
-		unit.health = 6;
-		unit.killer = 3;
-		unit.owner = 1;
-		unit.pos = {0, 0};
-		unit.dir = Direction::kDown;
-
-		model_.addUnit(unit);
-	};
-
-	model_.addBorder();
 
 	while (true) {
-		connection_.Write(model_.toCapnp());
-		auto reader = connection_.Read();
-		auto cmd = reader->getRoot<protocol::Command>();
-	}
+		try {
+			if (!connection_.Accept()) {
+				return;
+			}
 
+			if (!AcceptLogin()) {
+				return;
+			}
+
+			{
+				Unit unit;
+				unit.health = 6;
+				unit.killer = 3;
+				unit.owner = 1;
+				unit.pos = {0, 0};
+				unit.dir = Direction::kDown;
+
+				model_.addUnit(unit);
+			};
+
+			model_.addBorder();
+
+			while (true) {
+				connection_.Write(model_.toCapnp());
+				auto reader = connection_.Read();
+				auto cmd = reader->getRoot<protocol::Command>();
+			}
+		} catch (std::exception& ex) {
+			std::cerr << "Exception caught " << ex.what() << std::endl;
+		} catch (...) {
+			std::cerr << "Unknown exception caught" << std::endl;
+			return;
+		}
+	}
 }
 
 } // namespace evil
