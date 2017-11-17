@@ -3,7 +3,7 @@
 #include "Protocol.h"
 #include <vector>
 #include <iostream>
-
+#include <memory>
 
 template<typename T>
 std::ostream& operator<<(std::ostream& out, const Matrix<T>& mat) {
@@ -37,6 +37,9 @@ enum class Direction {
 };
 
 struct Unit {
+	int owner = -1;
+	int health = -1;
+	int killer = -1; // ???
 	Pos pos;
 	Direction dir;
 };
@@ -60,6 +63,7 @@ struct Cell {
 Direction opposite(Direction dir);
 Pos neighbor(const Pos& pos, Direction dir);
 Direction fromDirection(protocol::Direction dir);
+protocol::Direction toProtocolDirection(Direction dir);
 
 bool operator==(const Pos& lhs, const Pos& rhs);
 bool operator!=(const Pos& lhs, const Pos& rhs);
@@ -77,6 +81,7 @@ public:
 	static constexpr int kMaxCols = 100;
 
 	static Model fromResponse(protocol::Response::Reader response);
+	std::unique_ptr<capnp::MallocMessageBuilder> toCapnp() const;
 
 	bool isValid() const;
 

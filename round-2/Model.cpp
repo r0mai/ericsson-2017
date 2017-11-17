@@ -24,6 +24,18 @@ Direction fromDirection(protocol::Direction dir) {
 	return Direction::kNone;
 }
 
+protocol::Direction toProtocolDirection(Direction dir) {
+	switch(dir) {
+		case Direction::kLeft: return protocol::Direction::LEFT;
+		case Direction::kRight: return protocol::Direction::LEFT;
+		case Direction::kUp: return protocol::Direction::LEFT;
+		case Direction::kDown: return protocol::Direction::LEFT;
+		default: break;
+	}
+	assert(false);
+	return protocol::Direction::DOWN;
+}
+
 Direction opposite(Direction dir) {
 	switch (dir) {
 		case Direction::kLeft: return Direction::kRight;
@@ -145,6 +157,59 @@ Model Model::fromResponse(protocol::Response::Reader response) {
 
 	m.colorize();
 	return m;
+}
+
+std::unique_ptr<capnp::MallocMessageBuilder> Model::toCapnp() const {
+	auto builder = std::make_unique<capnp::MallocMessageBuilder>();
+	auto response = builder->initRoot<protocol::Response>();
+	auto info = response.initInfo();
+
+	response.setStatus("status from localhost");
+
+	info.setTick(tick_);
+	info.setLevel(level_);
+	info.setOwns(owns_);
+
+	auto cells = response.initCells(grid_.height());
+	for (int r = 0; r < grid_.height(); ++r) {
+		auto row = cells.init(r, grid_.width());
+		for (int c = 0; c < grid_.height(); ++c) {
+			auto cell = row[c];
+			auto& m_cell = grid_(r, c);
+			cell.setOwner(m_cell.owner);
+
+			// TODO WTF
+			auto attack = cell.initAttack();
+			if (m_cell.is_attacked) {
+				attack.setUnit(0);
+			}
+		}
+	}
+
+	auto units = response.initUnits(units_.size());
+	for (int i = 0; i < units_.size(); ++i) {
+		auto pos = units[i].initPosition();
+		pos.setRow(units_[i].pos.row);
+		pos.setCol(units_[i].pos.col);
+
+		units[i].setOwner(units_[i].owner);
+		units[i].setHealth(units_[i].health);
+		units[i].setKiller(units_[i].killer);
+		units[i].setDirection(toProtocolDirection(units_[i].dir));
+	}
+
+	auto enemies = response.initEnemies(enemies_.size());
+	for (int i = 0; i < enemies_.size(); ++i) {
+		auto pos = enemies[i].initPosition();
+		pos.setRow(enemies_[i].pos.row);
+		pos.setCol(enemies_[i].pos.col);
+
+		auto dir = enemies[i].initDirection();
+		dir.setVertical(toProtocolDirection(enemies_[i].v_dir));
+		dir.setHorizontal(toProtocolDirection(enemies_[i].h_dir));
+	}
+
+	return builder;
 }
 
 bool Model::isValid() const {
