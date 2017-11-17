@@ -93,8 +93,8 @@ void Gui::draw() {
 
 	auto& grid = model_.getGrid();
 
-	for (int r=0; r < grid.width(); ++r) {
-		for (int c=0; c < grid.height(); ++c) {
+	for (int r=0; r < grid.rows(); ++r) {
+		for (int c=0; c < grid.cols(); ++c) {
 			auto& cell = grid.at(r, c);
 			drawCell({r, c}, cell);
 		}

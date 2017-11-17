@@ -169,10 +169,10 @@ std::unique_ptr<capnp::MallocMessageBuilder> Model::toCapnp() const {
 	info.setLevel(level_);
 	info.setOwns(owns_);
 
-	auto cells = response.initCells(grid_.width());
-	for (int r = 0; r < grid_.width(); ++r) {
-		auto row = cells.init(r, grid_.height());
-		for (int c = 0; c < grid_.height(); ++c) {
+	auto cells = response.initCells(grid_.rows());
+	for (int r = 0; r < grid_.rows(); ++r) {
+		auto row = cells.init(r, grid_.cols());
+		for (int c = 0; c < grid_.cols(); ++c) {
 			auto cell = row[c];
 			auto& m_cell = grid_(r, c);
 			cell.setOwner(m_cell.owner);
@@ -274,13 +274,13 @@ void Model::colorize() {
 
 void Model::addBorder(int owner, int thickness) {
 	for (int i = 0; i < thickness; ++i) {
-		for (int r = 0; r < grid_.width(); ++r) {
+		for (int r = 0; r < grid_.rows(); ++r) {
 			grid_(r, i).owner = owner;
-			grid_(r, grid_.height() - 1 - i).owner = owner;
+			grid_(r, grid_.cols() - 1 - i).owner = owner;
 		}
-		for (int c = 0; c < grid_.height(); ++c) {
+		for (int c = 0; c < grid_.rows(); ++c) {
 			grid_(i, c).owner = owner;
-			grid_(grid_.width() - 1 - i, c).owner = owner;
+			grid_(grid_.cols() - 1 - i, c).owner = owner;
 		}
 	}
 }
