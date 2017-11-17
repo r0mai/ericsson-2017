@@ -278,9 +278,9 @@ void Model::addBorder(int owner, int thickness) {
 			grid_(r, i).owner = owner;
 			grid_(r, grid_.cols() - 1 - i).owner = owner;
 		}
-		for (int c = 0; c < grid_.rows(); ++c) {
+		for (int c = 0; c < grid_.cols(); ++c) {
 			grid_(i, c).owner = owner;
-			grid_(grid_.cols() - 1 - i, c).owner = owner;
+			grid_(grid_.rows() - 1 - i, c).owner = owner;
 		}
 	}
 }
