@@ -137,6 +137,15 @@ bool Server::RunGame() {
 			break;
 		}
 
+		for (auto c : cmd.getCommands().getMoves()) {
+			auto& units = model_.getUnits();
+			if (c.getUnit() < units.size()) {
+				units[c.getUnit()].dir = fromDirection(c.getDirection());
+			} else {
+				std::cerr << "Invalid unit idx" << std::endl;
+			}
+		}
+
 		if (!model_.stepAsServer()) {
 			model_invalid = true;
 		}

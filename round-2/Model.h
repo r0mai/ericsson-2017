@@ -85,7 +85,9 @@ public:
 	bool isValid() const;
 
 	const Grid& getGrid() const;
+	std::vector<Unit>& getUnits();
 	const std::vector<Unit>& getUnits() const;
+	std::vector<Enemy>& getEnemies();
 	const std::vector<Enemy>& getEnemies() const;
 	const std::string& getStatus() const;
 

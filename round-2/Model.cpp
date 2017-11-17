@@ -88,8 +88,16 @@ const Model::Grid& Model::getGrid() const {
 	return grid_;
 }
 
+std::vector<Unit>& Model::getUnits() {
+	return units_;
+}
+
 const std::vector<Unit>& Model::getUnits() const {
 	return units_;
+}
+
+std::vector<Enemy>& Model::getEnemies() {
+	return enemies_;
 }
 
 const std::vector<Enemy>& Model::getEnemies() const {
