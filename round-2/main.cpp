@@ -77,13 +77,24 @@ int main(int argc, char* argv[]) {
 	evil::Connection connection;
 	evil::Model model;
 
-	if (!connection.connect()) {
-		return 1;
+	int save_arg_index = 1;
+	std::vector<Command> cmds;
+
+	const char* host = "ecovpn.dyndns.org";
+	int port = 11224;
+
+	if (argc > 0) {
+		if (argv[1] == std::string("local")) {
+			save_arg_index = 2;
+			host = "localhost";
+		}
+	}
+	if (argc >= save_arg_index) {
+		cmds = load(argv[save_arg_index]);
 	}
 
-	std::vector<Command> cmds;
-	if (argc > 0) {
-		cmds = load(argv[1]);
+	if (!connection.connect(host, port)) {
+		return 1;
 	}
 
 	auto cmd_it = begin(cmds);
