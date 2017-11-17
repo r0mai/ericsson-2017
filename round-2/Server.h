@@ -22,7 +22,10 @@ private:
 class Server {
 public:
 	void Run();
+
 private:
+	bool AcceptLogin();
+
 	ServerConnection connection_;
 };
 

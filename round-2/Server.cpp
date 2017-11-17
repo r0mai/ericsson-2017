@@ -15,8 +15,13 @@ namespace evil {
 bool ServerConnection::Accept() {
 	sockfd_ = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockfd_ < 0) {
-		std::cerr << "ERROR opening socket" << std::endl;
+		perror("ERROR opening socket");
 		return false;
+	}
+
+	int enable = 1;
+	if (setsockopt(sockfd_, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0) {
+	    perror("setsockopt(SO_REUSEADDR) failed");
 	}
 
 	sockaddr_in serv_addr{};
@@ -28,7 +33,7 @@ bool ServerConnection::Accept() {
 	serv_addr.sin_port = htons(portno);
 
 	if (bind(sockfd_, (sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
-		std::cerr << "Error on binding" << std::endl;
+		perror("ERROR on binding");
 		return false;
 	}
 
@@ -36,7 +41,7 @@ bool ServerConnection::Accept() {
 	socklen_t clilen = sizeof(cli_addr);
 	newsockfd_ = accept(sockfd_, (struct sockaddr *) &cli_addr, &clilen);
 	if (newsockfd_ < 0) {
-		std::cerr << "ERROR on accept" << std::endl;
+		perror("ERROR on accept");
 		return false;
 	}
 
@@ -56,13 +61,29 @@ ServerConnection::~ServerConnection() {
 	close(newsockfd_);
 }
 
+bool Server::AcceptLogin() {
+	auto msg = connection_.Read();
+	auto login_cmd = msg->getRoot<protocol::Command>();
+
+	if (!login_cmd.getCommands().isLogin()) {
+		std::cerr << "No login message received" << std::endl;
+		return false;
+	}
+
+	std::cout << "Successful login of "
+		<< login_cmd.getCommands().getLogin().getTeam().cStr() << std::endl;
+
+	return true;
+}
+
 void Server::Run() {
 	if (!connection_.Accept()) {
 		return;
 	}
 
-	auto msg = connection_.Read();
-	std::cout << msg->getRoot<protocol::Command>().toString().flatten().cStr() << std::endl;
+	if (!AcceptLogin()) {
+		return;
+	}
 
 }
 
