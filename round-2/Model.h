@@ -96,6 +96,7 @@ public:
 	int getCoverage() const;
 
 	void addBorder(int owner = 1, int thickness = 2);
+	void addUnit(Unit unit);
 
 	Direction adjustDirection(int unit_index, Direction dir) const;
 

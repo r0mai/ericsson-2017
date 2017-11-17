@@ -85,11 +85,23 @@ void Server::Run() {
 		return;
 	}
 
+	{
+		Unit unit;
+		unit.health = 6;
+		unit.killer = 3;
+		unit.owner = 1;
+		unit.pos = {0, 0};
+		unit.dir = Direction::kDown;
+
+		model_.addUnit(unit);
+	};
+
 	model_.addBorder();
 
 	while (true) {
 		connection_.Write(model_.toCapnp());
-		connection_.Read();
+		auto reader = connection_.Read();
+		auto cmd = reader->getRoot<protocol::Command>();
 	}
 
 }

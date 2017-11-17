@@ -276,11 +276,17 @@ void Model::addBorder(int owner, int thickness) {
 	for (int i = 0; i < thickness; ++i) {
 		for (int r = 0; r < grid_.width(); ++r) {
 			grid_(r, i).owner = owner;
+			grid_(r, grid_.height() - 1 - i).owner = owner;
 		}
 		for (int c = 0; c < grid_.height(); ++c) {
 			grid_(i, c).owner = owner;
+			grid_(grid_.width() - 1 - i, c).owner = owner;
 		}
 	}
+}
+
+void Model::addUnit(Unit unit) {
+	units_.push_back(unit);
 }
 
 Direction Model::adjustDirection(int unit_index, Direction dir) const {
