@@ -85,6 +85,13 @@ void Server::Run() {
 		return;
 	}
 
+	model_.addBorder();
+
+	while (true) {
+		connection_.Write(model_.toCapnp());
+		connection_.Read();
+	}
+
 }
 
 } // namespace evil

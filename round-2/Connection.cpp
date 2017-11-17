@@ -50,7 +50,7 @@ std::unique_ptr<capnp::MallocMessageBuilder> Connection::communicate(
 	auto response = std::make_unique<capnp::MallocMessageBuilder>();
 	capnp::writeMessageToFd(sockfd_, *message);
 	capnp::readMessageCopyFromFd(sockfd_, *response);
-	return std::move(response);
+	return response;
 }
 
 std::future<std::unique_ptr<capnp::MallocMessageBuilder>> Connection::communicateAsync(

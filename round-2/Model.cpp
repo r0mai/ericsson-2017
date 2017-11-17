@@ -113,18 +113,19 @@ int Model::getOwns() const {
 }
 
 Model Model::fromResponse(protocol::Response::Reader response) {
-	if (response.getCells().size() == 0) {
-		return {};
-	}
-
 	Model m;
-	auto& mat = m.grid_;
-	int row = 0;
 
 	m.status_ = response.getStatus().cStr();
 	m.tick_ = response.getInfo().getTick();
 	m.level_ = response.getInfo().getLevel();
 	m.owns_ = response.getInfo().getOwns();
+
+	if (response.getCells().size() == 0) {
+		return m;
+	}
+
+	auto& mat = m.grid_;
+	int row = 0;
 
 	for (auto cells : response.getCells()) {
 		int col = 0;
@@ -135,8 +136,6 @@ Model Model::fromResponse(protocol::Response::Reader response) {
 		}
 		++row;
 	}
-	m.units_.clear();
-	m.enemies_.clear();
 
 	for (auto enemy : response.getEnemies()) {
 		auto pos = enemy.getPosition();
@@ -270,6 +269,17 @@ void Model::colorize() {
 	for (auto& enemy : enemies_) {
 		auto pos = enemy.pos;
 		getCell(pos).color = 4;
+	}
+}
+
+void Model::addBorder(int owner, int thickness) {
+	for (int i = 0; i < thickness; ++i) {
+		for (int r = 0; r < grid_.height(); ++r) {
+			grid_(r, i).owner = owner;
+		}
+		for (int c = 0; c < grid_.width(); ++c) {
+			grid_(i, c).owner = owner;
+		}
 	}
 }
 

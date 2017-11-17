@@ -111,7 +111,7 @@ int main(int argc, char* argv[]) {
 		auto reader = connection.communicate(std::move(message));
 		auto model = evil::Model::fromResponse(getResponse(reader));
 		if (!model.isValid()) {
-			std::cerr << model.getStatus() << std::endl;
+			std::cerr << "Login failed: " << model.getStatus() << std::endl;
 			return 0;
 		}
 	}
@@ -131,7 +131,7 @@ int main(int argc, char* argv[]) {
 			auto reader = future.get();
 			auto model = evil::Model::fromResponse(getResponse(reader));
 			if (!model.isValid()) {
-				std::cerr << model.getStatus() << std::endl;
+				std::cerr << "Invalid model in run loop: " << model.getStatus() << std::endl;
 				gui.close();
 				break;
 			}
