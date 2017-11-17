@@ -172,7 +172,7 @@ std::unique_ptr<capnp::MallocMessageBuilder> Model::toCapnp() const {
 	auto cells = response.initCells(grid_.height());
 	for (int r = 0; r < grid_.height(); ++r) {
 		auto row = cells.init(r, grid_.width());
-		for (int c = 0; c < grid_.height(); ++c) {
+		for (int c = 0; c < grid_.width(); ++c) {
 			auto cell = row[c];
 			auto& m_cell = grid_(r, c);
 			cell.setOwner(m_cell.owner);
