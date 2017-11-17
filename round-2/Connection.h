@@ -9,10 +9,10 @@ namespace evil {
 class Connection {
 public:
 	bool connect(const char* host = "ecovpn.dyndns.org", int port = 11224);
-	std::unique_ptr<capnp::StreamFdMessageReader> communicate(
+	std::unique_ptr<capnp::MallocMessageBuilder> communicate(
 		std::unique_ptr<capnp::MallocMessageBuilder> message);
 
-	std::future<std::unique_ptr<capnp::StreamFdMessageReader>> communicateAsync(
+	std::future<std::unique_ptr<capnp::MallocMessageBuilder>> communicateAsync(
 		std::unique_ptr<capnp::MallocMessageBuilder> message);
 
 private:

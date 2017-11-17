@@ -44,15 +44,16 @@ bool Connection::connect(const char* host, int port) {
 	return true;
 }
 
-std::unique_ptr<capnp::StreamFdMessageReader> Connection::communicate(
+std::unique_ptr<capnp::MallocMessageBuilder> Connection::communicate(
 	std::unique_ptr<capnp::MallocMessageBuilder> message)
 {
+	auto response = std::make_unique<capnp::MallocMessageBuilder>();
 	capnp::writeMessageToFd(sockfd_, *message);
-
-	return std::make_unique<capnp::StreamFdMessageReader>(sockfd_);
+	capnp::readMessageCopyFromFd(sockfd_, *response);
+	return std::move(response);
 }
 
-std::future<std::unique_ptr<capnp::StreamFdMessageReader>> Connection::communicateAsync(
+std::future<std::unique_ptr<capnp::MallocMessageBuilder>> Connection::communicateAsync(
 	std::unique_ptr<capnp::MallocMessageBuilder> message)
 {
 	return std::async([this, m = std::move(message)]() mutable {

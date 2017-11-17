@@ -12,7 +12,7 @@
 
 
 protocol::Response::Reader getResponse(
-	std::unique_ptr<capnp::StreamFdMessageReader>& reader)
+	std::unique_ptr<capnp::MallocMessageBuilder>& reader)
 {
 	return reader->getRoot<protocol::Response>();
 }
@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
 	const char* host = "ecovpn.dyndns.org";
 	int port = 11224;
 
-	if (argc > 0) {
+	if (argc > 1) {
 		if (argv[1] == std::string("local")) {
 			save_arg_index = 2;
 			host = "localhost";
@@ -111,8 +111,7 @@ int main(int argc, char* argv[]) {
 		login.setTeam("prezident_evil");
 		login.setHash("stzq8jm94kf9iyw7353j9semae2sjorjvthakhzw");
 		auto reader = connection.communicate(std::move(message));
-		auto response = getResponse(reader);
-		if (!model.update(response)) {
+		if (!model.update(getResponse(reader))) {
 			std::cerr << model.getStatus() << std::endl;
 			return 0;
 		}
