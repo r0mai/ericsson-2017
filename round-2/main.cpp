@@ -127,6 +127,7 @@ int main(int argc, char* argv[]) {
 		if (!gui.update()) {
 			break;
 		}
+		gui.draw();
 
 		if (isFutureReady(future)) {
 			auto reader = future.get();
@@ -172,6 +173,5 @@ int main(int argc, char* argv[]) {
 
 			future = connection.communicateAsync(std::move(message));
 		}
-		gui.draw();
 	}
 }

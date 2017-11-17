@@ -29,12 +29,14 @@ private:
 	static constexpr float cell_h = (float)window_h / map_h;
 
 	void drawCell(int row_idx, int coll_idx, const Cell& cell);
+	void drawCell(int row_idx, int coll_idx, sf::Color color);
 	Pos windowToPos(int x, int y) const;
 
 	sf::RenderWindow window_ {sf::VideoMode(window_w, window_h), "Window"};
 
 	Model model_;
 	Direction dir_ = Direction::kNone;
+	Pos last_pos_;
 };
 
 } // namespace evil

@@ -21,14 +21,18 @@ sf::Color owner_colors[] = {
 
 } // anonymous namespace
 
-void Gui::drawCell(int row_idx, int coll_idx, const Cell& cell) {
+
+void Gui::drawCell(int row_idx, int coll_idx, sf::Color color) {
 	sf::RectangleShape rectangle;
-	auto color = owner_colors[cell.color];
 	rectangle.setSize(sf::Vector2f(cell_w, cell_h));
 	rectangle.setFillColor(color);
 	rectangle.setPosition(coll_idx * cell_w, row_idx * cell_h);
-
 	window_.draw(rectangle);
+}
+
+void Gui::drawCell(int row_idx, int coll_idx, const Cell& cell) {
+	auto color = owner_colors[cell.color];
+	drawCell(row_idx, coll_idx, color);
 }
 
 
@@ -61,7 +65,7 @@ bool Gui::update() {
 		}
 		if (event.type == sf::Event::MouseMoved) {
 			auto& ev = event.mouseMove;
-			auto pos = windowToPos(ev.x, ev.y);
+			last_pos_ = windowToPos(ev.x, ev.y);
 		}
 	}
 
@@ -85,6 +89,7 @@ void Gui::draw() {
 		}
 	}
 
+	drawCell(last_pos_.row, last_pos_.col, sf::Color(50, 230, 250, 100));
 	window_.display();
 }
 
