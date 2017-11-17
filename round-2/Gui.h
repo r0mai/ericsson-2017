@@ -29,6 +29,7 @@ private:
 	static constexpr float cell_h = (float)window_h / map_h;
 
 	void drawCell(int row_idx, int coll_idx, const Cell& cell);
+	Pos windowToPos(int x, int y) const;
 
 	sf::RenderWindow window_ {sf::VideoMode(window_w, window_h), "Window"};
 

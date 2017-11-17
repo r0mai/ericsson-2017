@@ -59,9 +59,18 @@ bool Gui::update() {
 				case sf::Keyboard::Escape: window_.close(); break;
 			}
 		}
+		if (event.type == sf::Event::MouseMoved) {
+			auto& ev = event.mouseMove;
+			auto pos = windowToPos(ev.x, ev.y);
+		}
 	}
 
 	return window_.isOpen();
+}
+
+Pos Gui::windowToPos(int x, int y) const {
+	Pos pos{int(y / cell_h), int(x / cell_w)};
+	return pos;
 }
 
 void Gui::draw() {
