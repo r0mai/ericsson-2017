@@ -95,7 +95,7 @@ public:
 	int getOwns() const;
 	int getCoverage() const;
 
-	Direction adjustDirection(int unit_index, Direction dir);
+	Direction adjustDirection(int unit_index, Direction dir) const;
 
 private:
 	void colorize();

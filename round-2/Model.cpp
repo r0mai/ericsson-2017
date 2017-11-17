@@ -273,7 +273,7 @@ void Model::colorize() {
 	}
 }
 
-Direction Model::adjustDirection(int unit_index, Direction dir) {
+Direction Model::adjustDirection(int unit_index, Direction dir) const {
 	auto& unit = units_[unit_index];
 
 	if (dir == Direction::kNone) {
