@@ -14,15 +14,19 @@ include_directories(${SFML_INCLUDE_DIR})
 include_directories(${CAPNP_INCLUDE_DIRS})
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
-add_executable(xonix
-    main.cpp
+add_library(xonixLib
     gui.cpp
     Connection.cpp
     Client.cpp
     Model.cpp
+    Server.cpp
     protocol/Common.capnp.c++
     protocol/Command.capnp.c++
     protocol/Response.capnp.c++
 )
 
-target_link_libraries(xonix ${SFML_LIBRARIES} ${CAPNP_LIBRARIES})
+add_executable(xonix main.cpp)
+add_executable(server server_main.cpp)
+
+target_link_libraries(xonix xonixLib ${SFML_LIBRARIES} ${CAPNP_LIBRARIES})
+target_link_libraries(server xonixLib ${SFML_LIBRARIES} ${CAPNP_LIBRARIES})
