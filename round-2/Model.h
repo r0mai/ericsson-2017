@@ -50,6 +50,7 @@ struct Cell {
 
 	// algo
 	int color = 0;
+	int proximity = 0;
 };
 
 Direction fromDirection(protocol::Direction dir);
@@ -100,6 +101,7 @@ public:
 
 private:
 	void colorize();
+	int getSafeDistance();
 	Pos trace(const Pos& pos, Direction v_dir, Direction h_dir, int col);
 
 	Cell& getCell(const Pos& pos);

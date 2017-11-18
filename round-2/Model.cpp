@@ -1,5 +1,7 @@
 #include "Model.h"
 #include <cassert>
+#include <limits>
+
 
 namespace evil {
 namespace {
@@ -201,8 +203,11 @@ bool Model::isValid() const {
 }
 
 void Model::colorize() {
+	auto safe_dst = getSafeDistance();
+
 	for (auto& cell : grid_) {
 		cell.color = 0;
+		cell.proximity = std::numeric_limits<int>::max();
 		if (cell.owner == 1) {
 			cell.color = 1;
 		}
@@ -222,6 +227,7 @@ void Model::colorize() {
 		auto vdx = opposite(vd);
 		auto hdx = opposite(hd);
 
+		getCell(enemy.pos).proximity = - safe_dst;
 		auto bounce1 = trace(enemy.pos, vd, hd, 5);
 
 		auto bounce2a = trace(bounce1, vdx, hd, 6);
@@ -259,15 +265,19 @@ Pos Model::trace(const Pos& start, Direction v_dir, Direction h_dir, int col) {
 	Pos pos = start;
 	Pos last = start;
 	bool overdraw = col <= 5;
+	int proximity = getCell(start).proximity;
 
 	while (getCell(pos).owner != 1) {
-		auto& cc = getCell(pos).color;
+		auto& cell = getCell(pos);
+		auto& cc = cell.color;
+		cell.proximity = std::min(proximity, cell.proximity);
 		if (overdraw || cc == 0) {
 			cc = col;
 		}
 		last = pos;
 		pos = neighbor(pos, v_dir);
 		pos = neighbor(pos, h_dir);
+		++proximity;
 	}
 	return last;
 }
@@ -519,5 +529,20 @@ void Model::provision(const Moves& moves) {
 		unit.next_pos = neighbor(unit.pos, move.second);
 	}
 }
+
+int Model::getSafeDistance() {
+	int dst = std::numeric_limits<int>::max();
+	auto pos = units_[0].pos;
+	for (int r = 0; r < kMaxRows; ++r) {
+		for (int c = 0; c < kMaxCols; ++c) {
+			if (getCell({r, c}).owner == 1) {
+				dst = std::min(dst,
+					std::abs(pos.row - r) + std::abs(pos.col - c));
+			}
+		}
+	}
+	return dst;
+}
+
 
 } // namespace evil

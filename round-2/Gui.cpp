@@ -131,10 +131,14 @@ void Gui::draw() {
 
 	auto& grid = model_.getGrid();
 
-	for (int r=0; r < grid.rows(); ++r) {
-		for (int c=0; c < grid.cols(); ++c) {
-			auto& cell = grid.at(r, c);
-			drawCell({r, c}, cell);
+	for (int r = 0; r < grid.rows(); ++r) {
+		for (int c = 0; c < grid.cols(); ++c) {
+			Pos pos{r, c};
+			auto& cell = grid(r, c);
+			drawCell(pos, cell);
+			if (cell.proximity <= 0) {
+				drawDot(pos, sf::Color::White);
+			}
 		}
 	}
 
