@@ -3,6 +3,7 @@
 #include "Matrix.h"
 #include "Protocol.h"
 #include "Utils.h"
+#include "Pos.h"
 
 #include <vector>
 #include <iostream>
@@ -21,14 +22,6 @@ std::ostream& operator<<(std::ostream& out, const Matrix<T>& mat) {
 
 
 namespace evil {
-
-struct Pos {
-	Pos() = default;
-	Pos(int row, int col) : row(row), col(col) {}
-
-	int row = 0;
-	int col = 0;
-};
 
 enum class Direction {
 	kUp,
