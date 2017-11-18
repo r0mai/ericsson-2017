@@ -9,8 +9,20 @@ namespace evil {
 class Player {
 public:
 	virtual ~Player() = default;
+
+	/**
+	 * Called once after each server response.
+	 */
 	virtual void update(const Model& model) = 0;
+
+	/**
+	 * Called multiple times after `update()`, until returns `true`.
+	 */
 	virtual bool isReady() const = 0;
+
+	/**
+	 * Called once per `update()`, just after `isReady()` returned `true`.
+	 */
 	virtual Model::Moves getMoves() const = 0;
 };
 
