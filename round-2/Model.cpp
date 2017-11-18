@@ -439,13 +439,8 @@ void Model::stepEnemy(Enemy& enemy, std::mt19937& rng_engine) {
 	auto side1_p     = neighbor(neighbor(enemy.pos,  v), oh);
 	auto side2_p     = neighbor(neighbor(enemy.pos, ov),  h);
 
-	const auto& forward_c = getCell(forward_p);
-	const auto& backwards_c = getCell(backwards_p);
-	const auto& side1_c = getCell(side1_p);
-	const auto& side2_c = getCell(side2_p);
-
 	// can we continue moving forward
-	if (old_cell.owner == forward_c.owner) {
+	if (isValid(forward_p) && old_cell.owner == getCell(forward_p).owner) {
 		enemy.pos = forward_p;
 		return;
 	}
@@ -454,13 +449,13 @@ void Model::stepEnemy(Enemy& enemy, std::mt19937& rng_engine) {
 	std::vector<EnemyState> possible_states;
 	possible_states.reserve(3);
 
-	if (old_cell.owner == backwards_c.owner) {
+	if (isValid(backwards_p) && old_cell.owner == getCell(backwards_p).owner) {
 		possible_states.push_back(std::make_tuple(backwards_p, ov, oh));
 	}
-	if (old_cell.owner == side1_c.owner) {
+	if (isValid(side1_p) && old_cell.owner == getCell(side1_p).owner) {
 		possible_states.push_back(std::make_tuple(side1_p, v, oh));
 	}
-	if (old_cell.owner == side2_c.owner) {
+	if (isValid(side2_p) && old_cell.owner == getCell(side2_p).owner) {
 		possible_states.push_back(std::make_tuple(side2_p, ov, h));
 	}
 
