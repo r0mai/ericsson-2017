@@ -49,7 +49,12 @@ std::unique_ptr<capnp::MallocMessageBuilder> Connection::communicate(
 {
 	auto response = std::make_unique<capnp::MallocMessageBuilder>();
 	capnp::writeMessageToFd(sockfd_, *message);
-	capnp::readMessageCopyFromFd(sockfd_, *response);
+	try {
+		capnp::readMessageCopyFromFd(sockfd_, *response);
+	} catch(kj::Exception& ex) {
+		std::cerr << "Remote closed connection." << std::endl;
+		return {};
+	}
 	return response;
 }
 

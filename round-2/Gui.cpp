@@ -23,6 +23,29 @@ sf::Color owner_colors[] = {
 } // anonymous namespace
 
 
+Gui::GuiPlayer::GuiPlayer(Gui* gui)
+	: gui_(gui)
+{}
+
+void Gui::GuiPlayer::update(const Model& model) {
+	gui_->onPlayerUpdate(model);
+}
+
+bool Gui::GuiPlayer::isReady() const {
+	return gui_->isReady();
+}
+
+Model::Moves Gui::GuiPlayer::getMoves() const {
+	return gui_->getMoves();
+}
+
+
+// Gui /////////////////////////////////////////////////////////////////////////
+
+Gui::Gui()
+	: player_(this)
+{}
+
 void Gui::drawCell(const Pos& pos, sf::Color color) {
 	sf::RectangleShape rectangle;
 	rectangle.setSize(sf::Vector2f(cell_w, cell_h));
@@ -52,8 +75,9 @@ bool Gui::init() {
 	return true;
 }
 
-void Gui::setModel(Model model) {
+void Gui::setDrawModel(Model model) {
 	model_ = std::move(model);
+	updateStatus();
 }
 
 bool Gui::update() {
@@ -101,8 +125,15 @@ void Gui::draw() {
 		}
 	}
 
-	drawDot(next_pos_, sf::Color::Black);
-	drawDot(neighbor(next_pos_, dir_), sf::Color(0, 200, 190));
+	for (auto& unit : model_.getUnits()) {
+		if (unit.pos != unit.next_pos) {
+			drawCell(unit.next_pos, sf::Color(255, 220, 5, 150));
+		}
+		drawDot(neighbor(unit.next_pos, dir_), sf::Color::Black);
+	}
+
+	// drawDot(next_pos_, sf::Color::Black);
+	// drawDot(neighbor(next_pos_, dir_), sf::Color(0, 200, 190));
 
 	drawCell(mouse_pos_, sf::Color(50, 230, 250, 100));
 	window_.display();
@@ -130,8 +161,28 @@ void Gui::close() {
 	window_.close();
 }
 
+Player& Gui::getPlayer() {
+	return player_;
+}
+
 void Gui::setNextPos(const Pos& pos) {
 	next_pos_ = pos;
 }
+
+void Gui::onPlayerUpdate(const Model& model) {
+	model_ = model;
+	last_update_ = Clock::now();
+}
+
+bool Gui::isReady() {
+	auto delta = Clock::now() - last_update_;
+	return delta > std::chrono::milliseconds(400);
+}
+
+Model::Moves Gui::getMoves() {
+	auto dir = model_.adjustDirection(0, dir_);
+	return {{0, dir}};
+}
+
 
 } // namespace evil

@@ -160,6 +160,7 @@ Model Model::fromResponse(protocol::Response::Reader response) {
 		Unit u;
 		u.pos = Pos{pos.getRow(), pos.getCol()};
 		u.dir = fromDirection(unit.getDirection());
+		u.next_pos = u.pos;
 		m.units_.push_back(u);
 	}
 
@@ -422,6 +423,13 @@ int Model::getCoverage() const {
 		}
 	}
 	return count;
+}
+
+void Model::provision(const Moves& moves) {
+	for (auto& move : moves) {
+		auto& unit = units_[move.first];
+		unit.next_pos = neighbor(unit.pos, move.second);
+	}
 }
 
 } // namespace evil

@@ -36,8 +36,12 @@ struct Unit {
 	int owner = -1;
 	int health = -1;
 	int killer = -1; // ???
+
 	Pos pos;
 	Direction dir;
+
+	// algo
+	Pos next_pos;
 };
 
 struct Enemy {
@@ -73,6 +77,7 @@ std::ostream& operator<<(std::ostream& out, Direction dir);
 class Model {
 public:
 	using Grid = Matrix<Cell>;
+	using Moves = std::vector<std::pair<int, Direction>>;
 
 	static constexpr int kMaxRows = 80;
 	static constexpr int kMaxCols = 100;
@@ -99,6 +104,7 @@ public:
 	void stepEnemy(Enemy& enemy, std::mt19937& rng_engine);
 
 	Direction adjustDirection(int unit_index, Direction dir) const;
+	void provision(const Moves& moves);
 
 private:
 	void colorize();

@@ -8,12 +8,12 @@ namespace evil {
 
 class Connection {
 public:
-	bool connect(const char* host = "ecovpn.dyndns.org", int port = 11224);
-	std::unique_ptr<capnp::MallocMessageBuilder> communicate(
-		std::unique_ptr<capnp::MallocMessageBuilder> message);
+	using Message = std::unique_ptr<capnp::MallocMessageBuilder>;
+	using FutureMessage = std::future<Message>;
 
-	std::future<std::unique_ptr<capnp::MallocMessageBuilder>> communicateAsync(
-		std::unique_ptr<capnp::MallocMessageBuilder> message);
+	bool connect(const char* host = "ecovpn.dyndns.org", int port = 11224);
+	Message communicate(Message msg);
+	FutureMessage communicateAsync(Message msg);
 
 private:
 	int sockfd_ = -1;

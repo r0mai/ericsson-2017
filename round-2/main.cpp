@@ -40,6 +40,35 @@ evil::Direction toDirection(char ch) {
 	return evil::Direction::kNone;
 }
 
+evil::Model login(evil::Connection& conn) {
+	auto message = std::make_unique<capnp::MallocMessageBuilder>();
+	auto command = message->initRoot<protocol::Command>();
+	auto commands = command.initCommands();
+	auto login = commands.initLogin();
+	login.setTeam("prezident_evil");
+	login.setHash("stzq8jm94kf9iyw7353j9semae2sjorjvthakhzw");
+	auto reader = conn.communicate(std::move(message));
+	return evil::Model::fromResponse(getResponse(reader));
+}
+
+evil::Connection::FutureMessage sendMoves(
+	evil::Connection& conn,	const evil::Model::Moves& moves)
+{
+	auto msg = std::make_unique<capnp::MallocMessageBuilder>();
+	auto msg_command = msg->initRoot<protocol::Command>();
+	auto msg_commands = msg_command.initCommands();
+	auto msg_moves = msg_commands.initMoves(moves.size());
+
+	for (int i = 0; i < moves.size(); ++i) {
+		auto& move = moves[i];
+		auto msg_move = msg_moves[i];
+		msg_move.setUnit(move.first);
+		msg_move.setDirection(toProtocol(move.second));
+	}
+
+	return conn.communicateAsync(std::move(msg));
+}
+
 struct Command {
 	int level = -1;
 	int tick = -1;
@@ -77,7 +106,6 @@ std::vector<Command> load(const char* filename) {
 int main(int argc, char* argv[]) {
 	evil::Connection connection;
 	int save_arg_index = 1;
-	std::vector<Command> cmds;
 
 	const char* host = "ecovpn.dyndns.org";
 	int port = 11224;
@@ -88,99 +116,68 @@ int main(int argc, char* argv[]) {
 			host = "localhost";
 		}
 	}
+
+	// Autoplay
+	std::vector<Command> cmds;
 	if (argc >= save_arg_index) {
 		cmds = load(argv[save_arg_index]);
 	}
+	auto cmd_it = begin(cmds);
+	auto cmd_next = evil::Direction::kNone;
 
 	if (!connection.connect(host, port)) {
 		return 1;
 	}
 
-	auto cmd_it = begin(cmds);
-	auto cmd_next = evil::Direction::kNone;
-
 	evil::Gui gui;
 	gui.init();
 
-	{
-		auto message = std::make_unique<capnp::MallocMessageBuilder>();
-		auto command = message->initRoot<protocol::Command>();
-		auto commands = command.initCommands();
-		auto login = commands.initLogin();
-		login.setTeam("prezident_evil");
-		login.setHash("stzq8jm94kf9iyw7353j9semae2sjorjvthakhzw");
-		auto reader = connection.communicate(std::move(message));
-		auto model = evil::Model::fromResponse(getResponse(reader));
-		if (!model.isValid()) {
-			std::cerr << "Login failed: " << model.getStatus() << std::endl;
-			return 0;
-		}
+	auto model = login(connection);
+	auto model_ready = true;
+	auto steps_ready = false;
+
+	if (!model.isValid()) {
+		std::cerr << "Login failed: " << model.getStatus() << std::endl;
+		return 1;
 	}
 
-	auto message = std::make_unique<capnp::MallocMessageBuilder>();
-	auto command = message->initRoot<protocol::Command>();
-	auto future = connection.communicateAsync(std::move(message));
-	auto prev = evil::Direction::kNone;
+	std::future<evil::Connection::Message> future;
 
 	while (true) {
+		// gui phase
+		gui.setDrawModel(model);
 		if (!gui.update()) {
 			break;
 		}
 		gui.draw();
-		std::this_thread::sleep_for(std::chrono::milliseconds(8));
+
+		// player phase
+		auto& player = gui.getPlayer();
+		if (model_ready) {
+			model_ready = false;
+			steps_ready = false;
+			player.update(model);
+		}
+
+		if (!steps_ready && player.isReady()) {
+			steps_ready = true;
+			auto moves = player.getMoves();
+			model.provision(moves);
+			future = sendMoves(connection, moves);
+		}
 
 		if (isFutureReady(future)) {
 			auto reader = future.get();
+			if (!reader) {
+				return 0;
+			}
 			auto response = getResponse(reader);
-			auto model = evil::Model::fromResponse(response);
-			// if (!model.getStatus().empty()) {
-			// 	std::cerr << model.getStatus() << std::endl;
-			// }
-
-			if (!model.isValid()) {
-				std::cerr << "Invalid model in run loop: " << model.getStatus() << std::endl;
-				gui.close();
-				break;
-			}
-			gui.setModel(model);
-			gui.updateStatus();
-			auto message = std::make_unique<capnp::MallocMessageBuilder>();
-			auto command = message->initRoot<protocol::Command>();
-			auto commands = command.initCommands();
-			auto moves = commands.initMoves(1);
-			auto move = moves[0];
-
-			auto next = gui.getDirection();
-			if (next != evil::Direction::kNone) {
-				cmd_it = end(cmds);
-			}
-
-			if (cmd_it != end(cmds)) {
-				auto& cmd = *cmd_it;
-				if (cmd.level == model.getLevel() &&
-					cmd.tick == model.getTick())
-				{
-					cmd_next = cmd.dir;
-					++cmd_it;
-				}
-				next = cmd_next;
-			}
-
-			next = model.adjustDirection(0, next);
-			move.setDirection(toProtocol(next));
-			move.setUnit(0);
-
-			auto next_pos = neighbor(model.getUnits().at(0).pos, next);
-			gui.setNextPos(next_pos);
-
-			if (next != prev) {
-				prev = next;
-				std::cout
-					<< model.getLevel() << " " << model.getTick()
-					<< " " << next << std::endl;
-			}
-
-			future = connection.communicateAsync(std::move(message));
+			model = evil::Model::fromResponse(response);
+			model_ready = true;
+		} else {
+			std::this_thread::sleep_for(std::chrono::milliseconds(8));
 		}
 	}
+
+	return 0;
 }
