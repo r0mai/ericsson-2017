@@ -246,6 +246,7 @@ void Model::colorize() {
 		auto hdx = opposite(hd);
 
 		auto bounce1 = trace(enemy.pos, vd, hd, 5);
+
 		auto bounce2a = trace(bounce1, vdx, hd, 6);
 		auto bounce2b = trace(bounce1, vd, hdx, 6);
 		auto bounce2c = trace(enemy.pos, vdx, hdx, 6);
@@ -256,6 +257,19 @@ void Model::colorize() {
 		auto bounce3bb = trace(bounce2b, vdx, hdx, 7);
 		auto bounce3ca = trace(bounce2c, vd, hdx, 7);
 		auto bounce3cb = trace(bounce2c, vdx, hd, 7);
+
+		auto bounce4aaa = trace(bounce3aa, vdx, hd, 7);
+		auto bounce4aab = trace(bounce3aa, vd, hdx, 7);
+		auto bounce4aba = trace(bounce3ab, vdx, hd, 7);
+		auto bounce4abb = trace(bounce3ab, vd, hdx, 7);
+		auto bounce4baa = trace(bounce3ba, vdx, hd, 7);
+		auto bounce4bab = trace(bounce3ba, vd, hdx, 7);
+		auto bounce4bba = trace(bounce3bb, vdx, hd, 7);
+		auto bounce4bbb = trace(bounce3bb, vd, hdx, 7);
+		auto bounce4caa = trace(bounce3ca, vd, hd, 7);
+		auto bounce4cab = trace(bounce3ca, vdx, hdx, 7);
+		auto bounce4cba = trace(bounce3cb, vd, hd, 7);
+		auto bounce4cbb = trace(bounce3cb, vdx, hdx, 7);
 	}
 
 	for (auto& enemy : enemies_) {
