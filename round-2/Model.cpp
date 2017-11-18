@@ -232,7 +232,7 @@ void Model::colorize() {
 
 		auto bounce2a = trace(bounce1, vdx, hd, 6);
 		auto bounce2b = trace(bounce1, vd, hdx, 6);
-		auto bounce2c = trace(enemy.pos, vdx, hdx, 6);
+		auto bounce2c = trace(bounce1, vdx, hdx, 6);
 
 		auto bounce3aa = trace(bounce2a, vd, hd, 7);
 		auto bounce3ab = trace(bounce2a, vdx, hdx, 7);
