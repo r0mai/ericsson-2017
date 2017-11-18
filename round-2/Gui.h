@@ -54,7 +54,7 @@ private:
 
 	void drawCell(const Pos& pos, const Cell& cell);
 	void drawCell(const Pos& pos, sf::Color color);
-	void drawDot(const Pos& pos, sf::Color color);
+	void drawDot(const Pos& pos, sf::Color color, float scale = 1.f);
 	Pos windowToPos(int x, int y) const;
 
 	sf::RenderWindow window_ {sf::VideoMode(window_w, window_h), "Window"};

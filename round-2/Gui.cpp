@@ -54,9 +54,9 @@ void Gui::drawCell(const Pos& pos, sf::Color color) {
 	window_.draw(rectangle);
 }
 
-void Gui::drawDot(const Pos& pos, sf::Color color) {
+void Gui::drawDot(const Pos& pos, sf::Color color, float scale) {
     sf::CircleShape circ;
-    float r = 3.0f;
+    float r = 3.0f * scale;
 
     circ.setRadius(r);
     circ.setOrigin(r, r);
@@ -129,11 +129,8 @@ void Gui::draw() {
 		if (unit.pos != unit.next_pos) {
 			drawCell(unit.next_pos, sf::Color(255, 220, 5, 150));
 		}
-		drawDot(neighbor(unit.next_pos, dir_), sf::Color::Black);
+		drawDot(neighbor(unit.next_pos, dir_), sf::Color::Red);
 	}
-
-	// drawDot(next_pos_, sf::Color::Black);
-	// drawDot(neighbor(next_pos_, dir_), sf::Color(0, 200, 190));
 
 	drawCell(mouse_pos_, sf::Color(50, 230, 250, 100));
 	window_.display();
@@ -154,7 +151,7 @@ void Gui::updateStatus() {
 	ss << " - Tick " << model_.getTick();
 	ss << " - Coverage " << std::setprecision(2) << coverage << "%";
 	window_.setTitle(ss.str());
-	std::cerr << ss.str() << std::endl;
+	// std::cerr << ss.str() << std::endl;
 }
 
 void Gui::close() {
