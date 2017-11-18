@@ -115,7 +115,8 @@ int main(int argc, char* argv[]) {
 	    ("help,h", "Print help")
 	    ("host,H", po::value<std::string>()->default_value("ecovpn.dyndns.org"), "Server host")
 	    ("port,p", po::value<int>()->default_value(11224), "Server port")
-		("commands,c", po::value<std::string>())
+		("player,P", po::value<std::string>()->default_value("gui"), "Controller player")
+		("commands,c", po::value<std::string>(), "Commands file")
 	;
 
 	po::variables_map vm;
@@ -153,6 +154,16 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
+	evil::Player* player = nullptr;
+	if (vm["player"].as<std::string>() == "gui") {
+		player = &gui.getPlayer();
+	}
+
+	if (!player) {
+		std::cerr << "Unknown player " << vm["player"].as<std::string>() << std::endl;
+		return 1;
+	}
+
 	std::future<evil::Connection::Message> future;
 
 	while (true) {
@@ -164,17 +175,16 @@ int main(int argc, char* argv[]) {
 		gui.draw();
 
 		// player phase
-		auto& player = gui.getPlayer();
 		if (model_ready) {
 			model_ready = false;
 			steps_ready = false;
-			player.update(model);
+			player->update(model);
 			model.dumpStatus(std::cerr);
 		}
 
-		if (!steps_ready && player.isReady()) {
+		if (!steps_ready && player->isReady()) {
 			steps_ready = true;
-			auto moves = player.getMoves();
+			auto moves = player->getMoves();
 			model.provision(moves);
 			future = sendMoves(connection, moves);
 		}
