@@ -28,10 +28,8 @@ private:
 
 	static constexpr int map_w = 100;
 	static constexpr int map_h = 80;
-
 	static constexpr int window_w = 1024 * 2;
 	static constexpr int window_h = 768 * 2;
-
 	static constexpr float cell_w = (float)window_w / map_w;
 	static constexpr float cell_h = (float)window_h / map_h;
 
@@ -47,6 +45,12 @@ private:
 		Gui* gui_;
 	};
 
+	enum class Mode {
+		kNormal,
+		kLibrate,
+		kTracking
+	};
+
 	void onPlayerUpdate(const Model& model);
 	bool isReady();
 	Model::Moves getMoves();
@@ -54,8 +58,12 @@ private:
 	void drawCell(const Pos& pos, const Cell& cell);
 	void drawCell(const Pos& pos, sf::Color color);
 	void drawDot(const Pos& pos, sf::Color color, float scale = 1.f);
+
 	Pos windowToPos(int x, int y) const;
 	void handleKeypress(const sf::Event::KeyEvent& ev);
+	void handleMouseButton(const sf::Event::MouseButtonEvent& ev);
+
+	void toggleLibrate();
 	std::vector<Pos> makeTrap(const Pos& origin);
 
 	sf::RenderWindow window_ {sf::VideoMode(window_w, window_h), "Window"};
@@ -66,9 +74,9 @@ private:
 	GuiPlayer player_;
 	Clock::time_point last_update_;
 	int delay_ = 0;
-	bool librate_ = false;
-	Direction librate_dir_ = Direction::kNone;
 
+	Mode mode_ = Mode::kNormal;
+	Direction librate_dir_ = Direction::kNone;
 	Pos target_pos_;
 };
 

@@ -80,6 +80,15 @@ void Gui::setDrawModel(Model model) {
 	updateStatus();
 }
 
+void Gui::toggleLibrate() {
+	if (mode_ != Mode::kLibrate) {
+		mode_ = Mode::kLibrate;
+		librate_dir_ = dir_;
+	} else {
+		mode_ = Mode::kNormal;
+	}
+}
+
 void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 	switch (ev.code) {
 		case sf::Keyboard::Up: dir_ = Direction::kUp; break;
@@ -91,12 +100,18 @@ void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 		case sf::Keyboard::D: delay_ = 100; break;
 		case sf::Keyboard::S: delay_ = 200; break;
 		case sf::Keyboard::A: delay_ = 1000; break;
-		case sf::Keyboard::L:
-			librate_ = !librate_;
-			librate_dir_ = dir_;
-			break;
+		case sf::Keyboard::L: toggleLibrate(); break;
 		default: break;
 	}
+}
+
+void Gui::handleMouseButton(const sf::Event::MouseButtonEvent& ev) {
+	auto pos = windowToPos(ev.x, ev.y);
+	// auto& cell = model_.getCell(pos);
+	// if (cell.owner == 1) {
+	// 	target_pos_ = pos;
+	// 	mode_ = Mode::kTracking;
+	// }
 }
 
 bool Gui::update() {
@@ -114,6 +129,9 @@ bool Gui::update() {
 				mouse_pos_ = windowToPos(ev.x, ev.y);
 				break;
 			}
+			case sf::Event::MouseButtonPressed:
+				handleMouseButton(event.mouseButton);
+				break;
 			default:
 				break;
 		}
@@ -195,10 +213,17 @@ bool Gui::isReady() {
 }
 
 Model::Moves Gui::getMoves() {
-	auto dir = model_.adjustDirection(0, librate_ ? librate_dir_ : dir_);
-	if (librate_) {
+	Model::Moves moves;
+	Direction dir = dir_;
+
+	if (mode_ == Mode::kLibrate) {
+		dir = librate_dir_;
 		librate_dir_ = opposite(librate_dir_);
+	} else if (mode_ == Mode::kTracking) {
+
 	}
+
+	dir = model_.adjustDirection(0, dir);
 	return {{0, dir}};
 }
 
