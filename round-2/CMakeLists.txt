@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-find_package(Boost)
+find_package(Boost COMPONENTS program_options)
 find_package(CapnProto REQUIRED)
 find_package(SFML 2 REQUIRED system window graphics network)
 
@@ -29,5 +29,5 @@ add_library(xonixLib
 add_executable(xonix src/client_main.cpp)
 add_executable(server src/server_main.cpp)
 
-target_link_libraries(xonix xonixLib ${SFML_LIBRARIES} ${CAPNP_LIBRARIES})
-target_link_libraries(server xonixLib ${SFML_LIBRARIES} ${CAPNP_LIBRARIES})
+target_link_libraries(xonix xonixLib ${SFML_LIBRARIES} ${CAPNP_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(server xonixLib ${SFML_LIBRARIES} ${CAPNP_LIBRARIES} ${Boost_LIBRARIES})

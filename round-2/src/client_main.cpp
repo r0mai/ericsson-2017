@@ -5,12 +5,15 @@
 #include "Gui.h"
 #include "Model.h"
 #include "Client.h"
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <memory>
 #include <chrono>
 #include <thread>
+
+#include <boost/program_options.hpp>
 
 protocol::Response::Reader getResponse(
 	std::unique_ptr<capnp::MallocMessageBuilder>& reader)
@@ -104,28 +107,37 @@ std::vector<Command> load(const char* filename) {
 }
 
 int main(int argc, char* argv[]) {
-	evil::Connection connection;
-	int save_arg_index = 1;
+	namespace po = boost::program_options;
 
-	const char* host = "ecovpn.dyndns.org";
-	int port = 11224;
+	// Declare the supported options.
+	po::options_description desc("Allowed options");
+	desc.add_options()
+	    ("help,h", "Print help")
+	    ("host,H", po::value<std::string>()->default_value("ecovpn.dyndns.org"), "Server host")
+	    ("port,p", po::value<int>()->default_value(11224), "Server port")
+		("commands,c", po::value<std::string>())
+	;
 
-	if (argc > 1) {
-		if (argv[1] == std::string("local")) {
-			save_arg_index = 2;
-			host = "localhost";
-		}
+	po::variables_map vm;
+	po::store(po::parse_command_line(argc, argv, desc), vm);
+	po::notify(vm);
+
+	if (vm.count("help")) {
+		std::cout << desc << "\n";
+	    return 1;
+	}
+
+	std::vector<Command> cmds;
+	if (vm.count("commands")) {
+		cmds = load(vm["commands"].as<std::string>().c_str());
 	}
 
 	// Autoplay
-	std::vector<Command> cmds;
-	if (argc >= save_arg_index) {
-		cmds = load(argv[save_arg_index]);
-	}
 	auto cmd_it = begin(cmds);
 	auto cmd_next = evil::Direction::kNone;
 
-	if (!connection.connect(host, port)) {
+	evil::Connection connection;
+	if (!connection.connect(vm["host"].as<std::string>().c_str(), vm["port"].as<int>())) {
 		return 1;
 	}
 
