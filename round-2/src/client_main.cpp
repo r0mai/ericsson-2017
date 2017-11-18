@@ -5,6 +5,7 @@
 #include "Gui.h"
 #include "Model.h"
 #include "Client.h"
+#include "DumbPlayer.h"
 
 #include <iostream>
 #include <fstream>
@@ -154,13 +155,16 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
+	auto player_string = vm["player"].as<std::string>();
 	evil::Player* player = nullptr;
-	if (vm["player"].as<std::string>() == "gui") {
+	if (player_string == "gui") {
 		player = &gui.getPlayer();
+	} else if (player_string == "dumb") {
+		player = new evil::DumbPlayer(); // :scream:
 	}
 
 	if (!player) {
-		std::cerr << "Unknown player " << vm["player"].as<std::string>() << std::endl;
+		std::cerr << "Unknown player " << player_string << std::endl;
 		return 1;
 	}
 
