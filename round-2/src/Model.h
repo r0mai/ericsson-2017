@@ -76,6 +76,7 @@ public:
 	std::unique_ptr<capnp::MallocMessageBuilder> toCapnp() const;
 
 	bool isValid() const;
+	Pos size() const;
 
 	const Grid& getGrid() const;
 	std::vector<Unit>& getUnits();

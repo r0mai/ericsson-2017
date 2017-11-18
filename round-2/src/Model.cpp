@@ -596,4 +596,8 @@ void Model::dumpStatus(std::ostream& out) {
 	out << units_[0].dir << std::endl;
 }
 
+Pos Model::size() const {
+	return Pos(grid_.rows(), grid_.cols());
+}
+
 } // namespace evil
