@@ -11,11 +11,16 @@ public:
 	virtual Model::Moves getMoves() override;
 
 private:
+	std::pair<Pos, Pos> FindBiggestArea() const;
+
 	enum class State {
 		kNewMap,
+		kNewCut,
+		kGoTowardsCutStart,
 		kCut
 	};
 
+	// state for cut
 	int cut_zigzag_tick_ = 0;
 	Pos cut_start_;
 	Pos cut_end_;

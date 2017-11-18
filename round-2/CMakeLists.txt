@@ -22,6 +22,7 @@ add_library(xonixLib
     src/Server.cpp
     src/Direction.cpp
     src/DumbPlayer.cpp
+    src/Utils.cpp
     src/protocol/Common.capnp.c++
     src/protocol/Command.capnp.c++
     src/protocol/Response.capnp.c++

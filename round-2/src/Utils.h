@@ -5,6 +5,7 @@
 #include <random>
 #include <vector>
 #include <deque>
+#include <cassert>
 
 #include "Direction.h"
 #include "Matrix.h"
@@ -22,6 +23,21 @@ template<typename T>
 int getRandom(T& engine , int low, int high) {
 	std::uniform_int_distribution<int> dist(low, high);
 	return dist(engine);
+}
+
+int getArea(const Matrix<bool>& matrix);
+std::pair<Pos, Pos> getBoundingBox(const Matrix<bool>& matrix);
+
+template<typename T, typename U, typename F>
+void mergeMatrices(Matrix<T>& a, const Matrix<U>& b, F f) {
+	assert(a.rows() == b.rows());
+	assert(a.cols() == b.cols());
+
+	for (int r = 0; r < a.rows(); ++r) {
+		for (int c = 0; c < a.cols(); ++c) {
+			f(a(r, c), b(r, c));
+		}
+	}
 }
 
 template<typename T, typename F>
