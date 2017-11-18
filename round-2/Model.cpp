@@ -27,9 +27,9 @@ Direction fromDirection(protocol::Direction dir) {
 protocol::Direction toProtocolDirection(Direction dir) {
 	switch(dir) {
 		case Direction::kLeft: return protocol::Direction::LEFT;
-		case Direction::kRight: return protocol::Direction::LEFT;
-		case Direction::kUp: return protocol::Direction::LEFT;
-		case Direction::kDown: return protocol::Direction::LEFT;
+		case Direction::kRight: return protocol::Direction::RIGHT;
+		case Direction::kUp: return protocol::Direction::UP;
+		case Direction::kDown: return protocol::Direction::DOWN;
 		default: break;
 	}
 	assert(false);

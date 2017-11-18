@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <random>
 #include <iostream>
 
 #include "Model.h"
@@ -23,14 +24,21 @@ private:
 
 class Server {
 public:
+	void SetSeed(int seed);
 	void Run();
 
 private:
 	bool AcceptLogin();
+	void InitModel(int enemies_in, int enemies_out, int border_thickness = 2);
 	bool RunGame();
+
+	// inclusive
+	int GetRandom(int low, int high);
 
 	ServerConnection connection_;
 	Model model_;
+
+	std::mt19937 mt_engine_;
 };
 
 } // namespace evil

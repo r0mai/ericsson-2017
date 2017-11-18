@@ -80,6 +80,15 @@ bool Server::AcceptLogin() {
 	return true;
 }
 
+void Server::SetSeed(int seed) {
+	mt_engine_.seed(seed);
+}
+
+int Server::GetRandom(int low, int high) {
+	std::uniform_int_distribution<int> dist(low, high);
+	return dist(mt_engine_);
+}
+
 void Server::Run() {
 	if (!connection_.Bind()) {
 		return;
@@ -95,6 +104,8 @@ void Server::Run() {
 				continue;
 			}
 
+			InitModel(3, 0);
+
 			if (!RunGame()) {
 				continue;
 			}
@@ -109,7 +120,11 @@ void Server::Run() {
 	}
 }
 
-bool Server::RunGame() {
+void Server::InitModel(int enemies_in, int enemies_out, int border_thickness) {
+	model_ = {};
+
+	model_.addBorder(1, border_thickness);
+
 	{
 		Unit unit;
 		unit.health = 6;
@@ -121,8 +136,27 @@ bool Server::RunGame() {
 		model_.addUnit(unit);
 	};
 
-	model_.addBorder();
+	auto& grid = model_.getGrid();
+	auto& enemies = model_.getEnemies();
 
+	for (int i = 0; i < enemies_in; ++i) {
+		Enemy enemy;
+		enemy.pos.row = GetRandom(border_thickness, grid.rows() - border_thickness - 1);
+		enemy.pos.col = GetRandom(border_thickness, grid.cols() - border_thickness - 1);
+
+		int direction = GetRandom(0, 3);
+		switch (direction) {
+			case 0: enemy.v_dir = Direction::kUp;   enemy.h_dir = Direction::kRight; break;
+			case 1: enemy.v_dir = Direction::kDown; enemy.h_dir = Direction::kRight; break;
+			case 2: enemy.v_dir = Direction::kDown; enemy.h_dir = Direction::kLeft;  break;
+			case 3: enemy.v_dir = Direction::kUp;   enemy.h_dir = Direction::kLeft;  break;
+		}
+
+		enemies.push_back(enemy);
+	}
+}
+
+bool Server::RunGame() {
 	bool model_invalid = false;
 	while (true) {
 		connection_.Write(model_.toCapnp());
