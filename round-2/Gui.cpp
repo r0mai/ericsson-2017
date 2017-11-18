@@ -17,6 +17,7 @@ sf::Color owner_colors[] = {
 	sf::Color(255, 20, 40),
 	sf::Color(255, 200, 200),
 	sf::Color(255, 240, 240),
+	sf::Color(255, 248, 248),
 };
 
 } // anonymous namespace
@@ -122,6 +123,7 @@ void Gui::updateStatus() {
 	ss << " - Tick " << model_.getTick();
 	ss << " - Coverage " << std::setprecision(2) << coverage << "%";
 	window_.setTitle(ss.str());
+	std::cerr << ss.str() << std::endl;
 }
 
 void Gui::close() {

@@ -133,9 +133,9 @@ int main(int argc, char* argv[]) {
 			auto reader = future.get();
 			auto response = getResponse(reader);
 			auto model = evil::Model::fromResponse(response);
-			if (!model.getStatus().empty()) {
-				std::cerr << model.getStatus() << std::endl;
-			}
+			// if (!model.getStatus().empty()) {
+			// 	std::cerr << model.getStatus() << std::endl;
+			// }
 
 			if (!model.isValid()) {
 				std::cerr << "Invalid model in run loop: " << model.getStatus() << std::endl;
@@ -175,9 +175,9 @@ int main(int argc, char* argv[]) {
 
 			if (next != prev) {
 				prev = next;
-				// std::cout
-				// 	<< model.getLevel() << " " << model.getTick()
-				// 	<< " " << next << std::endl;
+				std::cout
+					<< model.getLevel() << " " << model.getTick()
+					<< " " << next << std::endl;
 			}
 
 			future = connection.communicateAsync(std::move(message));

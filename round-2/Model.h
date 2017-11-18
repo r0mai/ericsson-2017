@@ -104,6 +104,8 @@ public:
 
 private:
 	void colorize();
+	Pos trace(const Pos& pos, Direction v_dir, Direction h_dir, int col);
+
 	Cell& getCell(const Pos& pos);
 	bool isValid(const Pos& pos) const;
 

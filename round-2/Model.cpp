@@ -240,38 +240,22 @@ void Model::colorize() {
 	}
 
 	for (auto& enemy : enemies_) {
-		auto pos = enemy.pos;
-		auto last_pos = pos;
-		while (getCell(pos).owner != 1) {
-			getCell(pos).color = 5;
-			last_pos = pos;
-			pos = neighbor(pos, enemy.v_dir);
-			pos = neighbor(pos, enemy.h_dir);
-		}
+		auto vd = enemy.v_dir;
+		auto hd = enemy.h_dir;
+		auto vdx = opposite(vd);
+		auto hdx = opposite(hd);
 
-		pos = enemy.pos;
-		while (getCell(pos).owner != 1) {
-			auto& cc = getCell(pos).color;
-			if (cc == 0) { cc = 6; }
-			pos = neighbor(pos, opposite(enemy.v_dir));
-			pos = neighbor(pos, opposite(enemy.h_dir));
-		}
+		auto bounce1 = trace(enemy.pos, vd, hd, 5);
+		auto bounce2a = trace(bounce1, vdx, hd, 6);
+		auto bounce2b = trace(bounce1, vd, hdx, 6);
+		auto bounce2c = trace(enemy.pos, vdx, hdx, 6);
 
-		pos = last_pos;
-		while (getCell(pos).owner != 1) {
-			auto& cc = getCell(pos).color;
-			if (cc == 0) { cc = 6; }
-			pos = neighbor(pos, opposite(enemy.v_dir));
-			pos = neighbor(pos, enemy.h_dir);
-		}
-
-		pos = last_pos;
-		while (getCell(pos).owner != 1) {
-			auto& cc = getCell(pos).color;
-			if (cc == 0) { cc = 6; }
-			pos = neighbor(pos, enemy.v_dir);
-			pos = neighbor(pos, opposite(enemy.h_dir));
-		}
+		auto bounce3aa = trace(bounce2a, vd, hd, 7);
+		auto bounce3ab = trace(bounce2a, vdx, hdx, 7);
+		auto bounce3ba = trace(bounce2b, vd, hd, 7);
+		auto bounce3bb = trace(bounce2b, vdx, hdx, 7);
+		auto bounce3ca = trace(bounce2c, vd, hdx, 7);
+		auto bounce3cb = trace(bounce2c, vdx, hd, 7);
 	}
 
 	for (auto& enemy : enemies_) {
@@ -279,6 +263,24 @@ void Model::colorize() {
 		getCell(pos).color = 4;
 	}
 }
+
+Pos Model::trace(const Pos& start, Direction v_dir, Direction h_dir, int col) {
+	Pos pos = start;
+	Pos last = start;
+	bool overdraw = col <= 5;
+
+	while (getCell(pos).owner != 1) {
+		auto& cc = getCell(pos).color;
+		if (overdraw || cc == 0) {
+			cc = col;
+		}
+		last = pos;
+		pos = neighbor(pos, v_dir);
+		pos = neighbor(pos, h_dir);
+	}
+	return last;
+}
+
 
 void Model::addBorder(int owner, int thickness) {
 	for (int i = 0; i < thickness; ++i) {
