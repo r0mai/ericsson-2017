@@ -82,12 +82,15 @@ void Gui::setDrawModel(Model model) {
 
 void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 	switch (ev.code) {
-		default: break;
 		case sf::Keyboard::Up: dir_ = Direction::kUp; break;
 		case sf::Keyboard::Down: dir_ = Direction::kDown; break;
 		case sf::Keyboard::Right: dir_ = Direction::kRight; break;
 		case sf::Keyboard::Left: dir_ = Direction::kLeft; break;
 		case sf::Keyboard::Escape: window_.close(); break;
+		case sf::Keyboard::F: delay_ = 0; break;
+		case sf::Keyboard::D: delay_ = 200; break;
+		case sf::Keyboard::S: delay_ = 1000; break;
+		default: break;
 	}
 }
 
