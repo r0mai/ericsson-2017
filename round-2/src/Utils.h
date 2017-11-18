@@ -95,6 +95,8 @@ Matrix<int> distanceFill(const Pos& origin, const Pos& end, Func fn) {
 		queue.push_back({dst + 1, neighbor(pos, Direction::kUp)});
 		queue.push_back({dst + 1, neighbor(pos, Direction::kDown)});
 	}
+
+	return dst_matrix;
 }
 
 
