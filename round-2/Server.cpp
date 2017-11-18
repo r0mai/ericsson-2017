@@ -8,6 +8,7 @@
 #include <memory>
 #include <iostream>
 
+#include "Utils.h"
 #include "Protocol.h"
 
 namespace evil {
@@ -85,8 +86,7 @@ void Server::SetSeed(int seed) {
 }
 
 int Server::GetRandom(int low, int high) {
-	std::uniform_int_distribution<int> dist(low, high);
-	return dist(mt_engine_);
+	return getRandom(mt_engine_, low, high);
 }
 
 void Server::Run() {
@@ -180,7 +180,7 @@ bool Server::RunGame() {
 			}
 		}
 
-		if (!model_.stepAsServer()) {
+		if (!model_.stepAsServer(mt_engine_)) {
 			model_invalid = true;
 		}
 	}

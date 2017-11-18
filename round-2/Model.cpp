@@ -1,7 +1,6 @@
 #include "Model.h"
 #include <cassert>
 
-
 namespace evil {
 namespace {
 
@@ -295,8 +294,12 @@ void Model::addBorder(int owner, int thickness) {
 	}
 }
 
-bool Model::stepAsServer() {
+bool Model::stepAsServer(std::mt19937& rng_engine) {
 	status_ = {};
+
+	for (auto& enemy : enemies_) {
+		stepEnemy(enemy, rng_engine);
+	}
 
 	for (auto& unit : units_) {
 		auto new_pos = neighbor(unit.pos, unit.dir);
@@ -308,6 +311,54 @@ bool Model::stepAsServer() {
 	}
 
 	return true;
+}
+
+void Model::stepEnemy(Enemy& enemy, std::mt19937& rng_engine) {
+	auto v = enemy.v_dir;
+	auto h = enemy.h_dir;
+	auto ov = opposite(enemy.v_dir);
+	auto oh = opposite(enemy.h_dir);
+
+	const auto& old_cell = getCell(enemy.pos);
+
+	auto forward_p   = neighbor(neighbor(enemy.pos,  v),  h);
+	auto backwards_p = neighbor(neighbor(enemy.pos, ov), oh);
+	auto side1_p     = neighbor(neighbor(enemy.pos,  v), oh);
+	auto side2_p     = neighbor(neighbor(enemy.pos, ov),  h);
+
+	const auto& forward_c = getCell(forward_p);
+	const auto& backwards_c = getCell(backwards_p);
+	const auto& side1_c = getCell(side1_p);
+	const auto& side2_c = getCell(side2_p);
+
+	// can we continue moving forward
+	if (old_cell.owner == forward_c.owner) {
+		enemy.pos = forward_p;
+		return;
+	}
+
+	using EnemyState = std::tuple<Pos, Direction, Direction>;
+	std::vector<EnemyState> possible_states;
+	possible_states.reserve(3);
+
+	if (old_cell.owner == backwards_c.owner) {
+		possible_states.push_back(std::make_tuple(backwards_p, ov, oh));
+	}
+	if (old_cell.owner == side1_c.owner) {
+		possible_states.push_back(std::make_tuple(side1_p, v, oh));
+	}
+	if (old_cell.owner == side2_c.owner) {
+		possible_states.push_back(std::make_tuple(side2_p, ov, h));
+	}
+
+	if (!possible_states.empty()) {
+		auto& state = possible_states[getRandom(rng_engine, 0, possible_states.size() - 1)];
+		enemy.pos = std::get<0>(state);
+		enemy.v_dir = std::get<1>(state);
+		enemy.h_dir = std::get<2>(state);
+	}
+
+	// TODO implement super edge cases
 }
 
 Direction Model::adjustDirection(int unit_index, Direction dir) const {

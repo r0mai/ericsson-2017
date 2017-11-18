@@ -1,6 +1,9 @@
 #pragma once
+
 #include "Matrix.h"
 #include "Protocol.h"
+#include "Utils.h"
+
 #include <vector>
 #include <iostream>
 #include <memory>
@@ -97,7 +100,8 @@ public:
 	int getCoverage() const;
 
 	void addBorder(int owner = 1, int thickness = 2);
-	bool stepAsServer();
+	bool stepAsServer(std::mt19937& rng_engine);
+	void stepEnemy(Enemy& enemy, std::mt19937& rng_engine);
 
 	Direction adjustDirection(int unit_index, Direction dir) const;
 
