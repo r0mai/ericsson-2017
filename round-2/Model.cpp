@@ -294,26 +294,13 @@ bool Model::stepAsServer(std::mt19937& rng_engine) {
 	}
 
 	for (int i = 0; i < units_.size(); ++i) {
-		auto& unit = units_[i];
-		auto old_pos = unit.pos;
-		auto new_pos = neighbor(unit.pos, unit.dir);
+		stepUnit(i);
+	}
 
-		if (!isValid(new_pos)) {
-			status_ = "Unit out of bounds";
-			return false;
-		}
-
-		auto& old_cell = getCell(old_pos);
-		auto& new_cell = getCell(new_pos);
-
-		unit.pos = new_pos;
-		if (new_cell.owner != unit.owner) {
-			new_cell.attacking_unit = i;
-		} else {
-			// we were attack and got to a safe zone
-			if (old_cell.attacking_unit == i) {
-				attackFinished(i, old_pos);
-			}
+	for (auto& enemy : enemies_) {
+		auto& cell = getCell(enemy.pos);
+		if (cell.isAttacked()) {
+			killUnit(cell.attacking_unit);
 		}
 	}
 
@@ -396,6 +383,45 @@ void Model::attackFinished(int unit, const Pos& last_attack_pos) {
 				grid_(r, c).owner = 1;
 				grid_(r, c).attacking_unit = -1;
 			}
+		}
+	}
+}
+
+void Model::stepUnit(int unit_idx) {
+	auto& unit = units_[unit_idx];
+	auto old_pos = unit.pos;
+	auto new_pos = neighbor(unit.pos, unit.dir);
+
+	if (!isValid(new_pos)) {
+		status_ = "Unit out of bounds";
+		killUnit(unit_idx);
+		return;
+	}
+
+	auto& old_cell = getCell(old_pos);
+	auto& new_cell = getCell(new_pos);
+
+	unit.pos = new_pos;
+	if (new_cell.owner != unit.owner) {
+		new_cell.attacking_unit = unit_idx;
+	} else {
+		// we were attack and got to a safe zone
+		if (old_cell.attacking_unit == unit_idx) {
+			attackFinished(unit_idx, old_pos);
+		}
+	}
+}
+
+void Model::killUnit(int unit_idx) {
+	std::cout << "Unit " << unit_idx << " died" << std::endl;
+	auto& unit = units_[unit_idx];
+
+	unit.pos = {0, 0};
+	unit.dir = Direction::kDown;
+
+	for (auto& cell : grid_) {
+		if (cell.attacking_unit == unit_idx) {
+			cell.attacking_unit = -1;
 		}
 	}
 }
