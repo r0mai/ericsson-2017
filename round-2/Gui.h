@@ -21,7 +21,6 @@ public:
 	void setDrawModel(Model model);
 	bool pollEvent(sf::Event& event);
 	Direction getDirection() const;
-	void setNextPos(const Pos& pos);
 	Player& getPlayer();
 
 private:
@@ -57,18 +56,20 @@ private:
 	void drawDot(const Pos& pos, sf::Color color, float scale = 1.f);
 	Pos windowToPos(int x, int y) const;
 	void handleKeypress(const sf::Event::KeyEvent& ev);
+	std::vector<Pos> makeTrap(const Pos& origin);
 
 	sf::RenderWindow window_ {sf::VideoMode(window_w, window_h), "Window"};
 	Model model_;
 	Direction dir_ = Direction::kNone;
 	Pos mouse_pos_;
-	Pos next_pos_;
 
 	GuiPlayer player_;
 	Clock::time_point last_update_;
 	int delay_ = 0;
 	bool librate_ = false;
 	Direction librate_dir_ = Direction::kNone;
+
+	Pos target_pos_;
 };
 
 } // namespace evil

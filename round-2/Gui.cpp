@@ -88,8 +88,9 @@ void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 		case sf::Keyboard::Left: dir_ = Direction::kLeft; break;
 		case sf::Keyboard::Escape: window_.close(); break;
 		case sf::Keyboard::F: delay_ = 0; break;
-		case sf::Keyboard::D: delay_ = 200; break;
-		case sf::Keyboard::S: delay_ = 1000; break;
+		case sf::Keyboard::D: delay_ = 100; break;
+		case sf::Keyboard::S: delay_ = 200; break;
+		case sf::Keyboard::A: delay_ = 1000; break;
 		case sf::Keyboard::L:
 			librate_ = !librate_;
 			librate_dir_ = dir_;
@@ -149,6 +150,10 @@ void Gui::draw() {
 		drawDot(neighbor(unit.next_pos, dir_), sf::Color::Red);
 	}
 
+	// for (auto pos : makeTrap(mouse_pos_)) {
+	// 	drawCell(pos, sf::Color(50, 230, 250, 100));
+	// }
+
 	drawCell(mouse_pos_, sf::Color(50, 230, 250, 100));
 	window_.display();
 }
@@ -179,10 +184,6 @@ Player& Gui::getPlayer() {
 	return player_;
 }
 
-void Gui::setNextPos(const Pos& pos) {
-	next_pos_ = pos;
-}
-
 void Gui::onPlayerUpdate(const Model& model) {
 	model_ = model;
 	last_update_ = Clock::now();
@@ -201,5 +202,27 @@ Model::Moves Gui::getMoves() {
 	return {{0, dir}};
 }
 
+std::vector<Pos> Gui::makeTrap(const Pos& origin) {
+	auto vd = Direction::kUp;
+	auto hd = rotateCW(vd);
+
+	auto hdx = opposite(hd);
+	auto vdx = opposite(vd);
+
+	std::vector<Direction> dirs = {
+		vd, vd, vd, vd, hd, hd, hd,
+		hdx, hdx, hdx, vdx, vdx, vdx, vdx,
+		hd, hd, hd, vd, vd
+	};
+
+	auto pos = origin;
+	std::vector<Pos> result;
+	result.push_back(pos);
+	for (auto& dir : dirs) {
+		pos = neighbor(pos, dir);
+		result.push_back(pos);
+	}
+	return result;
+}
 
 } // namespace evil
