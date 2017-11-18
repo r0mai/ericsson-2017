@@ -409,7 +409,6 @@ Cell& Model::getCell(const Pos& pos) {
 }
 
 bool Model::isValid(const Pos& pos) const {
-	// Note: grid width - height is reversed
 	return
 		pos.row >= 0 && pos.row < kMaxRows &&
 		pos.col >= 0 && pos.col < kMaxCols;
