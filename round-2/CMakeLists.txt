@@ -20,6 +20,7 @@ add_library(xonixLib
     Client.cpp
     Model.cpp
     Server.cpp
+    Direction.cpp
     protocol/Common.capnp.c++
     protocol/Command.capnp.c++
     protocol/Response.capnp.c++

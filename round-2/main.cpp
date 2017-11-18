@@ -166,7 +166,7 @@ int main(int argc, char* argv[]) {
 			future = sendMoves(connection, moves);
 		}
 
-		if (isFutureReady(future)) {
+		if (evil::isFutureReady(future)) {
 			auto reader = future.get();
 			if (!reader) {
 				return 0;

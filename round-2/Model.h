@@ -3,7 +3,7 @@
 #include "Matrix.h"
 #include "Protocol.h"
 #include "Utils.h"
-#include "Pos.h"
+#include "Direction.h"
 
 #include <vector>
 #include <iostream>
@@ -22,15 +22,6 @@ std::ostream& operator<<(std::ostream& out, const Matrix<T>& mat) {
 
 
 namespace evil {
-
-enum class Direction {
-	kUp,
-	kRight,
-	kDown,
-	kLeft,
-
-	kNone
-};
 
 struct Unit {
 	int owner = -1;
@@ -61,8 +52,6 @@ struct Cell {
 	int color = 0;
 };
 
-Direction opposite(Direction dir);
-Pos neighbor(const Pos& pos, Direction dir);
 Direction fromDirection(protocol::Direction dir);
 protocol::Direction toProtocolDirection(Direction dir);
 
