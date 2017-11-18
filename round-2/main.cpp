@@ -157,6 +157,7 @@ int main(int argc, char* argv[]) {
 			model_ready = false;
 			steps_ready = false;
 			player.update(model);
+			model.dumpStatus(std::cerr);
 		}
 
 		if (!steps_ready && player.isReady()) {

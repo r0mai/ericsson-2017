@@ -138,6 +138,7 @@ Model Model::fromResponse(protocol::Response::Reader response) {
 		Unit u;
 		u.pos = Pos{pos.getRow(), pos.getCol()};
 		u.dir = fromDirection(unit.getDirection());
+		u.health = unit.getHealth();
 		u.next_pos = u.pos;
 		m.units_.push_back(u);
 	}
@@ -544,5 +545,12 @@ int Model::getSafeDistance() {
 	return dst;
 }
 
+void Model::dumpStatus(std::ostream& out) {
+	out << "L " << level_ << " ";
+	out << "T " << tick_ << " ";
+	out << "C " << getCoverage() << " ";
+	out << "H " << units_[0].health << " ";
+	out << units_[0].dir << std::endl;
+}
 
 } // namespace evil

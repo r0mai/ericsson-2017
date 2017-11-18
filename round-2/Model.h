@@ -98,6 +98,7 @@ public:
 
 	Direction adjustDirection(int unit_index, Direction dir) const;
 	void provision(const Moves& moves);
+	void dumpStatus(std::ostream& out);
 
 private:
 	void colorize();
