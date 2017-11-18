@@ -26,7 +26,7 @@ add_library(xonixLib
     src/protocol/Response.capnp.c++
 )
 
-add_executable(xonix src/main.cpp)
+add_executable(xonix src/client_main.cpp)
 add_executable(server src/server_main.cpp)
 
 target_link_libraries(xonix xonixLib ${SFML_LIBRARIES} ${CAPNP_LIBRARIES})
