@@ -302,17 +302,14 @@ bool Model::stepAsServer(std::mt19937& rng_engine) {
 
 	for (auto& enemy : enemies_) {
 		stepEnemy(enemy, rng_engine);
-	}
-
-	for (int i = 0; i < units_.size(); ++i) {
-		stepUnit(i);
-	}
-
-	for (auto& enemy : enemies_) {
 		auto& cell = getCell(enemy.pos);
 		if (cell.isAttacked()) {
 			killUnit(cell.attacking_unit);
 		}
+	}
+
+	for (int i = 0; i < units_.size(); ++i) {
+		stepUnit(i);
 	}
 
 	return true;
