@@ -8,7 +8,7 @@ class DumbPlayer : public Player {
 public:
 	virtual void update(const Model& model) override;
 	virtual bool isReady() const override;
-	virtual Model::Moves getMoves() const override;
+	virtual Model::Moves getMoves() override;
 
 private:
 	enum class State {

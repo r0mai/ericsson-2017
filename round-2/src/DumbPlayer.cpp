@@ -13,7 +13,7 @@ bool DumbPlayer::isReady() const {
 	return true;
 }
 
-Model::Moves DumbPlayer::getMoves() const {
+Model::Moves DumbPlayer::getMoves() {
 	const auto& unit = model_.getUnits()[0];
 	switch (state_) {
 		case State::kNewMap:

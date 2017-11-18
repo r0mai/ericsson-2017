@@ -23,7 +23,7 @@ public:
 	/**
 	 * Called once per `update()`, just after `isReady()` returned `true`.
 	 */
-	virtual Model::Moves getMoves() const = 0;
+	virtual Model::Moves getMoves() = 0;
 };
 
 } // namespace evil

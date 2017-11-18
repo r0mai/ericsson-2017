@@ -35,7 +35,7 @@ bool Gui::GuiPlayer::isReady() const {
 	return gui_->isReady();
 }
 
-Model::Moves Gui::GuiPlayer::getMoves() const {
+Model::Moves Gui::GuiPlayer::getMoves() {
 	return gui_->getMoves();
 }
 
