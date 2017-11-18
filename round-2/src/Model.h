@@ -82,6 +82,8 @@ public:
 	const std::vector<Unit>& getUnits() const;
 	std::vector<Enemy>& getEnemies();
 	const std::vector<Enemy>& getEnemies() const;
+	const Cell& getCell(const Pos& pos) const;
+	Cell& getCell(const Pos& pos);
 	const std::string& getStatus() const;
 
 	int getTick() const;
@@ -108,7 +110,6 @@ private:
 	int getSafeDistance();
 	Pos trace(const Pos& pos, Direction v_dir, Direction h_dir, int col);
 
-	Cell& getCell(const Pos& pos);
 	bool isValid(const Pos& pos) const;
 
 	Grid grid_ {kMaxRows, kMaxCols};

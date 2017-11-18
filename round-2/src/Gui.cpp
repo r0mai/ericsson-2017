@@ -107,11 +107,11 @@ void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 
 void Gui::handleMouseButton(const sf::Event::MouseButtonEvent& ev) {
 	auto pos = windowToPos(ev.x, ev.y);
-	// auto& cell = model_.getCell(pos);
-	// if (cell.owner == 1) {
-	// 	target_pos_ = pos;
-	// 	mode_ = Mode::kTracking;
-	// }
+	auto& cell = model_.getCell(pos);
+	if (cell.owner == 1) {
+		target_pos_ = pos;
+		mode_ = Mode::kTracking;
+	}
 }
 
 bool Gui::update() {

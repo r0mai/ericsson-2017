@@ -547,6 +547,10 @@ Cell& Model::getCell(const Pos& pos) {
 	return grid_(pos.row, pos.col);
 }
 
+const Cell& Model::getCell(const Pos& pos) const {
+	return grid_(pos.row, pos.col);
+}
+
 bool Model::isValid(const Pos& pos) const {
 	return
 		pos.row >= 0 && pos.row < kMaxRows &&
