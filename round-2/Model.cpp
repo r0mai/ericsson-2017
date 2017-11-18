@@ -138,7 +138,9 @@ Model Model::fromResponse(protocol::Response::Reader response) {
 		int col = 0;
 		for (auto cell : cells) {
 			mat(row, col).owner = cell.getOwner();
-			mat(row, col).is_attacked = cell.getAttack().isUnit();
+			if (cell.getAttack().isUnit()) {
+				mat(row, col).attacking_unit = cell.getAttack().getUnit();
+			}
 			++col;
 		}
 		++row;
@@ -186,8 +188,8 @@ std::unique_ptr<capnp::MallocMessageBuilder> Model::toCapnp() const {
 
 			// TODO WTF
 			auto attack = cell.initAttack();
-			if (m_cell.is_attacked) {
-				attack.setUnit(0);
+			if (m_cell.isAttacked()) {
+				attack.setUnit(m_cell.attacking_unit);
 			}
 		}
 	}
@@ -228,7 +230,7 @@ void Model::colorize() {
 		if (cell.owner == 1) {
 			cell.color = 1;
 		}
-		if (cell.is_attacked) {
+		if (cell.isAttacked()) {
 			cell.color = 2;
 		}
 	}

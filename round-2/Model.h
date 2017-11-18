@@ -56,7 +56,9 @@ struct Enemy {
 
 struct Cell {
 	int owner = 0;
-	bool is_attacked = false;
+	int attacking_unit = -1;
+
+	bool isAttacked() const { return attacking_unit >= 0; }
 
 	// algo
 	int color = 0;
