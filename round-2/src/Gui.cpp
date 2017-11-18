@@ -220,7 +220,39 @@ Model::Moves Gui::getMoves() {
 		dir = librate_dir_;
 		librate_dir_ = opposite(librate_dir_);
 	} else if (mode_ == Mode::kTracking) {
+		auto dst_matrix = distanceFill(target_pos_, model_.size(),
+			[&](const Pos& p) -> bool {
+				auto& cell = model_.getCell(p);
+				return cell.owner == 1;
+			});
 
+		auto pos = model_.getUnits().at(0).pos;
+		auto dst = dst_matrix(pos.row, pos.col);
+		auto closer_dir = Direction::kNone;
+
+		for (auto nb_dir : directions(pos, model_.size())) {
+			auto nb_pos = neighbor(pos, nb_dir);
+			auto nb_dst = dst_matrix(nb_pos.row, nb_pos.col);
+			if (nb_dst == -1) {
+				continue;
+			}
+
+			if (nb_dst < dst) {
+				closer_dir = nb_dir;
+			}
+		}
+
+		if (closer_dir == Direction::kNone) {
+			for (auto nb_dir : directions(pos, model_.size())) {
+				if (model_.getCell(neighbor(pos, nb_dir)).owner == 1) {
+					closer_dir = nb_dir;
+					break;
+				}
+			}
+			dir_ = closer_dir;
+			toggleLibrate();
+		}
+		dir = closer_dir;
 	}
 
 	dir = model_.adjustDirection(0, dir);
