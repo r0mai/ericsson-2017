@@ -9,7 +9,8 @@
 #include <fstream>
 #include <sstream>
 #include <memory>
-
+#include <chrono>
+#include <thread>
 
 protocol::Response::Reader getResponse(
 	std::unique_ptr<capnp::MallocMessageBuilder>& reader)
@@ -126,10 +127,16 @@ int main(int argc, char* argv[]) {
 			break;
 		}
 		gui.draw();
+		std::this_thread::sleep_for(std::chrono::milliseconds(8));
 
 		if (isFutureReady(future)) {
 			auto reader = future.get();
-			auto model = evil::Model::fromResponse(getResponse(reader));
+			auto response = getResponse(reader);
+			auto model = evil::Model::fromResponse(response);
+			if (!model.getStatus().empty()) {
+				std::cerr << model.getStatus() << std::endl;
+			}
+
 			if (!model.isValid()) {
 				std::cerr << "Invalid model in run loop: " << model.getStatus() << std::endl;
 				gui.close();
@@ -168,9 +175,9 @@ int main(int argc, char* argv[]) {
 
 			if (next != prev) {
 				prev = next;
-				std::cout
-					<< model.getLevel() << " " << model.getTick()
-					<< " " << next << std::endl;
+				// std::cout
+				// 	<< model.getLevel() << " " << model.getTick()
+				// 	<< " " << next << std::endl;
 			}
 
 			future = connection.communicateAsync(std::move(message));

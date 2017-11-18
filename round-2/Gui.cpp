@@ -101,7 +101,7 @@ void Gui::draw() {
 	}
 
 	drawDot(next_pos_, sf::Color::Black);
-	drawDot(neighbor(next_pos_, dir_), sf::Color::Black);
+	drawDot(neighbor(next_pos_, dir_), sf::Color(0, 200, 190));
 
 	drawCell(mouse_pos_, sf::Color(50, 230, 250, 100));
 	window_.display();
