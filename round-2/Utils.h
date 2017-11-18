@@ -4,6 +4,7 @@
 #include <future>
 #include <random>
 #include <vector>
+#include <deque>
 
 #include "Direction.h"
 #include "Matrix.h"
@@ -60,5 +61,41 @@ Matrix<bool> floodFill(const Matrix<T>& m, Pos initial_pos, F f) {
 
 	return filled;
 }
+
+template<typename Func>
+Matrix<int> distanceFill(const Pos& origin, const Pos& end, Func fn) {
+	Matrix<int> dst_matrix(end.row, end.col, -1);
+	std::deque<std::pair<int, Pos>> queue;
+
+	queue.push_back({0, origin});
+
+	while (!queue.empty()) {
+		auto dst = queue.front().first;
+		auto pos = queue.front().second;
+		queue.pop_front();
+
+		if (pos.row < 0 || pos.row >= end.row ||
+			pos.col < 0 || pos.col >= end.col)
+		{
+			continue;
+		}
+
+		auto& value = dst_matrix(pos.row, pos.col);
+		if (value != -1) {
+			continue;
+		}
+
+		if (!fn(pos)) {
+			continue;
+		}
+
+		value = dst;
+		queue.push_back({dst + 1, neighbor(pos, Direction::kRight)});
+		queue.push_back({dst + 1, neighbor(pos, Direction::kLeft)});
+		queue.push_back({dst + 1, neighbor(pos, Direction::kUp)});
+		queue.push_back({dst + 1, neighbor(pos, Direction::kDown)});
+	}
+}
+
 
 } // namespace evil
