@@ -15,5 +15,8 @@ enum class Direction {
 
 Pos neighbor(const Pos& pos, Direction dir);
 Direction opposite(Direction dir);
+Direction rotateCW(Direction dir);
+Direction rotateCCW(Direction dir);
+
 
 } // namespace evil

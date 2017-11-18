@@ -26,4 +26,31 @@ Direction opposite(Direction dir) {
 	return dir;
 }
 
+Direction rotateCW(Direction dir) {
+	switch (dir) {
+		case Direction::kLeft: return Direction::kUp;
+		case Direction::kUp: return Direction::kRight;
+		case Direction::kRight: return Direction::kDown;
+		case Direction::kDown: return Direction::kLeft;
+		default: return dir;
+	}
+
+	return dir;
+}
+
+
+Direction rotateCCW(Direction dir) {
+	switch (dir) {
+		case Direction::kLeft: return Direction::kDown;
+		case Direction::kUp: return Direction::kLeft;
+		case Direction::kRight: return Direction::kUp;
+		case Direction::kDown: return Direction::kRight;
+		default: return dir;
+	}
+
+	return dir;
+}
+
+
+
 } // namespace evil
