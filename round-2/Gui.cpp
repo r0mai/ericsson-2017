@@ -90,6 +90,10 @@ void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 		case sf::Keyboard::F: delay_ = 0; break;
 		case sf::Keyboard::D: delay_ = 200; break;
 		case sf::Keyboard::S: delay_ = 1000; break;
+		case sf::Keyboard::L:
+			librate_ = !librate_;
+			librate_dir_ = dir_;
+			break;
 		default: break;
 	}
 }
@@ -186,7 +190,10 @@ bool Gui::isReady() {
 }
 
 Model::Moves Gui::getMoves() {
-	auto dir = model_.adjustDirection(0, dir_);
+	auto dir = model_.adjustDirection(0, librate_ ? librate_dir_ : dir_);
+	if (librate_) {
+		librate_dir_ = opposite(librate_dir_);
+	}
 	return {{0, dir}};
 }
 

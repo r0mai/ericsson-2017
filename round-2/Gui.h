@@ -67,6 +67,8 @@ private:
 	GuiPlayer player_;
 	Clock::time_point last_update_;
 	int delay_ = 0;
+	bool librate_ = false;
+	Direction librate_dir_ = Direction::kNone;
 };
 
 } // namespace evil
