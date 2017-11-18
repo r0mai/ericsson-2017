@@ -295,10 +295,6 @@ void Model::addBorder(int owner, int thickness) {
 	}
 }
 
-void Model::addUnit(Unit unit) {
-	units_.push_back(unit);
-}
-
 bool Model::stepAsServer() {
 	status_ = {};
 

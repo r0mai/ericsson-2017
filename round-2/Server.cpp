@@ -133,7 +133,7 @@ void Server::InitModel(int enemies_in, int enemies_out, int border_thickness) {
 		unit.pos = {0, 0};
 		unit.dir = Direction::kDown;
 
-		model_.addUnit(unit);
+		model_.getUnits().push_back(unit);
 	};
 
 	auto& grid = model_.getGrid();
