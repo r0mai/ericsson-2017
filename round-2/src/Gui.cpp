@@ -80,10 +80,10 @@ void Gui::setDrawModel(Model model) {
 	updateStatus();
 }
 
-void Gui::toggleLibrate() {
+void Gui::toggleLibrate(Direction dir) {
 	if (mode_ != Mode::kLibrate) {
 		mode_ = Mode::kLibrate;
-		librate_dir_ = dir_;
+		librate_dir_ = (dir == Direction::kNone ? dir_ : dir);
 	} else {
 		mode_ = Mode::kNormal;
 	}
@@ -221,19 +221,14 @@ Model::Moves Gui::getMoves() {
 		librate_dir_ = opposite(librate_dir_);
 	} else if (mode_ == Mode::kTracking) {
 		auto pos = model_.getUnits().at(0).pos;
-		auto closer_dir = model_.directionTowards(pos, target_pos_);
-
-		if (closer_dir == Direction::kNone) {
-			for (auto nb_dir : directions(pos, model_.size())) {
-				if (model_.getCell(neighbor(pos, nb_dir)).owner == 1) {
-					closer_dir = nb_dir;
-					break;
-				}
+		if (pos != target_pos_) {
+			dir = model_.directionTowards(pos, target_pos_);
+			if (neighbor(pos, dir) == target_pos_) {
+				toggleLibrate(opposite(dir));
 			}
-			dir_ = closer_dir;
+		} else {
 			toggleLibrate();
 		}
-		dir = closer_dir;
 	}
 
 	dir = model_.adjustDirection(0, dir);

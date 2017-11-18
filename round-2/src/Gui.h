@@ -63,7 +63,7 @@ private:
 	void handleKeypress(const sf::Event::KeyEvent& ev);
 	void handleMouseButton(const sf::Event::MouseButtonEvent& ev);
 
-	void toggleLibrate();
+	void toggleLibrate(Direction dir = Direction::kNone);
 	std::vector<Pos> makeTrap(const Pos& origin);
 
 	sf::RenderWindow window_ {sf::VideoMode(window_w, window_h), "Window"};
