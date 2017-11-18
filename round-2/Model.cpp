@@ -302,13 +302,17 @@ bool Model::stepAsServer(std::mt19937& rng_engine) {
 		stepEnemy(enemy, rng_engine);
 	}
 
-	for (auto& unit : units_) {
+	for (int i = 0; i < units_.size(); ++i) {
+		auto& unit = units_[i];
 		auto new_pos = neighbor(unit.pos, unit.dir);
 		if (!isValid(new_pos)) {
 			status_ = "Unit out of bounds";
 			return false;
 		}
 		unit.pos = new_pos;
+		if (getCell(unit.pos).owner != unit.owner) {
+			getCell(unit.pos).attacking_unit = i;
+		}
 	}
 
 	return true;
