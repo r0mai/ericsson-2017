@@ -139,6 +139,8 @@ void Server::InitModel(int enemies_in, int enemies_out, int border_thickness) {
 	model_ = {};
 
 	model_.addBorder(1, border_thickness);
+	model_.setTick(1);
+	model_.setLevel(0);
 
 	{
 		Unit unit;

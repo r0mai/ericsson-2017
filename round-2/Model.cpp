@@ -97,6 +97,14 @@ int Model::getOwns() const {
 	return owns_;
 }
 
+void Model::setTick(int tick) {
+	tick_ = tick;
+}
+
+void Model::setLevel(int level) {
+	level_ = level;
+}
+
 Model Model::fromResponse(protocol::Response::Reader response) {
 	Model m;
 
@@ -283,7 +291,6 @@ Pos Model::trace(const Pos& start, Direction v_dir, Direction h_dir, int col) {
 	return last;
 }
 
-
 void Model::addBorder(int owner, int thickness) {
 	for (int i = 0; i < thickness; ++i) {
 		for (int r = 0; r < grid_.rows(); ++r) {
@@ -299,6 +306,8 @@ void Model::addBorder(int owner, int thickness) {
 
 bool Model::stepAsServer(std::mt19937& rng_engine) {
 	status_ = {};
+
+	++tick_;
 
 	for (auto& enemy : enemies_) {
 		stepEnemy(enemy, rng_engine);
