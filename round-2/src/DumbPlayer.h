@@ -12,8 +12,14 @@ public:
 
 private:
 	enum class State {
-		kNewMap
+		kNewMap,
+		kCut
 	};
+
+	int cut_zigzag_tick_ = 0;
+	Pos cut_start_;
+	Pos cut_end_;
+	Direction cut_direction_;
 
 	Model model_;
 	State state_;
