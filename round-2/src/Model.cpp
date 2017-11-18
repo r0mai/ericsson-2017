@@ -588,6 +588,32 @@ int Model::getSafeDistance() {
 	return dst;
 }
 
+Direction Model::directionTowards(const Pos& source_pos, const Pos& target_pos) const {
+	auto dst_matrix = distanceFill(target_pos, size(),
+		[&](const Pos& p) -> bool {
+			auto& cell = getCell(p);
+			return cell.owner == 1;
+		});
+
+	auto pos = getUnits().at(0).pos;
+	auto dst = dst_matrix(pos.row, pos.col);
+	auto closer_dir = Direction::kNone;
+
+	for (auto nb_dir : directions(source_pos, size())) {
+		auto nb_pos = neighbor(source_pos, nb_dir);
+		auto nb_dst = dst_matrix(nb_pos.row, nb_pos.col);
+		if (nb_dst == -1) {
+			continue;
+		}
+
+		if (nb_dst < dst) {
+			closer_dir = nb_dir;
+		}
+	}
+
+	return closer_dir;
+}
+
 void Model::dumpStatus(std::ostream& out) {
 	out << "L " << level_ << " ";
 	out << "T " << tick_ << " ";

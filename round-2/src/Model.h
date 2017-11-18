@@ -104,6 +104,9 @@ public:
 
 	Direction adjustDirection(int unit_index, Direction dir) const;
 	void provision(const Moves& moves);
+
+	Direction directionTowards(const Pos& source_pos, const Pos& target_pos) const;
+
 	void dumpStatus(std::ostream& out);
 
 private:
