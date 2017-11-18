@@ -56,6 +56,7 @@ private:
 	void drawCell(const Pos& pos, sf::Color color);
 	void drawDot(const Pos& pos, sf::Color color, float scale = 1.f);
 	Pos windowToPos(int x, int y) const;
+	void handleKeypress(const sf::Event::KeyEvent& ev);
 
 	sf::RenderWindow window_ {sf::VideoMode(window_w, window_h), "Window"};
 	Model model_;
@@ -65,6 +66,7 @@ private:
 
 	GuiPlayer player_;
 	Clock::time_point last_update_;
+	int delay_ = 0;
 };
 
 } // namespace evil

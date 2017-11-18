@@ -80,28 +80,34 @@ void Gui::setDrawModel(Model model) {
 	updateStatus();
 }
 
+void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
+	switch (ev.code) {
+		default: break;
+		case sf::Keyboard::Up: dir_ = Direction::kUp; break;
+		case sf::Keyboard::Down: dir_ = Direction::kDown; break;
+		case sf::Keyboard::Right: dir_ = Direction::kRight; break;
+		case sf::Keyboard::Left: dir_ = Direction::kLeft; break;
+		case sf::Keyboard::Escape: window_.close(); break;
+	}
+}
+
 bool Gui::update() {
 	sf::Event event;
-	while (window_.pollEvent(event))
-	{
-		// "close requested" event: we close the window_
-		if (event.type == sf::Event::Closed) {
-			window_.close();
-		}
-
-		if (event.type == sf::Event::KeyPressed) {
-			switch (event.key.code) {
-				default: break;
-				case sf::Keyboard::Up: dir_ = Direction::kUp; break;
-				case sf::Keyboard::Down: dir_ = Direction::kDown; break;
-				case sf::Keyboard::Right: dir_ = Direction::kRight; break;
-				case sf::Keyboard::Left: dir_ = Direction::kLeft; break;
-				case sf::Keyboard::Escape: window_.close(); break;
+	while (window_.pollEvent(event)) {
+		switch (event.type) {
+			case sf::Event::Closed:
+				window_.close();
+				break;
+			case sf::Event::KeyPressed:
+				handleKeypress(event.key);
+				break;
+			case sf::Event::MouseMoved: {
+				auto& ev = event.mouseMove;
+				mouse_pos_ = windowToPos(ev.x, ev.y);
+				break;
 			}
-		}
-		if (event.type == sf::Event::MouseMoved) {
-			auto& ev = event.mouseMove;
-			mouse_pos_ = windowToPos(ev.x, ev.y);
+			default:
+				break;
 		}
 	}
 
@@ -173,7 +179,7 @@ void Gui::onPlayerUpdate(const Model& model) {
 
 bool Gui::isReady() {
 	auto delta = Clock::now() - last_update_;
-	return delta > std::chrono::milliseconds(400);
+	return delta > std::chrono::milliseconds(delay_);
 }
 
 Model::Moves Gui::getMoves() {
