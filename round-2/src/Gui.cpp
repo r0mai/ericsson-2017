@@ -186,10 +186,10 @@ Direction Gui::getDirection() const {
 
 void Gui::updateStatus() {
 	std::stringstream ss;
-	float coverage = model_.getCoverage() / 80.0f;
+	float coverage = round(model_.getCoverage() / 80.0f);
 	ss << "Level " << model_.getLevel();
 	ss << " - Tick " << model_.getTick();
-	ss << " - Coverage " << std::setprecision(2) << coverage << "%";
+	ss << " - Coverage " << coverage << "%";
 	window_.setTitle(ss.str());
 	// std::cerr << ss.str() << std::endl;
 }
