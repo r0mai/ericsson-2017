@@ -186,7 +186,6 @@ std::unique_ptr<capnp::MallocMessageBuilder> Model::toCapnp() const {
 			auto& m_cell = grid_(r, c);
 			cell.setOwner(m_cell.owner);
 
-			// TODO WTF
 			auto attack = cell.initAttack();
 			if (m_cell.isAttacked()) {
 				attack.setUnit(m_cell.attacking_unit);
