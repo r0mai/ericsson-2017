@@ -89,6 +89,21 @@ int Server::GetRandom(int low, int high) {
 	return getRandom(mt_engine_, low, high);
 }
 
+std::tuple<Direction, Direction> Server::GetRandomDirection() {
+	Direction v;
+	Direction h;
+
+	int direction = GetRandom(0, 3);
+	switch (direction) {
+		case 0: v = Direction::kUp;   h = Direction::kRight; break;
+		case 1: v = Direction::kDown; h = Direction::kRight; break;
+		case 2: v = Direction::kDown; h = Direction::kLeft;  break;
+		case 3: v = Direction::kUp;   h = Direction::kLeft;  break;
+	}
+
+	return std::make_tuple(v, h);
+}
+
 void Server::Run() {
 	if (!connection_.Bind()) {
 		return;
@@ -104,7 +119,7 @@ void Server::Run() {
 				continue;
 			}
 
-			InitModel(3, 0);
+			InitModel(3, 3);
 
 			if (!RunGame()) {
 				continue;
@@ -143,15 +158,20 @@ void Server::InitModel(int enemies_in, int enemies_out, int border_thickness) {
 		Enemy enemy;
 		enemy.pos.row = GetRandom(border_thickness, grid.rows() - border_thickness - 1);
 		enemy.pos.col = GetRandom(border_thickness, grid.cols() - border_thickness - 1);
+		std::tie(enemy.v_dir, enemy.h_dir) = GetRandomDirection();
+		enemies.push_back(enemy);
+	}
 
-		int direction = GetRandom(0, 3);
-		switch (direction) {
-			case 0: enemy.v_dir = Direction::kUp;   enemy.h_dir = Direction::kRight; break;
-			case 1: enemy.v_dir = Direction::kDown; enemy.h_dir = Direction::kRight; break;
-			case 2: enemy.v_dir = Direction::kDown; enemy.h_dir = Direction::kLeft;  break;
-			case 3: enemy.v_dir = Direction::kUp;   enemy.h_dir = Direction::kLeft;  break;
-		}
+	for (int i = 0; i < enemies_out; ++i) {
+		int row_idx = GetRandom(0, border_thickness - 1);
+		int col_idx = GetRandom(0, border_thickness - 1);
+		if (GetRandom(0, 1)) { row_idx = grid.rows() - row_idx - 1; }
+		if (GetRandom(0, 1)) { col_idx = grid.cols() - col_idx - 1; }
 
+		Enemy enemy;
+		enemy.pos.row = row_idx;
+		enemy.pos.col = col_idx;
+		std::tie(enemy.v_dir, enemy.h_dir) = GetRandomDirection();
 		enemies.push_back(enemy);
 	}
 }

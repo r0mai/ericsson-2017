@@ -35,6 +35,8 @@ private:
 	// inclusive
 	int GetRandom(int low, int high);
 
+	std::tuple<Direction, Direction> GetRandomDirection();
+
 	ServerConnection connection_;
 	Model model_;
 
