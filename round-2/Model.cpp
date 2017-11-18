@@ -295,18 +295,109 @@ bool Model::stepAsServer(std::mt19937& rng_engine) {
 
 	for (int i = 0; i < units_.size(); ++i) {
 		auto& unit = units_[i];
+		auto old_pos = unit.pos;
 		auto new_pos = neighbor(unit.pos, unit.dir);
+
 		if (!isValid(new_pos)) {
 			status_ = "Unit out of bounds";
 			return false;
 		}
+
+		auto& old_cell = getCell(old_pos);
+		auto& new_cell = getCell(new_pos);
+
 		unit.pos = new_pos;
-		if (getCell(unit.pos).owner != unit.owner) {
-			getCell(unit.pos).attacking_unit = i;
+		if (new_cell.owner != unit.owner) {
+			new_cell.attacking_unit = i;
+		} else {
+			// we were attack and got to a safe zone
+			if (old_cell.attacking_unit == i) {
+				attackFinished(i, old_pos);
+			}
 		}
 	}
 
 	return true;
+}
+
+void Model::attackFinished(int unit, const Pos& last_attack_pos) {
+	enum class AttackState {
+		kUnknonwn,
+		kAttacked,
+		kCantCapture,
+		kCaptured
+	};
+
+	Matrix<AttackState> attack_grid(grid_.rows(), grid_.cols(), AttackState::kUnknonwn);
+
+	auto attacked_grid = floodFill(grid_, last_attack_pos,
+		[&](const Pos& pos) {
+			return getCell(pos).attacking_unit == unit;
+		}
+	);
+
+	std::vector<Pos> attacked_poss;
+
+	for (int r = 0; r < grid_.rows(); ++r) {
+		for (int c = 0; c < grid_.cols(); ++c) {
+			if (attacked_grid(r, c)) {
+				attack_grid(r, c) = AttackState::kAttacked;
+				attacked_poss.emplace_back(r, c);
+			}
+		}
+	}
+
+	for (auto attacked : attacked_poss) {
+		auto f = [&](const Pos& p) {
+			if (attack_grid(p.row, p.col) == AttackState::kUnknonwn) {
+				auto try_capture_grid = floodFill(grid_, p,
+					[&](const Pos& pos) {
+						auto& cell = getCell(pos);
+						return !cell.isAttacked() && cell.owner == 0;
+					}
+				);
+				for (int r = 0; r < grid_.rows(); ++r) {
+					for (int c = 0; c < grid_.cols(); ++c) {
+						if (try_capture_grid(r, c)) {
+							attack_grid(r, c) = AttackState::kCaptured;
+						}
+					}
+				}
+			}
+		};
+
+		f(neighbor(attacked, Direction::kUp));
+		f(neighbor(attacked, Direction::kDown));
+		f(neighbor(attacked, Direction::kLeft));
+		f(neighbor(attacked, Direction::kRight));
+	}
+
+	for (auto& enemy : enemies_) {
+		if (attack_grid(enemy.pos.row, enemy.pos.col) != AttackState::kCaptured) {
+			continue;
+		}
+		auto cant_capture_grid = floodFill(grid_, enemy.pos, [&](const Pos& p) {
+			return attack_grid(p.row, p.col) == AttackState::kCaptured;
+		});
+		for (int r = 0; r < grid_.rows(); ++r) {
+			for (int c = 0; c < grid_.cols(); ++c) {
+				if (cant_capture_grid(r, c)) {
+					attack_grid(r, c) = AttackState::kCantCapture;
+				}
+			}
+		}
+	}
+
+	for (int r = 0; r < grid_.rows(); ++r) {
+		for (int c = 0; c < grid_.cols(); ++c) {
+			if (attack_grid(r, c) == AttackState::kCaptured) {
+				grid_(r, c).owner = 1;
+			} else if (attack_grid(r, c) == AttackState::kAttacked) {
+				grid_(r, c).owner = 1;
+				grid_(r, c).attacking_unit = -1;
+			}
+		}
+	}
 }
 
 void Model::stepEnemy(Enemy& enemy, std::mt19937& rng_engine) {

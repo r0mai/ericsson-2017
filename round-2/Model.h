@@ -91,6 +91,7 @@ public:
 	void addBorder(int owner = 1, int thickness = 2);
 	bool stepAsServer(std::mt19937& rng_engine);
 	void stepEnemy(Enemy& enemy, std::mt19937& rng_engine);
+	void attackFinished(int unit, const Pos& last_attack_pos);
 
 	Direction adjustDirection(int unit_index, Direction dir) const;
 	void provision(const Moves& moves);
