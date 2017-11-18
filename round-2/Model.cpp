@@ -471,13 +471,46 @@ void Model::stepEnemy(Enemy& enemy, std::mt19937& rng_engine) {
 	}
 
 	if (!possible_states.empty()) {
+		goto choose_one;
+	}
+
+	// edgy cases
+
+	{
+		auto lin_side1_p = neighbor(enemy.pos, ov);
+		auto lin_side2_p = neighbor(enemy.pos, oh);
+
+		if (isValid(lin_side1_p) && old_cell.owner == getCell(lin_side1_p).owner) {
+			possible_states.push_back(std::make_tuple(lin_side1_p, ov, oh));
+		}
+		if (isValid(lin_side2_p) && old_cell.owner == getCell(lin_side2_p).owner) {
+			possible_states.push_back(std::make_tuple(lin_side2_p, ov, oh));
+		}
+	}
+
+	if (!possible_states.empty()) {
+		goto choose_one;
+	}
+
+	{
+		auto lin_side3_p = neighbor(enemy.pos, v);
+		auto lin_side4_p = neighbor(enemy.pos, h);
+
+		if (isValid(lin_side3_p) && old_cell.owner == getCell(lin_side3_p).owner) {
+			possible_states.push_back(std::make_tuple(lin_side3_p, v, oh));
+		}
+		if (isValid(lin_side4_p) && old_cell.owner == getCell(lin_side4_p).owner) {
+			possible_states.push_back(std::make_tuple(lin_side4_p, ov, h));
+		}
+	}
+
+	if (!possible_states.empty()) {
+choose_one:
 		auto& state = possible_states[getRandom(rng_engine, 0, possible_states.size() - 1)];
 		enemy.pos = std::get<0>(state);
 		enemy.v_dir = std::get<1>(state);
 		enemy.h_dir = std::get<2>(state);
 	}
-
-	// TODO implement super edge cases
 }
 
 Direction Model::adjustDirection(int unit_index, Direction dir) const {
