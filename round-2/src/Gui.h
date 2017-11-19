@@ -133,9 +133,7 @@ private:
 	void toggleLibrate();
 	void toggleManual(Direction dir);
 	void toggleTrap(const Pos& origin, Direction axis0, Direction axis1);
-	void rotateAxesCW();
-	void rotateAxesCCW();
-	void mirrorAxis1();
+	void toggleMirror();
 
 	void cycleModes();
 
@@ -147,8 +145,7 @@ private:
 	GuiPlayer player_;
 	Clock::time_point last_update_;
 	int delay_ = 0;
-	Direction axis0_ = Direction::kUp;
-	Direction axis1_ = Direction::kRight;
+	bool mirror_ = false;
 
 	enum Mode {
 		kNormal,

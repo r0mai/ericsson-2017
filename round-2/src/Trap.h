@@ -1,7 +1,9 @@
 #pragma once
 #include <vector>
 #include "Pos.h"
+#include "Model.h"
 #include "Direction.h"
+#include <boost/optional.hpp>
 
 
 namespace evil {
@@ -20,6 +22,8 @@ struct Trap {
 };
 
 Trap makeTrap(Direction axis0, Direction axis1);
+boost::optional<Trap> makeAlignedTrap(const Model& model, const Pos& pos, bool mirror);
+
 std::vector<Pos> renderTrap(const Pos& origin, const Trap& trap);
 Pos renderTrigger(const Pos& origin, const Trap& trap);
 

@@ -1,6 +1,7 @@
 #include "Trap.h"
+#include "Model.h"
 #include <cassert>
-
+#include <array>
 
 namespace evil {
 
@@ -28,6 +29,58 @@ Trap makeTrap(Direction axis0, Direction axis1) {
 	return trap;
 }
 
+boost::optional<Trap> makeAlignedTrap(
+	const Model& model, const Pos& origin, bool mirror)
+{
+	std::vector<Pos> blues = {{0, 0}, {1, 0}, {2, 0}};
+	std::vector<Pos> whites = {{1, 1}, {2, 2}, {2, 3}, {3, 3}, {4, 4}};
+
+	std::array<Direction, 4> directions = {
+		Direction::kRight,
+		Direction::kDown,
+		Direction::kLeft,
+		Direction::kUp
+	};
+
+	for (auto axis0 : directions) {
+		auto base_axis = (mirror ? axis0 : opposite(axis0));
+		std::array<Direction, 2> normals = {
+			rotateCW(base_axis), rotateCCW(base_axis)
+		};
+
+		for (auto axis1 : normals) {
+			bool match = true;
+			for (auto rel : blues) {
+				auto pos = neighbor(
+					neighbor(origin, axis0, rel.col), axis1, rel.row);
+				if (model.getCell(pos).owner != 1) {
+					match = false;
+					break;
+				}
+			}
+
+			if (!match) {
+				continue;
+			}
+
+			for (auto rel : whites) {
+				auto pos = neighbor(
+					neighbor(origin, axis0, rel.col), axis1, rel.row);
+				if (model.getCell(pos).owner != 0) {
+					match = false;
+					break;
+				}
+			}
+
+			if (match) {
+				return makeTrap(axis0, axis1);
+			}
+		}
+	}
+
+	return boost::none;
+}
+
 std::vector<Pos> renderTrap(const Pos& origin, const Trap& trap) {
 	auto pos = origin;
 	std::vector<Pos> vec;
@@ -45,5 +98,7 @@ Pos renderTrigger(const Pos& origin, const Trap& trap) {
 	pos.col += trap.trigger.col;
 	return pos;
 }
+
+
 
 } // namespace evil

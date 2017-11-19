@@ -15,12 +15,15 @@ Pos neighbor(const Pos& pos, Direction dir) {
 }
 
 Pos neighbor(const Pos& pos, Direction dir, int repeat) {
-	auto nb_pos = pos;
-	while (repeat > 0) {
-		nb_pos = neighbor(nb_pos, dir);
-		--repeat;
+	switch(dir) {
+		case Direction::kLeft: return {pos.row, pos.col - repeat};
+		case Direction::kRight: return {pos.row, pos.col + repeat};
+		case Direction::kUp: return {pos.row - repeat, pos.col};
+		case Direction::kDown: return {pos.row + repeat, pos.col};
+		default: break;
 	}
-	return nb_pos;
+
+	return pos;
 }
 
 Direction opposite(Direction dir) {

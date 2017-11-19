@@ -253,10 +253,8 @@ void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 		case sf::Keyboard::S: delay_ = 200; break;
 		case sf::Keyboard::A: delay_ = 1000; break;
 
-		case sf::Keyboard::R: rotateAxesCCW(); break;
-		case sf::Keyboard::Y: rotateAxesCW(); break;
-		case sf::Keyboard::M: mirrorAxis1(); break;
-		case sf::Keyboard::C: cycleModes(); break;
+		case sf::Keyboard::W: toggleMirror(); break;
+		case sf::Keyboard::Tab: cycleModes(); break;
 		default: break;
 	}
 }
@@ -271,8 +269,10 @@ void Gui::handleMouseButton(const sf::Event::MouseButtonEvent& ev) {
 			seq->add(std::make_unique<Librate>());
 			fragment_ = std::move(seq);
 		} else if (mode_ == Mode::kTrap) {
-			auto trap = makeTrap(axis0_, axis1_);
-			fragment_ = std::make_unique<Capture>(mouse_pos_, trap);
+			auto trap = makeAlignedTrap(model_, mouse_pos_, mirror_);
+			if (trap) {
+				fragment_ = std::make_unique<Capture>(mouse_pos_, *trap);
+			}
 		}
 	}
 }
@@ -332,8 +332,11 @@ void Gui::draw() {
 	}
 
 	if (mode_ == Mode::kTrap) {
-		for (auto pos : renderTrap(mouse_pos_, makeTrap(axis0_, axis1_))) {
-			drawCell(pos, sf::Color(50, 230, 250, 100));
+		auto trap = makeAlignedTrap(model_, mouse_pos_, mirror_);
+		if (trap) {
+			for (auto pos : renderTrap(mouse_pos_, *trap)) {
+				drawCell(pos, sf::Color(50, 230, 250, 100));
+			}
 		}
 	}
 
@@ -391,18 +394,8 @@ Model::Moves Gui::getMoves() {
 	return {{0, dir}};
 }
 
-void Gui::rotateAxesCW() {
-	axis0_ = rotateCW(axis0_);
-	axis1_ = rotateCW(axis1_);
-}
-
-void Gui::rotateAxesCCW() {
-	axis0_ = rotateCCW(axis0_);
-	axis1_ = rotateCCW(axis1_);
-}
-
-void Gui::mirrorAxis1() {
-	axis1_ = opposite(axis1_);
+void Gui::toggleMirror() {
+	mirror_ = !mirror_;
 }
 
 void Gui::cycleModes() {
