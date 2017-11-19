@@ -65,16 +65,19 @@ public:
 	virtual bool isFinished() const;
 
 private:
+	bool isTriggered(const Model& model) const;
+
 	enum class Status {
-		kUnknown,
 		kConverge,
 		kBuild,
 		kWait,
-		kTrigger,
+		kSnap,
 		kDone
-	} status = Status::kUnknown;
+	} status_ = Status::kConverge;
 
 	Pos origin_;
+	Pos trigger_;
+	Pos snap_origin_;
 	Trap trap_;
 	std::unique_ptr<Fragment> fragment_;
 };
