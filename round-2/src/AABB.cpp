@@ -19,11 +19,11 @@ Pos AABB::center() const {
 }
 
 int AABB::rows() const {
-	return maxs.row - mins.row;
+	return maxs.row - mins.row + 1;
 }
 
 int AABB::cols() const {
-	return maxs.row - mins.row;
+	return maxs.col - mins.col + 1;
 }
 
 int AABB::area() const {
