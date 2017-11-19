@@ -110,6 +110,7 @@ std::vector<Command> load(const char* filename) {
 int main(int argc, char* argv[]) {
 	namespace po = boost::program_options;
 
+	bool stepping = false;
 	po::options_description desc("Allowed options");
 	desc.add_options()
 	    ("help,h", "Print help")
@@ -117,6 +118,7 @@ int main(int argc, char* argv[]) {
 	    ("port,p", po::value<int>()->default_value(11224), "Server port")
 		("player,P", po::value<std::string>()->default_value("gui"), "Controller player")
 		("commands,c", po::value<std::string>(), "Commands file")
+		("stepping,s", po::bool_switch(&stepping), "Start in stepping mode")
 	;
 
 	po::variables_map vm;
@@ -144,7 +146,7 @@ int main(int argc, char* argv[]) {
 
 	evil::Gui gui;
 	evil::DumbPlayer dumb;
-	gui.init();
+	gui.init(stepping);
 
 	auto model = login(connection);
 	auto model_ready = true;

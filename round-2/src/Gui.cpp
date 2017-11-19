@@ -270,7 +270,8 @@ void Gui::drawCell(const Pos& pos, const Cell& cell) {
 }
 
 
-bool Gui::init() {
+bool Gui::init(bool stepping) {
+	is_stepping_ = stepping;
 	return true;
 }
 

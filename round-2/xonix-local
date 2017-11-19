@@ -1,4 +1,4 @@
 #!/bin/bash
 set -e
 
-$(sugoi target -b)/xonix -H localhost
+$(sugoi target -b)/xonix -H localhost "$@"

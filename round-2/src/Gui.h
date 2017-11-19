@@ -104,7 +104,7 @@ class Gui {
 public:
 	Gui();
 
-	bool init();
+	bool init(bool stepping);
 	void close();
 	bool update();
 	void updateStatus();
