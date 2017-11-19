@@ -550,7 +550,7 @@ Matrix<int> Model::lookaheadEnemies(int lookahead) const {
 	for (int i = 0; i <= lookahead; ++i) {
 		for (auto& enemy : states[i]) {
 			int& cell = lookahead_matrix(enemy.pos.row, enemy.pos.col);
-			if (cell == -1) {
+			if (cell == -1 || cell < i) {
 				cell = i;
 			}
 		}
