@@ -472,10 +472,10 @@ std::vector<EnemyState> Model::possibleEnemyStates(const EnemyState& enemy) cons
 		auto lin_side2_p = neighbor(enemy.pos, oh);
 
 		if (isValid(lin_side1_p) && old_cell.owner == getCell(lin_side1_p).owner) {
-			possible_states.push_back({lin_side1_p, ov, oh});
+			possible_states.push_back({lin_side1_p, ov, h});
 		}
 		if (isValid(lin_side2_p) && old_cell.owner == getCell(lin_side2_p).owner) {
-			possible_states.push_back({lin_side2_p, ov, oh});
+			possible_states.push_back({lin_side2_p, v, oh});
 		}
 	}
 
