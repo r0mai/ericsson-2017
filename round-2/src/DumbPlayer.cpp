@@ -180,6 +180,7 @@ AABB DumbPlayer::FindBestArea(const Pos& unit_pos) const {
 	double max_score = 0;
 	AABB max_bounding_box;
 
+	std::cout << "----" << std::endl;
 	for (int r = 0; r < grid.rows(); ++r) {
 		for (int c = 0; c < grid.cols(); ++c) {
 			if (grid(r, c).owner == 0 && areas(r, c) == 0) {
@@ -199,13 +200,22 @@ AABB DumbPlayer::FindBestArea(const Pos& unit_pos) const {
 					continue;
 				}
 
+				const double distance_coeff = 0.3;
+				const double across_distance_coeff = 0.5;
+				const double area_coeff = 5.0;
+				const double enemy_exp_base = 0.9;
+
 				auto enemy_count = GetEnemiesInArea(aabb).size();
 				auto distance = distanceToLongerSideMid(unit_pos, aabb);
 				auto distance_across = std::min(aabb.rows(), aabb.cols());
-				double probabilistic_area = distance_across +
-					std::pow(2.0, -double(enemy_count + 1)) * aabb.area() / 2.0;
-				auto score = probabilistic_area / double(distance + 3*distance_across);
 
+				double score =
+					distance_coeff * distance +
+					across_distance_coeff * distance_across +
+					across_distance_coeff * distance +
+					area_coeff * aabb.area() * std::pow(enemy_exp_base, enemy_count + 1);
+
+				std::cout << "aabb " << aabb << " -> " << score << std::endl;
 				if (score > max_score) {
 					max_score = score;
 					max_bounding_box = aabb;
