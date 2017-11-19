@@ -443,7 +443,7 @@ void Model::killUnit(int unit_idx) {
 	}
 }
 
-void Model::stepEnemy(Enemy& enemy, std::mt19937& rng_engine) {
+std::vector<EnemyState> Model::possibleEnemyStates(const Enemy& enemy) const {
 	auto v = enemy.v_dir;
 	auto h = enemy.h_dir;
 	auto ov = opposite(enemy.v_dir);
@@ -458,26 +458,24 @@ void Model::stepEnemy(Enemy& enemy, std::mt19937& rng_engine) {
 
 	// can we continue moving forward
 	if (isValid(forward_p) && old_cell.owner == getCell(forward_p).owner) {
-		enemy.pos = forward_p;
-		return;
+		return {{forward_p, v, h}};
 	}
 
-	using EnemyState = std::tuple<Pos, Direction, Direction>;
 	std::vector<EnemyState> possible_states;
 	possible_states.reserve(3);
 
 	if (isValid(backwards_p) && old_cell.owner == getCell(backwards_p).owner) {
-		possible_states.push_back(std::make_tuple(backwards_p, ov, oh));
+		possible_states.push_back({backwards_p, ov, oh});
 	}
 	if (isValid(side1_p) && old_cell.owner == getCell(side1_p).owner) {
-		possible_states.push_back(std::make_tuple(side1_p, v, oh));
+		possible_states.push_back({side1_p, v, oh});
 	}
 	if (isValid(side2_p) && old_cell.owner == getCell(side2_p).owner) {
-		possible_states.push_back(std::make_tuple(side2_p, ov, h));
+		possible_states.push_back({side2_p, ov, h});
 	}
 
 	if (!possible_states.empty()) {
-		goto choose_one;
+		return possible_states;
 	}
 
 	// edgy cases
@@ -487,15 +485,15 @@ void Model::stepEnemy(Enemy& enemy, std::mt19937& rng_engine) {
 		auto lin_side2_p = neighbor(enemy.pos, oh);
 
 		if (isValid(lin_side1_p) && old_cell.owner == getCell(lin_side1_p).owner) {
-			possible_states.push_back(std::make_tuple(lin_side1_p, ov, oh));
+			possible_states.push_back({lin_side1_p, ov, oh});
 		}
 		if (isValid(lin_side2_p) && old_cell.owner == getCell(lin_side2_p).owner) {
-			possible_states.push_back(std::make_tuple(lin_side2_p, ov, oh));
+			possible_states.push_back({lin_side2_p, ov, oh});
 		}
 	}
 
 	if (!possible_states.empty()) {
-		goto choose_one;
+		return possible_states;
 	}
 
 	{
@@ -503,19 +501,21 @@ void Model::stepEnemy(Enemy& enemy, std::mt19937& rng_engine) {
 		auto lin_side4_p = neighbor(enemy.pos, h);
 
 		if (isValid(lin_side3_p) && old_cell.owner == getCell(lin_side3_p).owner) {
-			possible_states.push_back(std::make_tuple(lin_side3_p, v, oh));
+			possible_states.push_back({lin_side3_p, v, oh});
 		}
 		if (isValid(lin_side4_p) && old_cell.owner == getCell(lin_side4_p).owner) {
-			possible_states.push_back(std::make_tuple(lin_side4_p, ov, h));
+			possible_states.push_back({lin_side4_p, ov, h});
 		}
 	}
+	return possible_states;
+}
+
+void Model::stepEnemy(Enemy& enemy, std::mt19937& rng_engine) {
+	auto possible_states = possibleEnemyStates(enemy);
 
 	if (!possible_states.empty()) {
-choose_one:
 		auto& state = possible_states[getRandom(rng_engine, 0, possible_states.size() - 1)];
-		enemy.pos = std::get<0>(state);
-		enemy.v_dir = std::get<1>(state);
-		enemy.h_dir = std::get<2>(state);
+		enemy = Enemy{state};
 	}
 }
 

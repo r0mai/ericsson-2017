@@ -35,11 +35,18 @@ struct Unit {
 	Pos next_pos;
 };
 
-struct Enemy {
+struct EnemyState {
 	Pos pos;
 
 	Direction h_dir;
 	Direction v_dir;
+};
+
+struct Enemy : EnemyState {
+	Enemy() = default;
+	Enemy(const EnemyState& state) : EnemyState(state) {}
+
+	// other non-model stuff can go in here
 };
 
 struct Cell {
@@ -96,6 +103,9 @@ public:
 
 	void setTick(int tick);
 	void setLevel(int level);
+
+	// after a step
+	std::vector<EnemyState> possibleEnemyStates(const Enemy& enemy) const;
 
 	void addBorder(int owner = 1, int thickness = 2);
 	bool stepAsServer(std::mt19937& rng_engine);
