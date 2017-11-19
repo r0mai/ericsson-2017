@@ -36,4 +36,9 @@ bool AABB::contains(const Pos& pos) const {
 		pos.col >= mins.col && pos.col <= maxs.col;
 }
 
+std::ostream& operator<<(std::ostream& os, const AABB& aabb) {
+	os << "(" << aabb.mins << ", " << aabb.maxs << ")";
+	return os;
+}
+
 } // namespace evil

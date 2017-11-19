@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Pos.h"
+#include <ostream>
 
 namespace evil {
 
@@ -21,5 +22,7 @@ struct AABB {
 	// inclusive
 	bool contains(const Pos& pos) const;
 };
+
+std::ostream& operator<<(std::ostream& os, const AABB& aabb);
 
 } // namespace evil
