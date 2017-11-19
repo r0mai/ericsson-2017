@@ -15,7 +15,7 @@ bool DumbPlayer::isReady() const {
 }
 
 Model::Moves DumbPlayer::getMoves() {
-	const auto& unit = model_.getUnits()[0];
+	const auto& unit = model_.getUnit(0);
 	while (true) {
 		switch (state_) {
 			case State::kNewCut: {
@@ -80,7 +80,7 @@ void DumbPlayer::FindBestCut() {
 		cut_zigzag_tick_ = 0;
 	}
 
-	const auto& unit = model_.getUnits()[0];
+	const auto& unit = model_.getUnit(0);
 	auto start_distance = taxicabDistance(unit.pos, cut_start_);
 	auto end_distance = taxicabDistance(unit.pos, cut_end_);
 

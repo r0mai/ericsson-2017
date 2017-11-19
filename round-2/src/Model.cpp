@@ -523,16 +523,7 @@ Direction Model::adjustDirection(int unit_index, Direction dir) const {
 	auto& unit = units_[unit_index];
 
 	if (dir == Direction::kNone) {
-		for (int i = 0; i < 4; ++i) {
-			auto nb_dir = toDirection(i);
-			auto nb_pos = neighbor(unit.pos, nb_dir);
-			if (isValid(nb_pos)) {
-				return nb_dir;
-			}
-		}
-
-		assert(false && "Could not adjust direction");
-		return Direction::kNone;
+		dir = unit.dir;
 	}
 
 	auto pos = neighbor(unit.pos, dir);
@@ -595,7 +586,7 @@ Direction Model::directionTowards(const Pos& source_pos, const Pos& target_pos) 
 			return cell.owner == 1;
 		});
 
-	auto pos = getUnits().at(0).pos;
+	auto pos = getUnit(0).pos;
 	auto dst = dst_matrix(pos.row, pos.col);
 	auto closer_dir = Direction::kNone;
 
@@ -624,6 +615,14 @@ void Model::dumpStatus(std::ostream& out) {
 
 Pos Model::size() const {
 	return Pos(grid_.rows(), grid_.cols());
+}
+
+Unit& Model::getUnit(int index) {
+	return units_[index];
+}
+
+const Unit& Model::getUnit(int index) const {
+	return units_[index];
 }
 
 } // namespace evil

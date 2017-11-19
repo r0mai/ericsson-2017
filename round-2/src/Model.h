@@ -86,6 +86,8 @@ public:
 	const Cell& getCell(const Pos& pos) const;
 	Cell& getCell(const Pos& pos);
 	const std::string& getStatus() const;
+	Unit& getUnit(int index);
+	const Unit& getUnit(int index) const;
 
 	int getTick() const;
 	int getLevel() const;
@@ -105,7 +107,7 @@ public:
 	Direction adjustDirection(int unit_index, Direction dir) const;
 	void provision(const Moves& moves);
 
-	Direction directionTowards(const Pos& source_pos, const Pos& target_pos) const;
+	Direction directionTowards(const Pos& src, const Pos& dst) const;
 
 	void dumpStatus(std::ostream& out);
 
