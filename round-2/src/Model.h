@@ -102,6 +102,7 @@ public:
 	int getLevel() const;
 	int getOwns() const;
 	int getCoverage() const;
+	int maxTick() const;
 
 	void setTick(int tick);
 	void setLevel(int level);

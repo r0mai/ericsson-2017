@@ -635,6 +635,10 @@ int Model::getCoverage() const {
 	return count;
 }
 
+int Model::maxTick() const {
+	return 1000 + (level_ % 500) * 10;
+}
+
 void Model::provision(const Moves& moves) {
 	for (auto& move : moves) {
 		auto& unit = units_[move.first];
