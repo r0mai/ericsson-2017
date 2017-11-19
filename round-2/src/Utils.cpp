@@ -1,6 +1,12 @@
 #include "Utils.h"
 
+#include <cmath>
+
 namespace evil {
+
+int taxicabDistance(const Pos& a, const Pos& b) {
+	return std::abs(a.row - b.row) + std::abs(a.col - b.col);
+}
 
 int getArea(const Matrix<bool>& matrix) {
 	int area = 0;

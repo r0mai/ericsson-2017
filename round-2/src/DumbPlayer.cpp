@@ -79,6 +79,15 @@ void DumbPlayer::FindBestCut() {
 		cut_direction_ = Direction::kDown;
 		cut_zigzag_tick_ = 0;
 	}
+
+	const auto& unit = model_.getUnits()[0];
+	auto start_distance = taxicabDistance(unit.pos, cut_start_);
+	auto end_distance = taxicabDistance(unit.pos, cut_end_);
+
+	if (end_distance < start_distance) {
+		std::swap(cut_start_, cut_end_);
+		cut_direction_ = opposite(cut_direction_);
+	}
 }
 
 std::pair<Pos, Pos> DumbPlayer::FindBiggestArea() const {

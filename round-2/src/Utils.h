@@ -25,6 +25,8 @@ int getRandom(T& engine , int low, int high) {
 	return dist(engine);
 }
 
+int taxicabDistance(const Pos& a, const Pos& b);
+
 int getArea(const Matrix<bool>& matrix);
 std::pair<Pos, Pos> getBoundingBox(const Matrix<bool>& matrix);
 
