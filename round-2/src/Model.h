@@ -10,6 +10,9 @@
 #include <memory>
 #include <climits>
 
+
+namespace evil {
+
 template<typename T>
 std::ostream& operator<<(std::ostream& out, const Matrix<T>& mat) {
 	for (int row = 0; row < mat.rows(); ++row) {
@@ -20,9 +23,6 @@ std::ostream& operator<<(std::ostream& out, const Matrix<T>& mat) {
 	}
 	return out;
 }
-
-
-namespace evil {
 
 struct Unit {
 	int owner = -1;

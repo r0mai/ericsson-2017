@@ -1,7 +1,10 @@
 #pragma once
 #include <algorithm>
 #include <stdexcept>
+#include "Pos.h"
 
+
+namespace evil {
 
 template<class T>
 class Matrix {
@@ -29,6 +32,8 @@ public:
 
     reference at(size_type r, size_type c);
     const_reference at(size_type r, size_type c) const;
+    reference at(const Pos& pos);
+    const_reference at(const Pos& pos) const;
 
     reference operator()(size_type r, size_type c);
     const_reference operator()(size_type r, size_type c) const;
@@ -112,19 +117,29 @@ bool Matrix<T>::operator!=(const Matrix<T>& o) const {
 
 template<class T> inline
 typename Matrix<T>::reference Matrix<T>::at(size_type r, size_type c) {
-    if ( r >= rows_ || c >= cols_ ) {
+    if (r >= rows_ || c >= cols_) {
         throw std::out_of_range("Matrix : Out of range");
 
     }
-    return this->operator()(r,c);
+    return this->operator()(r, c);
 }
 
 template<class T> inline
 typename Matrix<T>::const_reference Matrix<T>::at(size_type r, size_type c) const {
-    if ( r >= rows_ || c >= cols_ ) {
+    if (r >= rows_ || c >= cols_) {
         throw std::out_of_range("Matrix : Out of range");
     }
-    return this->operator()(r,c);
+    return this->operator()(r, c);
+}
+
+template<class T> inline
+typename Matrix<T>::reference Matrix<T>::at(const Pos& pos) {
+    return data_[pos.col * rows_ + pos.row];
+}
+
+template<class T> inline
+typename Matrix<T>::const_reference Matrix<T>::at(const Pos& pos) const {
+    return data_[pos.col * rows_ + pos.row];
 }
 
 template<class T> inline
@@ -139,7 +154,7 @@ typename Matrix<T>::const_reference Matrix<T>::operator()(size_type r, size_type
 
 template<class T> inline
 void Matrix<T>::set_if_inbounds(size_type r, size_type c, const value_type& val) {
-    if ( r < rows_ && c < cols_ ) {
+    if (r < rows_ && c < cols_) {
         this->operator()(r, c) = val;
     } else {
         //std::cout << r << ", " << c << std::endl;
@@ -182,3 +197,5 @@ void Matrix<T>::swap(Matrix<T>& rhs) {
     std::swap(cols_, rhs.cols_);
     std::swap(data_, rhs.data_);
 }
+
+} // namespace evil
