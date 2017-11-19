@@ -13,7 +13,8 @@ public:
 private:
 	std::pair<Pos, Pos> FindBiggestArea() const;
 	void FindBestCut();
-	bool CheckIfSafe(Pos pos) const;
+	bool IsSafe(Pos pos) const;
+	bool CanGoFast(const Unit& unit) const;
 
 	enum class State {
 		kNewMap,
@@ -28,6 +29,7 @@ private:
 		Pos start;
 		Pos end;
 		Direction direction;
+		bool can_go_fast = false;
 	} cut_;
 
 	Model model_;

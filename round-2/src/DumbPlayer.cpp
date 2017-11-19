@@ -38,6 +38,8 @@ Model::Moves DumbPlayer::getMoves() {
 			case State::kCut: {
 				if (unit.pos == cut_.end) {
 					state_ = State::kNewCut;
+				} else if (cut_.can_go_fast) {
+					return {{0, cut_.direction}};
 				} else {
 					auto tick = cut_.zigzag_tick;
 					cut_.zigzag_tick += 1;
@@ -51,9 +53,14 @@ Model::Moves DumbPlayer::getMoves() {
 
 					Pos next_pos = neighbor(unit.pos, direction);
 					// if we're stepping off, check if safe
-					if (model_.getCell(next_pos).owner == 0 && !CheckIfSafe(next_pos)) {
-						direction = opposite(cut_.direction);
-						cut_.zigzag_tick = 0;
+					if (model_.getCell(next_pos).owner == 0) {
+						if (!IsSafe(next_pos)) {
+							direction = opposite(cut_.direction);
+							cut_.zigzag_tick = 0;
+						} else {
+							// if safe to step off, we might be able to go fast
+							cut_.can_go_fast = CanGoFast(unit);
+						}
 					}
 					return {{0, direction}};
 				}
@@ -63,7 +70,35 @@ Model::Moves DumbPlayer::getMoves() {
 	}
 }
 
+bool DumbPlayer::CanGoFast(const Unit& unit) const {
+	const int kMaxLookahead = 40;
+	int end_distance = taxicabDistance(unit.pos, cut_.end);
+	if (end_distance > kMaxLookahead) {
+		return false;
+	}
+
+	auto lookahead = model_.lookaheadEnemies(end_distance + 1);
+
+	int d = 1;
+	for (Pos p = neighbor(unit.pos, cut_.direction);
+		p != cut_.end;
+		p = neighbor(p, cut_.direction), ++d)
+	{
+		int la_cell = lookahead(p.row, p.col);
+		if (la_cell == -1) {
+			continue;
+		}
+		if (d+1 < la_cell) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 void DumbPlayer::FindBestCut() {
+	cut_ = Cut{};
+
 	Pos mins;
 	Pos maxs;
 	std::tie(mins, maxs) = FindBiggestArea();
@@ -99,7 +134,7 @@ void DumbPlayer::FindBestCut() {
 	}
 }
 
-bool DumbPlayer::CheckIfSafe(Pos pos) const {
+bool DumbPlayer::IsSafe(Pos pos) const {
 	auto enemy_states = model_.allPossibleEnemyStates(2);
 	for (int i = 1; i <= 2; ++i) {
 		for (auto& enemy_state : enemy_states[i]) {
