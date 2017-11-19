@@ -135,7 +135,9 @@ private:
 	void toggleTrap(const Pos& origin, Direction axis0, Direction axis1);
 	void rotateAxesCW();
 	void rotateAxesCCW();
-	void mirrorHorizontal();
+	void mirrorAxis1();
+
+	void cycleModes();
 
 	sf::RenderWindow window_ {sf::VideoMode(window_w, window_h), "Window"};
 	Model model_;
@@ -147,6 +149,12 @@ private:
 	int delay_ = 0;
 	Direction axis0_ = Direction::kUp;
 	Direction axis1_ = Direction::kRight;
+
+	enum Mode {
+		kNormal,
+		kTrap,
+		kModeCount
+	} mode_ = Mode::kNormal;
 
 	std::unique_ptr<Fragment> fragment_;
 };

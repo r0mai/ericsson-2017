@@ -42,10 +42,6 @@ Model::Moves Gui::GuiPlayer::getMoves() {
 }
 
 
-// Trap
-
-
-
 // Fragmets ////////////////////////////////////////////////////////////////////
 
 // Converge
@@ -259,7 +255,8 @@ void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 
 		case sf::Keyboard::R: rotateAxesCCW(); break;
 		case sf::Keyboard::Y: rotateAxesCW(); break;
-		case sf::Keyboard::M: mirrorHorizontal(); break;
+		case sf::Keyboard::M: mirrorAxis1(); break;
+		case sf::Keyboard::C: cycleModes(); break;
 		default: break;
 	}
 }
@@ -268,15 +265,15 @@ void Gui::handleMouseButton(const sf::Event::MouseButtonEvent& ev) {
 	auto pos = windowToPos(ev.x, ev.y);
 	auto& cell = model_.getCell(pos);
 	if (cell.owner == 1) {
-#if 0
-		auto seq = std::make_unique<Sequence>();
-		seq->add(std::make_unique<Converge>(pos));
-		seq->add(std::make_unique<Librate>());
-		fragment_ = std::move(seq);
-#else
-		auto trap = makeTrap(axis0_, axis1_);
-		fragment_ = std::make_unique<Capture>(mouse_pos_, trap);
-#endif
+		if (mode_ == Mode::kNormal) {
+			auto seq = std::make_unique<Sequence>();
+			seq->add(std::make_unique<Converge>(pos));
+			seq->add(std::make_unique<Librate>());
+			fragment_ = std::move(seq);
+		} else if (mode_ == Mode::kTrap) {
+			auto trap = makeTrap(axis0_, axis1_);
+			fragment_ = std::make_unique<Capture>(mouse_pos_, trap);
+		}
 	}
 }
 
@@ -334,11 +331,11 @@ void Gui::draw() {
 		drawDot(neighbor(unit.next_pos, dir_), sf::Color::Red);
 	}
 
-#if 1
-	for (auto pos : renderTrap(mouse_pos_, makeTrap(axis0_, axis1_))) {
-		drawCell(pos, sf::Color(50, 230, 250, 100));
+	if (mode_ == Mode::kTrap) {
+		for (auto pos : renderTrap(mouse_pos_, makeTrap(axis0_, axis1_))) {
+			drawCell(pos, sf::Color(50, 230, 250, 100));
+		}
 	}
-#endif
 
 	drawCell(mouse_pos_, sf::Color(50, 230, 250, 100));
 	window_.display();
@@ -404,13 +401,12 @@ void Gui::rotateAxesCCW() {
 	axis1_ = rotateCCW(axis1_);
 }
 
-void Gui::mirrorHorizontal() {
-	if (axis0_ == Direction::kLeft || axis0_ == Direction::kRight) {
-		axis0_ = opposite(axis0_);
-	} else {
-		axis1_ = opposite(axis1_);
-	}
+void Gui::mirrorAxis1() {
+	axis1_ = opposite(axis1_);
 }
 
+void Gui::cycleModes() {
+	mode_ = Mode((mode_ + 1) % Mode::kModeCount);
+}
 
 } // namespace evil
