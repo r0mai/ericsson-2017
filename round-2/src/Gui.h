@@ -51,6 +51,7 @@ private:
 class Sequence : public Fragment {
 public:
 	void add(std::unique_ptr<Fragment> fragment);
+	Direction forceGetNext(const Model& model);
 	virtual Direction getNext(const Model& model);
 	virtual bool isFinished() const;
 
@@ -81,6 +82,22 @@ private:
 	Trap trap_;
 	std::unique_ptr<Fragment> fragment_;
 };
+
+class Spike : public Fragment {
+public:
+	Spike(const Pos& origin, Direction dir);
+	virtual Direction getNext(const Model& model);
+	virtual bool isFinished() const;
+
+	static std::vector<Pos> render(const Pos& origin, Direction dir);
+
+private:
+	Pos origin_;
+	Sequence seq_;
+};
+
+
+// Gui /////////////////////////////////////////////////////////////////////////
 
 class Gui {
 public:
@@ -148,6 +165,8 @@ private:
 	enum Mode {
 		kNormal,
 		kTrap,
+		kSpike,
+		//
 		kModeCount
 	} mode_ = Mode::kNormal;
 

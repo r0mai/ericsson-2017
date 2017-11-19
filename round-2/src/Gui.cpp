@@ -123,6 +123,16 @@ Direction Sequence::getNext(const Model& model) {
 	return dir;
 }
 
+Direction Sequence::forceGetNext(const Model& model) {
+	while (!isFinished()) {
+		auto dir = getNext(model);
+		if (dir != Direction::kNone) {
+			return dir;
+		}
+	}
+	return Direction::kNone;
+}
+
 bool Sequence::isFinished() const {
 	return fragments_.empty();
 }
@@ -186,6 +196,43 @@ bool Capture::isTriggered(const Model& model) const {
 
 bool Capture::isFinished() const {
 	return false;
+}
+
+// Spike
+
+Spike::Spike(const Pos& origin, Direction dir)
+	: origin_(origin)
+{
+	auto conv = std::make_unique<Converge>(origin);
+	auto router = std::make_unique<Router>();
+
+	for (int i = 0; i < 2; ++i) {
+		router->add(dir);
+	}
+
+	for (int i = 0; i < 2; ++i) {
+		router->add(opposite(dir));
+	}
+
+	seq_.add(std::move(conv));
+	seq_.add(std::move(router));
+	seq_.add(std::make_unique<Librate>());
+}
+
+Direction Spike::getNext(const Model& model) {
+	return seq_.forceGetNext(model);
+}
+
+bool Spike::isFinished() const {
+	return seq_.isFinished();
+}
+
+std::vector<Pos> Spike::render(const Pos& origin, Direction dir) {
+	std::vector<Pos> vec;
+	vec.push_back(origin);
+	vec.push_back(neighbor(origin, dir));
+	vec.push_back(neighbor(origin, dir, 2));
+	return vec;
 }
 
 
@@ -256,6 +303,7 @@ void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 		case sf::Keyboard::Tab: toggleCycle(); break;
 		case sf::Keyboard::Num1: mode_ = Mode::kNormal; break;
 		case sf::Keyboard::Num2: mode_ = Mode::kTrap; break;
+		case sf::Keyboard::Num3: mode_ = Mode::kSpike; break;
 		default: break;
 	}
 }
@@ -274,6 +322,9 @@ void Gui::handleMouseButton(const sf::Event::MouseButtonEvent& ev) {
 			if (trap) {
 				fragment_ = std::make_unique<Capture>(mouse_pos_, *trap);
 			}
+		} else if (mode_ == Mode::kSpike) {
+			auto dir = toDirection(cycle_ % 4);
+			fragment_ = std::make_unique<Spike>(mouse_pos_, dir);
 		}
 	}
 }
@@ -345,6 +396,12 @@ void Gui::draw() {
 				drawCell(pos, sf::Color(180, 180, 180, 80));
 			}
 		}
+	} else if (mode_ == Mode::kSpike) {
+		auto dir = toDirection(cycle_ % 4);
+		std::cerr << "D " << dir << std::endl;
+		for (auto pos : Spike::render(mouse_pos_, dir)) {
+			drawCell(pos, sf::Color(50, 230, 250, 100));
+		}
 	} else {
 		drawCell(mouse_pos_, sf::Color(50, 230, 250, 100));
 	}
@@ -395,6 +452,7 @@ Model::Moves Gui::getMoves() {
 		if (fragment_->isFinished()) {
 			fragment_.reset();
 		}
+		dir_ = dir;
 	}
 
 	dir = model_.adjustDirection(0, dir);
