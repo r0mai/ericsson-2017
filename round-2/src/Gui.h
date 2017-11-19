@@ -34,6 +34,16 @@ public:
 	virtual bool isFinished() const override;
 };
 
+class Sequence : public Fragment {
+public:
+	void add(std::unique_ptr<Fragment> fragment);
+	virtual Direction getNext(const Model& model);
+	virtual bool isFinished() const;
+
+private:
+	std::deque<std::unique_ptr<Fragment>> fragments_;
+};
+
 
 class Gui {
 public:

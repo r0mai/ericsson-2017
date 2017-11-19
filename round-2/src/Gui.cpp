@@ -67,6 +67,32 @@ bool Librate::isFinished() const {
 	return false;
 }
 
+void Sequence::add(std::unique_ptr<Fragment> fragment) {
+	if (!fragment->isFinished()) {
+		fragments_.push_back(std::move(fragment));
+	}
+}
+
+Direction Sequence::getNext(const Model& model) {
+	if (fragments_.empty()) {
+		return Direction::kNone;
+	}
+
+	assert(fragments_.front()->isFinished() == false);
+	auto dir = fragments_.front()->getNext(model);
+
+	// clean up
+	while (!fragments_.empty() && fragments_.front()->isFinished()) {
+		fragments_.pop_front();
+	}
+
+	return dir;
+}
+
+bool Sequence::isFinished() const {
+	return fragments_.empty();
+}
+
 
 // Gui /////////////////////////////////////////////////////////////////////////
 
@@ -139,7 +165,10 @@ void Gui::handleMouseButton(const sf::Event::MouseButtonEvent& ev) {
 	auto pos = windowToPos(ev.x, ev.y);
 	auto& cell = model_.getCell(pos);
 	if (cell.owner == 1) {
-		fragment_ = std::make_unique<Converge>(pos);
+		auto seq = std::make_unique<Sequence>();
+		seq->add(std::make_unique<Converge>(pos));
+		seq->add(std::make_unique<Librate>());
+		fragment_ = std::move(seq);
 	}
 }
 
