@@ -1,4 +1,6 @@
 #include "Direction.h"
+#include <cassert>
+
 
 namespace evil {
 
@@ -72,6 +74,13 @@ std::vector<Direction> directions(const Pos& pos, const Pos& size) {
 	return vec;
 }
 
+Direction toDirection(int n) {
+	if (n >= 0 && n < 4) {
+		return Direction(n);
+	}
+	assert(false && "Invalid direction index");
+	return Direction::kNone;
+}
 
 
 } // namespace evil

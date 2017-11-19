@@ -14,6 +14,8 @@ enum class Direction {
 	kNone
 };
 
+Direction toDirection(int n);
+
 Pos neighbor(const Pos& pos, Direction dir);
 Pos neighbor(const Pos& pos, Direction dir, int repeat);
 Direction opposite(Direction dir);

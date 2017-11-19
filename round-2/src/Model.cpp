@@ -4,14 +4,6 @@
 
 
 namespace evil {
-namespace {
-
-Direction toDirection(int i) {
-	assert(i >= 0 && i < 4);
-	return Direction(i);
-}
-
-} // namespace
 
 Direction fromDirection(protocol::Direction dir) {
 	switch(dir) {
