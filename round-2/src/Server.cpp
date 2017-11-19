@@ -119,7 +119,7 @@ void Server::Run() {
 				continue;
 			}
 
-			InitModel(3, 0);
+			InitModel(40, 0);
 
 			if (!RunGame()) {
 				continue;

@@ -42,11 +42,20 @@ Model::Moves DumbPlayer::getMoves() {
 					auto tick = cut_zigzag_tick_;
 					cut_zigzag_tick_ += 1;
 					cut_zigzag_tick_ %= 3;
+					Direction direction = Direction::kNone;
 					switch (tick) {
-						case 2:
-						case 0: return {{0, cut_direction_}};
-						case 1: return {{0, opposite(cut_direction_)}};
+						case 1: direction = opposite(cut_direction_); break;
+						case 0:
+						case 2: direction = cut_direction_; break;
 					}
+
+					Pos next_pos = neighbor(unit.pos, direction);
+					// if we're stepping off, check if safe
+					if (model_.getCell(next_pos).owner == 0 && !CheckIfSafe(next_pos)) {
+						direction = opposite(cut_direction_);
+						cut_zigzag_tick_ = 0;
+					}
+					return {{0, direction}};
 				}
 				break;
 			}
@@ -88,6 +97,18 @@ void DumbPlayer::FindBestCut() {
 		std::swap(cut_start_, cut_end_);
 		cut_direction_ = opposite(cut_direction_);
 	}
+}
+
+bool DumbPlayer::CheckIfSafe(Pos pos) const {
+	auto enemy_states = model_.allPossibleEnemyStates(3);
+	for (int i = 1; i < 3; ++i) {
+		for (auto& enemy_state : enemy_states[i]) {
+			if (enemy_state.pos == pos) {
+				return false;
+			}
+		}
+	}
+	return true;
 }
 
 std::pair<Pos, Pos> DumbPlayer::FindBiggestArea() const {

@@ -13,6 +13,7 @@ public:
 private:
 	std::pair<Pos, Pos> FindBiggestArea() const;
 	void FindBestCut();
+	bool CheckIfSafe(Pos pos) const;
 
 	enum class State {
 		kNewMap,

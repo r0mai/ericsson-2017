@@ -105,9 +105,11 @@ public:
 	void setLevel(int level);
 
 	// after a step
-	std::vector<EnemyState> possibleEnemyStates(const Enemy& enemy) const;
+	std::vector<EnemyState> possibleEnemyStates(const EnemyState& enemy) const;
 	// after a step for all enemies
 	std::vector<EnemyState> allPossibleEnemyStates() const;
+	// i EnemyState
+	std::vector<std::vector<EnemyState>> allPossibleEnemyStates(int step) const;
 
 	void addBorder(int owner = 1, int thickness = 2);
 	bool stepAsServer(std::mt19937& rng_engine);

@@ -443,7 +443,7 @@ void Model::killUnit(int unit_idx) {
 	}
 }
 
-std::vector<EnemyState> Model::possibleEnemyStates(const Enemy& enemy) const {
+std::vector<EnemyState> Model::possibleEnemyStates(const EnemyState& enemy) const {
 	auto v = enemy.v_dir;
 	auto h = enemy.h_dir;
 	auto ov = opposite(enemy.v_dir);
@@ -515,6 +515,30 @@ std::vector<EnemyState> Model::allPossibleEnemyStates() const {
 	for (auto& enemy : enemies_) {
 		auto enemy_states = possibleEnemyStates(enemy);
 		states.insert(states.end(), enemy_states.begin(), enemy_states.end());
+	}
+	return states;
+}
+
+std::vector<std::vector<EnemyState>> Model::allPossibleEnemyStates(int step) const {
+	std::vector<std::vector<EnemyState>> states;
+	states.reserve(step + 1);
+	states.emplace_back();
+
+	std::vector<EnemyState> enemies(enemies_.size());
+	for (int i = 0; i < enemies.size(); ++i) {
+		states.back().push_back(enemies_[i]);
+	}
+	for (int i = 1; i < step; ++i) {
+		auto& prev_states = states.back();
+		states.emplace_back();
+		auto& current_states = states.back();
+		for (auto& enemy : prev_states) {
+			auto next_states = possibleEnemyStates(enemy);
+			current_states.insert(
+				current_states.end(),
+				next_states.begin(), next_states.end()
+			);
+		}
 	}
 	return states;
 }
