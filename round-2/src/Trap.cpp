@@ -30,7 +30,7 @@ Trap makeTrap(Direction axis0, Direction axis1) {
 }
 
 boost::optional<Trap> makeAlignedTrap(
-	const Model& model, const Pos& origin, bool mirror)
+	const Model& model, const Pos& origin, int cycle)
 {
 	std::vector<Pos> blues = {{0, 0}, {1, 0}, {2, 0}};
 	std::vector<Pos> whites = {{1, 1}, {2, 2}, {2, 3}, {3, 3}, {4, 4}};
@@ -42,10 +42,11 @@ boost::optional<Trap> makeAlignedTrap(
 		Direction::kUp
 	};
 
+	std::vector<std::pair<Direction, Direction>> axes;
+
 	for (auto axis0 : directions) {
-		auto base_axis = (mirror ? opposite(axis0) : axis0);
 		std::array<Direction, 2> normals = {
-			rotateCW(base_axis), rotateCCW(base_axis)
+			rotateCW(axis0), rotateCCW(axis0)
 		};
 
 		for (auto axis1 : normals) {
@@ -73,12 +74,17 @@ boost::optional<Trap> makeAlignedTrap(
 			}
 
 			if (match) {
-				return makeTrap(axis0, axis1);
+				axes.push_back({axis0, axis1});
 			}
 		}
 	}
 
-	return boost::none;
+	if (axes.empty()) {
+		return boost::none;
+	}
+
+	auto choice = axes[cycle % axes.size()];
+	return makeTrap(choice.first, choice.second);
 }
 
 std::vector<Pos> renderTrap(const Pos& origin, const Trap& trap) {

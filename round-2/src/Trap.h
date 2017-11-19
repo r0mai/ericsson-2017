@@ -22,7 +22,7 @@ struct Trap {
 };
 
 Trap makeTrap(Direction axis0, Direction axis1);
-boost::optional<Trap> makeAlignedTrap(const Model& model, const Pos& pos, bool mirror);
+boost::optional<Trap> makeAlignedTrap(const Model& model, const Pos& pos, int cycle);
 
 std::vector<Pos> renderTrap(const Pos& origin, const Trap& trap);
 Pos renderTrigger(const Pos& origin, const Trap& trap);

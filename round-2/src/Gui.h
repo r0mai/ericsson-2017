@@ -133,7 +133,7 @@ private:
 	void toggleLibrate();
 	void toggleManual(Direction dir);
 	void toggleTrap(const Pos& origin, Direction axis0, Direction axis1);
-	void toggleMirror();
+	void toggleCycle();
 
 	sf::RenderWindow window_ {sf::VideoMode(window_w, window_h), "Window"};
 	Model model_;
@@ -143,7 +143,7 @@ private:
 	GuiPlayer player_;
 	Clock::time_point last_update_;
 	int delay_ = 0;
-	bool mirror_ = false;
+	int cycle_ = 0;
 
 	enum Mode {
 		kNormal,
