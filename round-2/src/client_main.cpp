@@ -110,7 +110,6 @@ std::vector<Command> load(const char* filename) {
 int main(int argc, char* argv[]) {
 	namespace po = boost::program_options;
 
-	// Declare the supported options.
 	po::options_description desc("Allowed options");
 	desc.add_options()
 	    ("help,h", "Print help")

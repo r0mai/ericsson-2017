@@ -25,6 +25,8 @@ private:
 class Server {
 public:
 	void SetSeed(int seed);
+	void SetZergsInside(int count);
+	void SetZergsOutside(int count);
 	void Run();
 
 private:
@@ -34,6 +36,9 @@ private:
 
 	// inclusive
 	int GetRandom(int low, int high);
+
+	int zergs_inside_ = 7;
+	int zergs_outside_ = 0;
 
 	std::tuple<Direction, Direction> GetRandomDirection();
 

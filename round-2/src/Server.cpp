@@ -85,6 +85,14 @@ void Server::SetSeed(int seed) {
 	mt_engine_.seed(seed);
 }
 
+void Server::SetZergsInside(int count) {
+	zergs_inside_ = count;
+}
+
+void Server::SetZergsOutside(int count) {
+	zergs_outside_ = count;
+}
+
 int Server::GetRandom(int low, int high) {
 	return getRandom(mt_engine_, low, high);
 }
@@ -119,7 +127,7 @@ void Server::Run() {
 				continue;
 			}
 
-			InitModel(40, 0);
+			InitModel(zergs_inside_, zergs_outside_);
 
 			if (!RunGame()) {
 				continue;
