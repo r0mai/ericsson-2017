@@ -1,5 +1,6 @@
 #pragma once
 
+#include "AABB.h"
 #include "Player.h"
 
 namespace evil {
@@ -11,8 +12,8 @@ public:
 	virtual Model::Moves getMoves() override;
 
 private:
-	std::pair<Pos, Pos> FindBiggestArea() const;
-	void FindBestCut();
+	AABB FindBestArea(const Pos& unit_pos) const;
+	void FindBestCut(const Pos& unit_pos);
 	bool IsSafe(Pos pos) const;
 	bool CanGoFast(const Unit& unit) const;
 

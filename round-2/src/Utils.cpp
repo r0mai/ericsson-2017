@@ -16,7 +16,7 @@ int getArea(const Matrix<bool>& matrix) {
 	return area;
 }
 
-std::pair<Pos, Pos> getBoundingBox(const Matrix<bool>& matrix) {
+AABB getBoundingBox(const Matrix<bool>& matrix) {
 	Pos mins{int(matrix.rows()), int(matrix.cols())};
 	Pos maxs{-1, -1};
 

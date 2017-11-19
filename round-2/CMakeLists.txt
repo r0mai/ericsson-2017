@@ -24,6 +24,7 @@ add_library(xonixLib
     src/DumbPlayer.cpp
     src/Trap.cpp
     src/Utils.cpp
+    src/AABB.cpp
     src/protocol/Common.capnp.c++
     src/protocol/Command.capnp.c++
     src/protocol/Response.capnp.c++

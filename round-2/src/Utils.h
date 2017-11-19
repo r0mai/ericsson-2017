@@ -7,6 +7,7 @@
 #include <deque>
 #include <cassert>
 
+#include "AABB.h"
 #include "Direction.h"
 #include "Matrix.h"
 
@@ -28,7 +29,7 @@ int getRandom(T& engine , int low, int high) {
 int taxicabDistance(const Pos& a, const Pos& b);
 
 int getArea(const Matrix<bool>& matrix);
-std::pair<Pos, Pos> getBoundingBox(const Matrix<bool>& matrix);
+AABB getBoundingBox(const Matrix<bool>& matrix);
 
 template<typename T, typename U, typename F>
 void mergeMatrices(Matrix<T>& a, const Matrix<U>& b, F f) {

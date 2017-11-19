@@ -3,6 +3,26 @@
 
 namespace evil {
 
+namespace {
+
+int distanceToLongerSideMid(const Pos& a, const AABB& aabb) {
+	Pos size = aabb.size();
+	Pos center = aabb.center();
+
+	Pos p1, p2;
+	if (size.row > size.col) {
+		p1 = {center.row, aabb.mins.col - 1};
+		p2 = {center.row, aabb.maxs.col + 1};
+	} else {
+		p1 = {aabb.mins.row - 1, center.col};
+		p2 = {aabb.maxs.row + 1, center.col};
+	}
+
+	return std::min(taxicabDistance(a, p1), taxicabDistance(a, p2));
+}
+
+} // anonymous namespace
+
 void DumbPlayer::update(const Model& model) {
 	if (model_.getLevel() != model.getLevel()) {
 		state_ = State::kNewMap;
@@ -19,7 +39,7 @@ Model::Moves DumbPlayer::getMoves() {
 	while (true) {
 		switch (state_) {
 			case State::kNewCut: {
-				FindBestCut();
+				FindBestCut(unit.pos);
 				state_ = State::kGoTowardsCutStart;
 				break;
 			}
@@ -96,37 +116,27 @@ bool DumbPlayer::CanGoFast(const Unit& unit) const {
 	return true;
 }
 
-void DumbPlayer::FindBestCut() {
+void DumbPlayer::FindBestCut(const Pos& unit_pos) {
 	cut_ = Cut{};
 
-	Pos mins;
-	Pos maxs;
-	std::tie(mins, maxs) = FindBiggestArea();
-	Pos center = {
-		(mins.row + maxs.row) / 2,
-		(mins.col + maxs.col) / 2
-	};
-
-	Pos size = {
-		maxs.row - mins.row,
-		maxs.col - mins.col
-	};
+	auto aabb = FindBestArea(unit_pos);
+	Pos center = aabb.center();
+	Pos size = aabb.size();
 
 	if (size.row > size.col) {
-		cut_.start = {center.row, mins.col - 1};
-		cut_.end =   {center.row, maxs.col + 1};
+		cut_.start = {center.row, aabb.mins.col - 1};
+		cut_.end =   {center.row, aabb.maxs.col + 1};
 		cut_.direction = Direction::kRight;
 		cut_.zigzag_tick = 0;
 	} else {
-		cut_.start = {mins.row - 1, center.col};
-		cut_.end =   {maxs.row + 1, center.col};
+		cut_.start = {aabb.mins.row - 1, center.col};
+		cut_.end =   {aabb.maxs.row + 1, center.col};
 		cut_.direction = Direction::kDown;
 		cut_.zigzag_tick = 0;
 	}
 
-	const auto& unit = model_.getUnit(0);
-	auto start_distance = taxicabDistance(unit.pos, cut_.start);
-	auto end_distance = taxicabDistance(unit.pos, cut_.end);
+	auto start_distance = taxicabDistance(unit_pos, cut_.start);
+	auto end_distance = taxicabDistance(unit_pos, cut_.end);
 
 	if (end_distance < start_distance) {
 		std::swap(cut_.start, cut_.end);
@@ -146,12 +156,12 @@ bool DumbPlayer::IsSafe(Pos pos) const {
 	return true;
 }
 
-std::pair<Pos, Pos> DumbPlayer::FindBiggestArea() const {
+AABB DumbPlayer::FindBestArea(const Pos& unit_pos) const {
 	auto& grid = model_.getGrid();
 	Matrix<int> areas{grid.rows(), grid.cols()};
 
-	int max_area = 0;
-	std::pair<Pos, Pos> max_bounding_box;
+	double max_score = 0;
+	AABB max_bounding_box;
 
 	for (int r = 0; r < grid.rows(); ++r) {
 		for (int c = 0; c < grid.cols(); ++c) {
@@ -166,10 +176,14 @@ std::pair<Pos, Pos> DumbPlayer::FindBiggestArea() const {
 					}
 				});
 
-				int area = getArea(area_matrix);
-				if (area > max_area) {
-					max_area = area;
-					max_bounding_box = getBoundingBox(area_matrix);
+				auto aabb = getBoundingBox(area_matrix);
+				auto distance = distanceToLongerSideMid(unit_pos, aabb);
+				auto distance_across = std::min(aabb.rows(), aabb.cols());
+				auto score = aabb.area() / double(distance + 3*distance_across);
+
+				if (score > max_score) {
+					max_score = score;
+					max_bounding_box = aabb;
 				}
 			}
 		}
