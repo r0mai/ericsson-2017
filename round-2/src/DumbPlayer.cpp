@@ -116,6 +116,16 @@ bool DumbPlayer::CanGoFast(const Unit& unit) const {
 	return true;
 }
 
+int DumbPlayer::NumberOfEnemiesInArea(const Matrix<bool>& area) const {
+	int count = 0;
+	for (auto& enemy : model_.getEnemies()) {
+		if (area(enemy.pos.row, enemy.pos.col)) {
+			++count;
+		}
+	}
+	return count;
+}
+
 void DumbPlayer::FindBestCut(const Pos& unit_pos) {
 	cut_ = Cut{};
 
@@ -176,10 +186,13 @@ AABB DumbPlayer::FindBestArea(const Pos& unit_pos) const {
 					}
 				});
 
+				auto enemy_count = NumberOfEnemiesInArea(area_matrix);
 				auto aabb = getBoundingBox(area_matrix);
 				auto distance = distanceToLongerSideMid(unit_pos, aabb);
 				auto distance_across = std::min(aabb.rows(), aabb.cols());
-				auto score = aabb.area() / double(distance + 3*distance_across);
+				double probabilistic_area = distance_across +
+					std::pow(2.0, -double(enemy_count + 1)) * aabb.area() / 2.0;
+				auto score = probabilistic_area / double(distance + 3*distance_across);
 
 				if (score > max_score) {
 					max_score = score;

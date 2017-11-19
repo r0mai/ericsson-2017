@@ -16,6 +16,7 @@ private:
 	void FindBestCut(const Pos& unit_pos);
 	bool IsSafe(Pos pos) const;
 	bool CanGoFast(const Unit& unit) const;
+	int NumberOfEnemiesInArea(const Matrix<bool>& area) const;
 
 	enum class State {
 		kNewMap,
