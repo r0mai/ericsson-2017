@@ -144,7 +144,8 @@ Capture::Capture(const Pos& origin, const Trap& trap)
 	, trap_(trap)
 	, status_(Status::kConverge)
 {
-	trigger_ = renderTrigger(origin, trap);
+	trigger1_ = renderTrigger1(origin, trap);
+	trigger2_ = renderTrigger2(origin, trap);
 	fragment_ = std::make_unique<Converge>(origin);
 }
 
@@ -186,7 +187,9 @@ Direction Capture::getNext(const Model& model) {
 bool Capture::isTriggered(const Model& model) const {
 	bool triggered = false;
 	for (auto& enemy : model.getEnemies()) {
-		if (enemy.pos == trigger_) {
+		auto enemy_next = neighbor(
+			neighbor(enemy.pos, enemy.v_dir), enemy.h_dir);
+		if (enemy.pos == trigger1_ && enemy_next == trigger2_) {
 			triggered = true;
 			break;
 		}
@@ -398,7 +401,6 @@ void Gui::draw() {
 		}
 	} else if (mode_ == Mode::kSpike) {
 		auto dir = toDirection(cycle_ % 4);
-		std::cerr << "D " << dir << std::endl;
 		for (auto pos : Spike::render(mouse_pos_, dir)) {
 			drawCell(pos, sf::Color(50, 230, 250, 100));
 		}

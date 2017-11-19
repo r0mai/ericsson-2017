@@ -77,7 +77,8 @@ private:
 	} status_ = Status::kConverge;
 
 	Pos origin_;
-	Pos trigger_;
+	Pos trigger1_;
+	Pos trigger2_;
 	Pos snap_origin_;
 	Trap trap_;
 	std::unique_ptr<Fragment> fragment_;

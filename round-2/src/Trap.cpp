@@ -25,7 +25,8 @@ Trap makeTrap(Direction axis0, Direction axis1) {
 		vd, vd
 	};
 
-	trap.trigger = neighbor(neighbor({0, 0}, vd, 3), hd, 3);
+	trap.trigger1 = neighbor(neighbor({0, 0}, vd, 3), hd, 3);
+	trap.trigger2 = neighbor(neighbor({0, 0}, vd, 2), hd, 2);
 	return trap;
 }
 
@@ -98,10 +99,17 @@ std::vector<Pos> renderTrap(const Pos& origin, const Trap& trap) {
 	return vec;
 }
 
-Pos renderTrigger(const Pos& origin, const Trap& trap) {
+Pos renderTrigger1(const Pos& origin, const Trap& trap) {
 	Pos pos = origin;
-	pos.row += trap.trigger.row;
-	pos.col += trap.trigger.col;
+	pos.row += trap.trigger1.row;
+	pos.col += trap.trigger1.col;
+	return pos;
+}
+
+Pos renderTrigger2(const Pos& origin, const Trap& trap) {
+	Pos pos = origin;
+	pos.row += trap.trigger2.row;
+	pos.col += trap.trigger2.col;
 	return pos;
 }
 
