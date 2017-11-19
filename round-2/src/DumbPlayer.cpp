@@ -175,20 +175,25 @@ bool DumbPlayer::IsSafe(Pos pos) const {
 
 AABB DumbPlayer::FindBestArea(const Pos& unit_pos) const {
 	auto& grid = model_.getGrid();
-	Matrix<int> areas{grid.rows(), grid.cols()};
+	Matrix<int> areas_matrix{grid.rows(), grid.cols()};
 
-	double max_score = 0;
-	AABB max_bounding_box;
+	struct AreaDesc {
+		AABB aabb;
+		int area = 0;
+		int enemy_count = 0;
+		int distance_to_start = 0;
+		int distance_across = 0;
+	};
+	std::vector<AreaDesc> areas;
 
-	std::cout << "----" << std::endl;
 	for (int r = 0; r < grid.rows(); ++r) {
 		for (int c = 0; c < grid.cols(); ++c) {
-			if (grid(r, c).owner == 0 && areas(r, c) == 0) {
+			if (grid(r, c).owner == 0 && areas_matrix(r, c) == 0) {
 				auto area_matrix = floodFill(grid, {r, c}, [&](const Pos& p) {
 					return grid(p.row, p.col).owner == 0;
 				});
 
-				mergeMatrices(areas, area_matrix, [&](int& area_idx, bool in_area) {
+				mergeMatrices(areas_matrix, area_matrix, [&](int& area_idx, bool in_area) {
 					if (in_area) {
 						area_idx = 1;
 					}
@@ -200,31 +205,41 @@ AABB DumbPlayer::FindBestArea(const Pos& unit_pos) const {
 					continue;
 				}
 
-				const double distance_coeff = 0.3;
-				const double across_distance_coeff = 0.5;
-				const double area_coeff = 5.0;
-				const double enemy_exp_base = 0.9;
+				AreaDesc area_desc;
+				area_desc.aabb = aabb;
+				area_desc.area = aabb.area();
+				area_desc.enemy_count = GetEnemiesInArea(aabb).size();
+				area_desc.distance_to_start = distanceToLongerSideMid(unit_pos, aabb);
+				area_desc.distance_across = std::min(aabb.rows(), aabb.cols());
 
-				auto enemy_count = GetEnemiesInArea(aabb).size();
-				auto distance = distanceToLongerSideMid(unit_pos, aabb);
-				auto distance_across = std::min(aabb.rows(), aabb.cols());
-
-				double score =
-					distance_coeff * distance +
-					across_distance_coeff * distance_across +
-					across_distance_coeff * distance +
-					area_coeff * aabb.area() * std::pow(enemy_exp_base, enemy_count + 1);
-
-				std::cout << "aabb " << aabb << " -> " << score << std::endl;
-				if (score > max_score) {
-					max_score = score;
-					max_bounding_box = aabb;
-				}
+				areas.push_back(area_desc);
 			}
 		}
 	}
 
-	return max_bounding_box;
+	if (areas.empty()) {
+		std::cerr << "Ran out of areas to discover" << std::endl;
+		return {};
+	}
+
+	int largest_area = std::max_element(begin(areas), end(areas),
+		[](const auto& lhs, const auto& rhs) {
+			return lhs.aabb.area() < rhs.aabb.area();
+		})->aabb.area();
+
+	auto best_area = std::max_element(begin(areas), end(areas),
+		[&](const AreaDesc& lhs, const AreaDesc& rhs) {
+			double lhs_norm_area = lhs.area / double(largest_area);
+			double rhs_norm_area = rhs.area / double(largest_area);
+
+			double lhs_score = (180 - lhs.distance_to_start) * lhs_norm_area;
+			double rhs_score = (180 - rhs.distance_to_start) * rhs_norm_area;
+
+			return lhs_score < rhs_score;
+		}
+	);
+
+	return best_area->aabb;
 }
 
 } // namespace evil
