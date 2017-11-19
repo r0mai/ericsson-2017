@@ -88,7 +88,7 @@ bool DumbPlayer::CanGoFast(const Unit& unit) const {
 		if (la_cell == -1) {
 			continue;
 		}
-		if (d+1 < la_cell) {
+		if (d-1 < la_cell) {
 			return false;
 		}
 	}
