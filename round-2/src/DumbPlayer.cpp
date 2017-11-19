@@ -71,7 +71,7 @@ Model::Moves DumbPlayer::getMoves() {
 }
 
 bool DumbPlayer::CanGoFast(const Unit& unit) const {
-	const int kMaxLookahead = 40;
+	const int kMaxLookahead = 80;
 	int end_distance = taxicabDistance(unit.pos, cut_.end);
 	if (end_distance > kMaxLookahead) {
 		return false;
