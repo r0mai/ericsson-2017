@@ -2,11 +2,37 @@
 
 #include <SFML/Graphics.hpp>
 #include <chrono>
+#include <deque>
 #include "Protocol.h"
 #include "Model.h"
 #include "Player.h"
 
 namespace evil {
+
+
+class Fragment {
+public:
+	virtual ~Fragment() = default;
+	virtual Direction getNext(const Model& model) = 0;
+	virtual bool isFinished() const = 0;
+};
+
+class Converge : public Fragment {
+public:
+	Converge(const Pos& target);
+	virtual Direction getNext(const Model& model) override;
+	virtual bool isFinished() const override;
+
+private:
+	Pos target_;
+	bool is_finished_ = false;
+};
+
+class Librate : public Fragment {
+public:
+	virtual Direction getNext(const Model& model) override;
+	virtual bool isFinished() const override;
+};
 
 
 class Gui {
@@ -45,12 +71,6 @@ private:
 		Gui* gui_;
 	};
 
-	enum class Mode {
-		kNormal,
-		kLibrate,
-		kTracking
-	};
-
 	void onPlayerUpdate(const Model& model);
 	bool isReady();
 	Model::Moves getMoves();
@@ -63,21 +83,20 @@ private:
 	void handleKeypress(const sf::Event::KeyEvent& ev);
 	void handleMouseButton(const sf::Event::MouseButtonEvent& ev);
 
-	void toggleLibrate(Direction dir = Direction::kNone);
+	void toggleLibrate();
+	void toggleManual(Direction dir);
 	std::vector<Pos> makeTrap(const Pos& origin);
 
 	sf::RenderWindow window_ {sf::VideoMode(window_w, window_h), "Window"};
 	Model model_;
-	Direction dir_ = Direction::kNone;
+	Direction dir_ = Direction::kUp;
 	Pos mouse_pos_;
 
 	GuiPlayer player_;
 	Clock::time_point last_update_;
 	int delay_ = 0;
 
-	Mode mode_ = Mode::kNormal;
-	Direction librate_dir_ = Direction::kNone;
-	Pos target_pos_;
+	std::unique_ptr<Fragment> fragment_;
 };
 
 } // namespace evil

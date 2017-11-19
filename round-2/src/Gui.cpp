@@ -40,6 +40,34 @@ Model::Moves Gui::GuiPlayer::getMoves() {
 }
 
 
+// Fragmets ////////////////////////////////////////////////////////////////////
+
+Converge::Converge(const Pos& target)
+	: target_(target)
+{}
+
+Direction Converge::getNext(const Model& model) {
+	auto& unit = model.getUnit(0);
+	auto dir = model.directionTowards(unit.pos, target_);
+	is_finished_ = (
+		dir == Direction::kNone ||
+		neighbor(unit.pos, dir) == target_);
+	return dir;
+}
+
+bool Converge::isFinished() const {
+	return is_finished_;
+}
+
+Direction Librate::getNext(const Model& model) {
+	return opposite(model.getUnit(0).dir);
+}
+
+bool Librate::isFinished() const {
+	return false;
+}
+
+
 // Gui /////////////////////////////////////////////////////////////////////////
 
 Gui::Gui()
@@ -80,27 +108,29 @@ void Gui::setDrawModel(Model model) {
 	updateStatus();
 }
 
-void Gui::toggleLibrate(Direction dir) {
-	if (mode_ != Mode::kLibrate) {
-		mode_ = Mode::kLibrate;
-		librate_dir_ = (dir == Direction::kNone ? dir_ : dir);
-	} else {
-		mode_ = Mode::kNormal;
-	}
+void Gui::toggleLibrate() {
+	fragment_ = std::make_unique<Librate>();
+}
+
+void Gui::toggleManual(Direction dir) {
+	dir_ = dir;
+	fragment_.reset();
 }
 
 void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 	switch (ev.code) {
-		case sf::Keyboard::Up: dir_ = Direction::kUp; break;
-		case sf::Keyboard::Down: dir_ = Direction::kDown; break;
-		case sf::Keyboard::Right: dir_ = Direction::kRight; break;
-		case sf::Keyboard::Left: dir_ = Direction::kLeft; break;
+		case sf::Keyboard::X: fragment_.reset(); break;
 		case sf::Keyboard::Escape: window_.close(); break;
+
+		case sf::Keyboard::Up: toggleManual(Direction::kUp); break;
+		case sf::Keyboard::Down: toggleManual(Direction::kDown); break;
+		case sf::Keyboard::Right: toggleManual(Direction::kRight); break;
+		case sf::Keyboard::Left: toggleManual(Direction::kLeft); break;
+		case sf::Keyboard::L: toggleLibrate(); break;
 		case sf::Keyboard::F: delay_ = 0; break;
 		case sf::Keyboard::D: delay_ = 100; break;
 		case sf::Keyboard::S: delay_ = 200; break;
 		case sf::Keyboard::A: delay_ = 1000; break;
-		case sf::Keyboard::L: toggleLibrate(); break;
 		default: break;
 	}
 }
@@ -109,8 +139,7 @@ void Gui::handleMouseButton(const sf::Event::MouseButtonEvent& ev) {
 	auto pos = windowToPos(ev.x, ev.y);
 	auto& cell = model_.getCell(pos);
 	if (cell.owner == 1) {
-		target_pos_ = pos;
-		mode_ = Mode::kTracking;
+		fragment_ = std::make_unique<Converge>(pos);
 	}
 }
 
@@ -214,20 +243,12 @@ bool Gui::isReady() {
 
 Model::Moves Gui::getMoves() {
 	Model::Moves moves;
-	Direction dir = dir_;
+	auto dir = dir_;
 
-	if (mode_ == Mode::kLibrate) {
-		dir = librate_dir_;
-		librate_dir_ = opposite(librate_dir_);
-	} else if (mode_ == Mode::kTracking) {
-		auto pos = model_.getUnits().at(0).pos;
-		if (pos != target_pos_) {
-			dir = model_.directionTowards(pos, target_pos_);
-			if (neighbor(pos, dir) == target_pos_) {
-				toggleLibrate(opposite(dir));
-			}
-		} else {
-			toggleLibrate();
+	if (fragment_) {
+		dir = fragment_->getNext(model_);
+		if (fragment_->isFinished()) {
+			fragment_.reset();
 		}
 	}
 
