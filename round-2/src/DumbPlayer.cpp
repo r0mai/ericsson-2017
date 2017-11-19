@@ -100,8 +100,8 @@ void DumbPlayer::FindBestCut() {
 }
 
 bool DumbPlayer::CheckIfSafe(Pos pos) const {
-	auto enemy_states = model_.allPossibleEnemyStates(3);
-	for (int i = 1; i < 3; ++i) {
+	auto enemy_states = model_.allPossibleEnemyStates(2);
+	for (int i = 1; i <= 2; ++i) {
 		for (auto& enemy_state : enemy_states[i]) {
 			if (enemy_state.pos == pos) {
 				return false;

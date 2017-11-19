@@ -108,8 +108,15 @@ public:
 	std::vector<EnemyState> possibleEnemyStates(const EnemyState& enemy) const;
 	// after a step for all enemies
 	std::vector<EnemyState> allPossibleEnemyStates() const;
-	// i EnemyState
+
+	// returned vector size is (step + 1)
 	std::vector<std::vector<EnemyState>> allPossibleEnemyStates(int step) const;
+
+	// Enemy lookahead n steps
+	// -1 means no reachable/don't know
+	// 0 means enemy is there at the current tick
+	// 0 < n <= lookahead means an enemy could be there after n ticks
+	Matrix<int> lookaheadEnemies(int lookahead) const;
 
 	void addBorder(int owner = 1, int thickness = 2);
 	bool stepAsServer(std::mt19937& rng_engine);

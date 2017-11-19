@@ -528,7 +528,7 @@ std::vector<std::vector<EnemyState>> Model::allPossibleEnemyStates(int step) con
 	for (int i = 0; i < enemies.size(); ++i) {
 		states.back().push_back(enemies_[i]);
 	}
-	for (int i = 1; i < step; ++i) {
+	for (int i = 1; i <= step; ++i) {
 		auto& prev_states = states.back();
 		states.emplace_back();
 		auto& current_states = states.back();
@@ -541,6 +541,22 @@ std::vector<std::vector<EnemyState>> Model::allPossibleEnemyStates(int step) con
 		}
 	}
 	return states;
+}
+
+Matrix<int> Model::lookaheadEnemies(int lookahead) const {
+	Matrix<int> lookahead_matrix(grid_.rows(), grid_.cols(), -1);
+
+	auto states = allPossibleEnemyStates(lookahead);
+	for (int i = 0; i <= lookahead; ++i) {
+		for (auto& enemy : states[i]) {
+			int& cell = lookahead_matrix(enemy.pos.row, enemy.pos.col);
+			if (cell == -1) {
+				cell = i;
+			}
+		}
+	}
+
+	return lookahead_matrix;
 }
 
 void Model::stepEnemy(Enemy& enemy, std::mt19937& rng_engine) {
