@@ -152,6 +152,7 @@ private:
 	void toggleManual(Direction dir);
 	void toggleTrap(const Pos& origin, Direction axis0, Direction axis1);
 	void toggleCycle();
+	void toggleStepping(bool enable);
 
 	sf::RenderWindow window_ {sf::VideoMode(window_w, window_h), "Window"};
 	Model model_;
@@ -162,6 +163,8 @@ private:
 	Clock::time_point last_update_;
 	int delay_ = 0;
 	int cycle_ = 0;
+	bool is_stepping_ = false;
+	bool step_ready_ = false;
 
 	enum Mode {
 		kNormal,

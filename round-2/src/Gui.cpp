@@ -307,6 +307,8 @@ void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 		case sf::Keyboard::Num1: mode_ = Mode::kNormal; break;
 		case sf::Keyboard::Num2: mode_ = Mode::kTrap; break;
 		case sf::Keyboard::Num3: mode_ = Mode::kSpike; break;
+		case sf::Keyboard::Space: toggleStepping(false); break;
+		case sf::Keyboard::Period: toggleStepping(true); break;
 		default: break;
 	}
 }
@@ -438,9 +440,14 @@ Player& Gui::getPlayer() {
 void Gui::onPlayerUpdate(const Model& model) {
 	model_ = model;
 	last_update_ = Clock::now();
+	step_ready_ = false;
 }
 
 bool Gui::isReady() {
+	if (is_stepping_) {
+		return step_ready_;
+	}
+
 	auto delta = Clock::now() - last_update_;
 	return delta > std::chrono::milliseconds(delay_);
 }
@@ -458,11 +465,18 @@ Model::Moves Gui::getMoves() {
 	}
 
 	dir = model_.adjustDirection(0, dir);
+
 	return {{0, dir}};
 }
 
 void Gui::toggleCycle() {
 	++cycle_;
 }
+
+void Gui::toggleStepping(bool enable) {
+	step_ready_ = true;
+	is_stepping_ = enable;
+}
+
 
 } // namespace evil
