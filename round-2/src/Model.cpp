@@ -659,7 +659,8 @@ void Model::dumpStatus(std::ostream& out) {
 	out << "T " << tick_ << " ";
 	out << "C " << getCoverage() << " ";
 	out << "H " << units_[0].health << " ";
-	out << units_[0].dir << std::endl;
+	out << units_[0].dir << " ";
+	out << status_ << std::endl;
 }
 
 Pos Model::size() const {
