@@ -1,5 +1,7 @@
 #pragma once
 
+#include <ostream>
+
 namespace evil {
 
 struct Pos {
@@ -9,5 +11,7 @@ struct Pos {
 	int row = 0;
 	int col = 0;
 };
+
+std::ostream& operator<<(std::ostream& out, const Pos& pos);
 
 } // namespace evil

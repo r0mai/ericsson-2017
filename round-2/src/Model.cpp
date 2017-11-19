@@ -29,11 +29,6 @@ protocol::Direction toProtocolDirection(Direction dir) {
 	return protocol::Direction::DOWN;
 }
 
-std::ostream& operator<<(std::ostream& out, const Pos& pos) {
-	out << "(" << pos.row << ", " << pos.col << ")";
-	return out;
-}
-
 std::ostream& operator<<(std::ostream& out, Direction dir) {
 	switch (dir) {
 		case Direction::kLeft: out << '<'; break;
