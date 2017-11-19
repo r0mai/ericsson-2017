@@ -24,7 +24,7 @@ Model::Moves DumbPlayer::getMoves() {
 				break;
 			}
 			case State::kGoTowardsCutStart: {
-				auto dir = model_.directionTowards(unit.pos, cut_start_);
+				auto dir = model_.directionTowards(unit.pos, cut_.start);
 				if (dir == Direction::kNone) {
 					state_ = State::kCut;
 				} else {
@@ -36,24 +36,24 @@ Model::Moves DumbPlayer::getMoves() {
 				state_ = State::kNewCut;
 				break;
 			case State::kCut: {
-				if (unit.pos == cut_end_) {
+				if (unit.pos == cut_.end) {
 					state_ = State::kNewCut;
 				} else {
-					auto tick = cut_zigzag_tick_;
-					cut_zigzag_tick_ += 1;
-					cut_zigzag_tick_ %= 3;
+					auto tick = cut_.zigzag_tick;
+					cut_.zigzag_tick += 1;
+					cut_.zigzag_tick %= 3;
 					Direction direction = Direction::kNone;
 					switch (tick) {
-						case 1: direction = opposite(cut_direction_); break;
+						case 1: direction = opposite(cut_.direction); break;
 						case 0:
-						case 2: direction = cut_direction_; break;
+						case 2: direction = cut_.direction; break;
 					}
 
 					Pos next_pos = neighbor(unit.pos, direction);
 					// if we're stepping off, check if safe
 					if (model_.getCell(next_pos).owner == 0 && !CheckIfSafe(next_pos)) {
-						direction = opposite(cut_direction_);
-						cut_zigzag_tick_ = 0;
+						direction = opposite(cut_.direction);
+						cut_.zigzag_tick = 0;
 					}
 					return {{0, direction}};
 				}
@@ -78,24 +78,24 @@ void DumbPlayer::FindBestCut() {
 	};
 
 	if (size.row > size.col) {
-		cut_start_ = {center.row, mins.col - 1};
-		cut_end_ =   {center.row, maxs.col + 1};
-		cut_direction_ = Direction::kRight;
-		cut_zigzag_tick_ = 0;
+		cut_.start = {center.row, mins.col - 1};
+		cut_.end =   {center.row, maxs.col + 1};
+		cut_.direction = Direction::kRight;
+		cut_.zigzag_tick = 0;
 	} else {
-		cut_start_ = {mins.row - 1, center.col};
-		cut_end_ =   {maxs.row + 1, center.col};
-		cut_direction_ = Direction::kDown;
-		cut_zigzag_tick_ = 0;
+		cut_.start = {mins.row - 1, center.col};
+		cut_.end =   {maxs.row + 1, center.col};
+		cut_.direction = Direction::kDown;
+		cut_.zigzag_tick = 0;
 	}
 
 	const auto& unit = model_.getUnit(0);
-	auto start_distance = taxicabDistance(unit.pos, cut_start_);
-	auto end_distance = taxicabDistance(unit.pos, cut_end_);
+	auto start_distance = taxicabDistance(unit.pos, cut_.start);
+	auto end_distance = taxicabDistance(unit.pos, cut_.end);
 
 	if (end_distance < start_distance) {
-		std::swap(cut_start_, cut_end_);
-		cut_direction_ = opposite(cut_direction_);
+		std::swap(cut_.start, cut_.end);
+		cut_.direction = opposite(cut_.direction);
 	}
 }
 

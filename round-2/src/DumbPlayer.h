@@ -23,10 +23,12 @@ private:
 	};
 
 	// state for cut
-	int cut_zigzag_tick_ = 0;
-	Pos cut_start_;
-	Pos cut_end_;
-	Direction cut_direction_;
+	struct Cut {
+		int zigzag_tick = 0;
+		Pos start;
+		Pos end;
+		Direction direction;
+	} cut_;
 
 	Model model_;
 	State state_;
