@@ -23,6 +23,8 @@ sf::Color owner_colors[] = {
 } // anonymous namespace
 
 
+// GuiPlayer
+
 Gui::GuiPlayer::GuiPlayer(Gui* gui)
 	: gui_(gui)
 {}
@@ -40,7 +42,13 @@ Model::Moves Gui::GuiPlayer::getMoves() {
 }
 
 
+// Trap
+
+
+
 // Fragmets ////////////////////////////////////////////////////////////////////
+
+// Converge
 
 Converge::Converge(const Pos& target)
 	: target_(target)
@@ -59,6 +67,8 @@ bool Converge::isFinished() const {
 	return is_finished_;
 }
 
+// Librate
+
 Direction Librate::getNext(const Model& model) {
 	return opposite(model.getUnit(0).dir);
 }
@@ -66,6 +76,34 @@ Direction Librate::getNext(const Model& model) {
 bool Librate::isFinished() const {
 	return false;
 }
+
+// Router
+
+void Router::add(Direction dir) {
+	dirs_.push_back(dir);
+}
+
+void Router::add(const std::vector<Direction>& dirs) {
+	for (auto dir : dirs) {
+		dirs_.push_back(dir);
+	}
+}
+
+Direction Router::getNext(const Model& model) {
+	if (dirs_.empty()) {
+		return Direction::kNone;
+	}
+
+	auto dir = dirs_.front();
+	dirs_.pop_front();
+	return dir;
+}
+
+bool Router::isFinished() const {
+	return dirs_.empty();
+}
+
+// Sequence
 
 void Sequence::add(std::unique_ptr<Fragment> fragment) {
 	if (!fragment->isFinished()) {
@@ -157,6 +195,10 @@ void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 		case sf::Keyboard::D: delay_ = 100; break;
 		case sf::Keyboard::S: delay_ = 200; break;
 		case sf::Keyboard::A: delay_ = 1000; break;
+
+		case sf::Keyboard::R: rotateAxesCCW(); break;
+		case sf::Keyboard::Y: rotateAxesCW(); break;
+		case sf::Keyboard::M: mirrorHorizontal(); break;
 		default: break;
 	}
 }
@@ -226,9 +268,11 @@ void Gui::draw() {
 		drawDot(neighbor(unit.next_pos, dir_), sf::Color::Red);
 	}
 
-	// for (auto pos : makeTrap(mouse_pos_)) {
-	// 	drawCell(pos, sf::Color(50, 230, 250, 100));
-	// }
+#if 0
+	for (auto pos : renderTrap(mouse_pos_, makeTrap(axis0_, axis1_))) {
+		drawCell(pos, sf::Color(50, 230, 250, 100));
+	}
+#endif
 
 	drawCell(mouse_pos_, sf::Color(50, 230, 250, 100));
 	window_.display();
@@ -249,7 +293,6 @@ void Gui::updateStatus() {
 	ss << " - Tick " << model_.getTick();
 	ss << " - Coverage " << coverage << "%";
 	window_.setTitle(ss.str());
-	// std::cerr << ss.str() << std::endl;
 }
 
 void Gui::close() {
@@ -285,27 +328,23 @@ Model::Moves Gui::getMoves() {
 	return {{0, dir}};
 }
 
-std::vector<Pos> Gui::makeTrap(const Pos& origin) {
-	auto vd = Direction::kUp;
-	auto hd = rotateCW(vd);
-
-	auto hdx = opposite(hd);
-	auto vdx = opposite(vd);
-
-	std::vector<Direction> dirs = {
-		vd, vd, vd, vd, hd, hd, hd,
-		hdx, hdx, hdx, vdx, vdx, vdx, vdx,
-		hd, hd, hd, vd, vd
-	};
-
-	auto pos = origin;
-	std::vector<Pos> result;
-	result.push_back(pos);
-	for (auto& dir : dirs) {
-		pos = neighbor(pos, dir);
-		result.push_back(pos);
-	}
-	return result;
+void Gui::rotateAxesCW() {
+	axis0_ = rotateCW(axis0_);
+	axis1_ = rotateCW(axis1_);
 }
+
+void Gui::rotateAxesCCW() {
+	axis0_ = rotateCCW(axis0_);
+	axis1_ = rotateCCW(axis1_);
+}
+
+void Gui::mirrorHorizontal() {
+	if (axis0_ == Direction::kLeft || axis0_ == Direction::kRight) {
+		axis0_ = opposite(axis0_);
+	} else {
+		axis1_ = opposite(axis1_);
+	}
+}
+
 
 } // namespace evil

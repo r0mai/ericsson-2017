@@ -14,6 +14,15 @@ Pos neighbor(const Pos& pos, Direction dir) {
 	return pos;
 }
 
+Pos neighbor(const Pos& pos, Direction dir, int repeat) {
+	auto nb_pos = pos;
+	while (repeat > 0) {
+		nb_pos = neighbor(nb_pos, dir);
+		--repeat;
+	}
+	return nb_pos;
+}
+
 Direction opposite(Direction dir) {
 	switch (dir) {
 		case Direction::kLeft: return Direction::kRight;

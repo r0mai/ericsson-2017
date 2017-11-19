@@ -6,6 +6,7 @@
 #include "Protocol.h"
 #include "Model.h"
 #include "Player.h"
+#include "Trap.h"
 
 namespace evil {
 
@@ -19,6 +20,8 @@ public:
 
 class Converge : public Fragment {
 public:
+	// Note: this does not work well if target is set to the unit's
+	// current position.
 	Converge(const Pos& target);
 	virtual Direction getNext(const Model& model) override;
 	virtual bool isFinished() const override;
@@ -34,6 +37,17 @@ public:
 	virtual bool isFinished() const override;
 };
 
+class Router : public Fragment {
+public:
+	void add(Direction dir);
+	void add(const std::vector<Direction>& dirs);
+	virtual Direction getNext(const Model& model) override;
+	virtual bool isFinished() const override;
+
+private:
+	std::deque<Direction> dirs_;
+};
+
 class Sequence : public Fragment {
 public:
 	void add(std::unique_ptr<Fragment> fragment);
@@ -44,6 +58,26 @@ private:
 	std::deque<std::unique_ptr<Fragment>> fragments_;
 };
 
+class Capture : public Fragment {
+public:
+	Capture(const Pos& origin, const Trap& trap);
+	virtual Direction getNext(const Model& model);
+	virtual bool isFinished() const;
+
+private:
+	enum class Status {
+		kUnknown,
+		kConverge,
+		kBuild,
+		kWait,
+		kTrigger,
+		kDone
+	} status = Status::kUnknown;
+
+	Pos origin_;
+	Trap trap_;
+	std::unique_ptr<Fragment> fragment_;
+};
 
 class Gui {
 public:
@@ -95,7 +129,10 @@ private:
 
 	void toggleLibrate();
 	void toggleManual(Direction dir);
-	std::vector<Pos> makeTrap(const Pos& origin);
+	void toggleTrap(const Pos& origin, Direction axis0, Direction axis1);
+	void rotateAxesCW();
+	void rotateAxesCCW();
+	void mirrorHorizontal();
 
 	sf::RenderWindow window_ {sf::VideoMode(window_w, window_h), "Window"};
 	Model model_;
@@ -105,6 +142,8 @@ private:
 	GuiPlayer player_;
 	Clock::time_point last_update_;
 	int delay_ = 0;
+	Direction axis0_ = Direction::kUp;
+	Direction axis1_ = Direction::kRight;
 
 	std::unique_ptr<Fragment> fragment_;
 };

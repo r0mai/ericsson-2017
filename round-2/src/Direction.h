@@ -15,6 +15,7 @@ enum class Direction {
 };
 
 Pos neighbor(const Pos& pos, Direction dir);
+Pos neighbor(const Pos& pos, Direction dir, int repeat);
 Direction opposite(Direction dir);
 Direction rotateCW(Direction dir);
 Direction rotateCCW(Direction dir);
