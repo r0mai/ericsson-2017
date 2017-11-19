@@ -144,6 +144,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	evil::Gui gui;
+	evil::DumbPlayer dumb;
 	gui.init();
 
 	auto model = login(connection);
@@ -160,7 +161,7 @@ int main(int argc, char* argv[]) {
 	if (player_string == "gui") {
 		player = &gui.getPlayer();
 	} else if (player_string == "dumb") {
-		player = new evil::DumbPlayer(); // :scream:
+		player = &dumb;
 	}
 
 	if (!player) {
