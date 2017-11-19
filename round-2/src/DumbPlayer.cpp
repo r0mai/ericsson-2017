@@ -97,7 +97,13 @@ bool DumbPlayer::CanGoFast(const Unit& unit) const {
 		return false;
 	}
 
-	auto lookahead = model_.lookaheadEnemies(end_distance + 1);
+	bool success = false;
+	auto lookahead = model_.lookaheadEnemies(
+		end_distance + 1, 1000000, &success);
+	if (!success) {
+		std::cerr << "Too much lookahead" << std::endl;
+		return false;
+	}
 
 	int d = 1;
 	for (Pos p = neighbor(unit.pos, cut_.direction);
@@ -186,8 +192,13 @@ AABB DumbPlayer::FindBestArea(const Pos& unit_pos) const {
 					}
 				});
 
-				auto enemy_count = NumberOfEnemiesInArea(area_matrix);
+				// don't bother with small windows
 				auto aabb = getBoundingBox(area_matrix);
+				if (aabb.rows() < 5 || aabb.cols() < 5) {
+					continue;
+				}
+
+				auto enemy_count = NumberOfEnemiesInArea(area_matrix);
 				auto distance = distanceToLongerSideMid(unit_pos, aabb);
 				auto distance_across = std::min(aabb.rows(), aabb.cols());
 				double probabilistic_area = distance_across +

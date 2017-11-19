@@ -8,6 +8,7 @@
 #include <vector>
 #include <iostream>
 #include <memory>
+#include <climits>
 
 template<typename T>
 std::ostream& operator<<(std::ostream& out, const Matrix<T>& mat) {
@@ -111,13 +112,15 @@ public:
 	std::vector<EnemyState> allPossibleEnemyStates() const;
 
 	// returned vector size is (step + 1)
-	std::vector<std::vector<EnemyState>> allPossibleEnemyStates(int step) const;
+	std::vector<std::vector<EnemyState>> allPossibleEnemyStates(
+		int step, int max_states = INT_MAX, bool* success = nullptr) const;
 
 	// Enemy lookahead n steps
 	// -1 means no reachable/don't know
 	// 0 means enemy is there at the current tick
 	// 0 < n <= lookahead means an enemy could be there after n ticks
-	Matrix<int> lookaheadEnemies(int lookahead) const;
+	Matrix<int> lookaheadEnemies(
+		int lookahead, int max_states = INT_MAX, bool* success = nullptr) const;
 
 	void addBorder(int owner = 1, int thickness = 2);
 	bool stepAsServer(std::mt19937& rng_engine);

@@ -519,7 +519,12 @@ std::vector<EnemyState> Model::allPossibleEnemyStates() const {
 	return states;
 }
 
-std::vector<std::vector<EnemyState>> Model::allPossibleEnemyStates(int step) const {
+std::vector<std::vector<EnemyState>> Model::allPossibleEnemyStates(
+	int step, int max_states, bool* success) const
+{
+	if (success) { *success = false; }
+
+	int count_all_states = 0;
 	std::vector<std::vector<EnemyState>> states;
 	states.reserve(step + 1);
 	states.emplace_back();
@@ -534,19 +539,32 @@ std::vector<std::vector<EnemyState>> Model::allPossibleEnemyStates(int step) con
 		auto& current_states = states.back();
 		for (auto& enemy : prev_states) {
 			auto next_states = possibleEnemyStates(enemy);
+			count_all_states += next_states.size();
+
+			if (count_all_states > max_states) {
+				// it takes too much time, bail out
+				return states;
+			}
+
 			current_states.insert(
 				current_states.end(),
 				next_states.begin(), next_states.end()
 			);
 		}
 	}
+	if (success) { *success = true; }
 	return states;
 }
 
-Matrix<int> Model::lookaheadEnemies(int lookahead) const {
-	Matrix<int> lookahead_matrix(grid_.rows(), grid_.cols(), -1);
+Matrix<int> Model::lookaheadEnemies(
+	int lookahead, int max_states, bool* success) const
+{
+	auto states = allPossibleEnemyStates(lookahead, max_states, success);
+	if (success && !*success) {
+		return {};
+	}
 
-	auto states = allPossibleEnemyStates(lookahead);
+	Matrix<int> lookahead_matrix(grid_.rows(), grid_.cols(), -1);
 	for (int i = 0; i <= lookahead; ++i) {
 		for (auto& enemy : states[i]) {
 			int& cell = lookahead_matrix(enemy.pos.row, enemy.pos.col);
