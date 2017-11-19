@@ -253,8 +253,9 @@ void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 		case sf::Keyboard::S: delay_ = 200; break;
 		case sf::Keyboard::A: delay_ = 1000; break;
 
-		case sf::Keyboard::W: toggleMirror(); break;
-		case sf::Keyboard::Tab: cycleModes(); break;
+		case sf::Keyboard::Tab: toggleMirror(); break;
+		case sf::Keyboard::Num1: mode_ = Mode::kNormal; break;
+		case sf::Keyboard::Num2: mode_ = Mode::kTrap; break;
 		default: break;
 	}
 }
@@ -337,10 +338,16 @@ void Gui::draw() {
 			for (auto pos : renderTrap(mouse_pos_, *trap)) {
 				drawCell(pos, sf::Color(50, 230, 250, 100));
 			}
+		} else {
+			trap = makeTrap(Direction::kUp,
+				mirror_ ? Direction::kLeft : Direction::kRight);
+			for (auto pos : renderTrap(mouse_pos_, *trap)) {
+				drawCell(pos, sf::Color(180, 180, 180, 80));
+			}
 		}
+	} else {
+		drawCell(mouse_pos_, sf::Color(50, 230, 250, 100));
 	}
-
-	drawCell(mouse_pos_, sf::Color(50, 230, 250, 100));
 	window_.display();
 }
 
@@ -396,10 +403,6 @@ Model::Moves Gui::getMoves() {
 
 void Gui::toggleMirror() {
 	mirror_ = !mirror_;
-}
-
-void Gui::cycleModes() {
-	mode_ = Mode((mode_ + 1) % Mode::kModeCount);
 }
 
 } // namespace evil

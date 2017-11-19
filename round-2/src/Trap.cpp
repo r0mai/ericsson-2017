@@ -43,7 +43,7 @@ boost::optional<Trap> makeAlignedTrap(
 	};
 
 	for (auto axis0 : directions) {
-		auto base_axis = (mirror ? axis0 : opposite(axis0));
+		auto base_axis = (mirror ? opposite(axis0) : axis0);
 		std::array<Direction, 2> normals = {
 			rotateCW(base_axis), rotateCCW(base_axis)
 		};
@@ -53,7 +53,7 @@ boost::optional<Trap> makeAlignedTrap(
 			for (auto rel : blues) {
 				auto pos = neighbor(
 					neighbor(origin, axis0, rel.col), axis1, rel.row);
-				if (model.getCell(pos).owner != 1) {
+				if (!model.isValid(pos) || model.getCell(pos).owner != 1) {
 					match = false;
 					break;
 				}
@@ -66,7 +66,7 @@ boost::optional<Trap> makeAlignedTrap(
 			for (auto rel : whites) {
 				auto pos = neighbor(
 					neighbor(origin, axis0, rel.col), axis1, rel.row);
-				if (model.getCell(pos).owner != 0) {
+				if (!model.isValid(pos) || model.getCell(pos).owner != 0) {
 					match = false;
 					break;
 				}

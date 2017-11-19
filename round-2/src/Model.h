@@ -83,6 +83,7 @@ public:
 	std::unique_ptr<capnp::MallocMessageBuilder> toCapnp() const;
 
 	bool isValid() const;
+	bool isValid(const Pos& pos) const;
 	Pos size() const;
 
 	const Grid& getGrid() const;
@@ -136,8 +137,6 @@ private:
 	void colorize();
 	int getSafeDistance();
 	Pos trace(const Pos& pos, Direction v_dir, Direction h_dir, int col);
-
-	bool isValid(const Pos& pos) const;
 
 	Grid grid_ {kMaxRows, kMaxCols};
 	std::vector<Unit> units_;

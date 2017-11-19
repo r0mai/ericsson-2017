@@ -135,8 +135,6 @@ private:
 	void toggleTrap(const Pos& origin, Direction axis0, Direction axis1);
 	void toggleMirror();
 
-	void cycleModes();
-
 	sf::RenderWindow window_ {sf::VideoMode(window_w, window_h), "Window"};
 	Model model_;
 	Direction dir_ = Direction::kUp;
