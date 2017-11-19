@@ -106,6 +106,8 @@ public:
 
 	// after a step
 	std::vector<EnemyState> possibleEnemyStates(const Enemy& enemy) const;
+	// after a step for all enemies
+	std::vector<EnemyState> allPossibleEnemyStates() const;
 
 	void addBorder(int owner = 1, int thickness = 2);
 	bool stepAsServer(std::mt19937& rng_engine);

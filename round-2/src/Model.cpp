@@ -510,6 +510,15 @@ std::vector<EnemyState> Model::possibleEnemyStates(const Enemy& enemy) const {
 	return possible_states;
 }
 
+std::vector<EnemyState> Model::allPossibleEnemyStates() const {
+	std::vector<EnemyState> states;
+	for (auto& enemy : enemies_) {
+		auto enemy_states = possibleEnemyStates(enemy);
+		states.insert(states.end(), enemy_states.begin(), enemy_states.end());
+	}
+	return states;
+}
+
 void Model::stepEnemy(Enemy& enemy, std::mt19937& rng_engine) {
 	auto possible_states = possibleEnemyStates(enemy);
 
