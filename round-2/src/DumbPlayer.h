@@ -16,7 +16,7 @@ private:
 	void FindBestCut(const Pos& unit_pos);
 	bool IsSafe(Pos pos) const;
 	bool CanGoFast(const Unit& unit) const;
-	int NumberOfEnemiesInArea(const Matrix<bool>& area) const;
+	std::vector<EnemyState> GetEnemiesInArea(const AABB& aabb) const;
 
 	enum class State {
 		kNewMap,
@@ -27,6 +27,7 @@ private:
 
 	// state for cut
 	struct Cut {
+		AABB aabb;
 		int zigzag_tick = 0;
 		Pos start;
 		Pos end;

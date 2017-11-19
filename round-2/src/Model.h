@@ -114,12 +114,18 @@ public:
 	// returned vector size is (step + 1)
 	std::vector<std::vector<EnemyState>> allPossibleEnemyStates(
 		int step, int max_states = INT_MAX, bool* success = nullptr) const;
+	std::vector<std::vector<EnemyState>> allPossibleEnemyStates(
+		const std::vector<EnemyState>& states,
+		int step, int max_states = INT_MAX, bool* success = nullptr) const;
 
 	// Enemy lookahead n steps
 	// -1 means no reachable/don't know
 	// 0 means enemy is there at the current tick
 	// 0 < n <= lookahead means an enemy could be there after n ticks
 	Matrix<int> lookaheadEnemies(
+		int lookahead, int max_states = INT_MAX, bool* success = nullptr) const;
+	Matrix<int> lookaheadEnemies(
+		const std::vector<EnemyState>& states,
 		int lookahead, int max_states = INT_MAX, bool* success = nullptr) const;
 
 	void addBorder(int owner = 1, int thickness = 2);

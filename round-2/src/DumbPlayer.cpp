@@ -99,7 +99,7 @@ bool DumbPlayer::CanGoFast(const Unit& unit) const {
 
 	bool success = false;
 	auto lookahead = model_.lookaheadEnemies(
-		end_distance + 1, 1000000, &success);
+		GetEnemiesInArea(cut_.aabb), end_distance + 1, 1000000, &success);
 	if (!success) {
 		std::cerr << "Too much lookahead" << std::endl;
 		return false;
@@ -122,14 +122,14 @@ bool DumbPlayer::CanGoFast(const Unit& unit) const {
 	return true;
 }
 
-int DumbPlayer::NumberOfEnemiesInArea(const Matrix<bool>& area) const {
-	int count = 0;
+std::vector<EnemyState> DumbPlayer::GetEnemiesInArea(const AABB& aabb) const {
+	std::vector<EnemyState> enemies;
 	for (auto& enemy : model_.getEnemies()) {
-		if (area(enemy.pos.row, enemy.pos.col)) {
-			++count;
+		if (aabb.contains(enemy.pos)) {
+			enemies.push_back(enemy);
 		}
 	}
-	return count;
+	return enemies;
 }
 
 void DumbPlayer::FindBestCut(const Pos& unit_pos) {
@@ -139,6 +139,7 @@ void DumbPlayer::FindBestCut(const Pos& unit_pos) {
 	Pos center = aabb.center();
 	Pos size = aabb.size();
 
+	cut_.aabb = aabb;
 	if (size.row > size.col) {
 		cut_.start = {center.row, aabb.mins.col - 1};
 		cut_.end =   {center.row, aabb.maxs.col + 1};
@@ -194,11 +195,11 @@ AABB DumbPlayer::FindBestArea(const Pos& unit_pos) const {
 
 				// don't bother with small windows
 				auto aabb = getBoundingBox(area_matrix);
-				if (aabb.rows() < 5 || aabb.cols() < 5) {
+				if (aabb.rows() < 8 || aabb.cols() < 8) {
 					continue;
 				}
 
-				auto enemy_count = NumberOfEnemiesInArea(area_matrix);
+				auto enemy_count = GetEnemiesInArea(aabb).size();
 				auto distance = distanceToLongerSideMid(unit_pos, aabb);
 				auto distance_across = std::min(aabb.rows(), aabb.cols());
 				double probabilistic_area = distance_across +

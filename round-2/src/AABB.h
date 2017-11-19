@@ -17,6 +17,9 @@ struct AABB {
 	int cols() const;
 
 	int area() const;
+
+	// inclusive
+	bool contains(const Pos& pos) const;
 };
 
 } // namespace evil

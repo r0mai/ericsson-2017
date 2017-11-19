@@ -30,4 +30,10 @@ int AABB::area() const {
 	return rows() * cols();
 }
 
+bool AABB::contains(const Pos& pos) const {
+	return
+		pos.row >= mins.row && pos.row <= maxs.row &&
+		pos.col >= mins.col && pos.col <= maxs.col;
+}
+
 } // namespace evil
