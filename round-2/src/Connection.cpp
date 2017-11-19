@@ -18,13 +18,13 @@ namespace evil {
 bool Connection::connect(const char* host, int port) {
 	sockfd_ = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockfd_ < 0) {
-		std::cerr << "socket() failed " << sockfd_ << std::endl;
+		perror("socket() failed");
 		return false;
 	}
 
 	auto* server = gethostbyname(host);
 	if (!server) {
-		std::cerr << "gethostbyname() failed" << std::endl;
+		perror("gethostbyname() failed");
 		return false;
 	}
 
@@ -38,7 +38,7 @@ bool Connection::connect(const char* host, int port) {
 	serv_addr.sin_port = htons(port);
 
 	if (::connect(sockfd_, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
-		std::cerr << "connect() failed " << std::endl;
+		perror("connect() failed");
 		return false;
 	}
 	return true;
