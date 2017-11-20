@@ -181,6 +181,8 @@ int main(int argc, char* argv[]) {
 	auto calc_start = Clock::now();
 	auto calc_end = Clock::now();
 
+	auto calc_time = asMs(calc_end - calc_start);
+
 	while (true) {
 		// gui phase
 		gui.setDrawModel(model);
@@ -203,7 +205,7 @@ int main(int argc, char* argv[]) {
 			model.provision(moves);
 
 			calc_end = Clock::now();
-			// std::cout << "Calculation time = " << asMs(calc_end - calc_start) << "ms" << std::endl;
+			calc_time = asMs(calc_end - calc_start);
 			future = sendMoves(connection, moves);
 		}
 
@@ -215,7 +217,7 @@ int main(int argc, char* argv[]) {
 			auto response = getResponse(reader);
 			model = evil::Model::fromResponse(response);
 			calc_start = Clock::now();
-			// std::cout << "Network time = " << asMs(calc_start - calc_end) << "ms" << std::endl;
+			std::cout << "Network time = " << asMs(calc_start - calc_end) << "ms; calc time = " << calc_time << "ms" << std::endl;
 			model_ready = true;
 		} else {
 			std::this_thread::yield();
