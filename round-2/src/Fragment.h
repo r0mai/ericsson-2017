@@ -81,8 +81,8 @@ private:
 class Spike : public Fragment {
 public:
 	Spike(const Pos& origin, Direction dir);
-	virtual Direction getNext(const Model& model);
-	virtual bool isFinished() const;
+	virtual Direction getNext(const Model& model) override;
+	virtual bool isFinished() const override;
 
 	static std::vector<Pos> render(const Pos& origin, Direction dir);
 
@@ -94,8 +94,8 @@ private:
 class Diagonal : public Fragment {
 public:
 	Diagonal(const Pos& origin, Direction dir);
-	virtual Direction getNext(const Model& model);
-	virtual bool isFinished() const;
+	virtual Direction getNext(const Model& model) override;
+	virtual bool isFinished() const override;
 
 	static std::vector<Pos> render(const Pos& origin, Direction dir);
 
@@ -104,6 +104,21 @@ private:
 	Sequence seq_;
 };
 
+class SafeRouter : public Fragment {
+public:
+	SafeRouter() = default;
+	SafeRouter(const Model& model, std::vector<Direction> directions, int unit_idx = 0);
 
+	virtual Direction getNext(const Model& model) override;
+	virtual bool isFinished() const override;
+private:
+
+	bool CanGoFast(const Model& model) const;
+
+	int unit_idx_ = 0;
+	int next_direction_idx_ = 1;
+	bool can_go_fast_ = false;
+	std::vector<Direction> directions_;
+};
 
 } // namespace evil

@@ -56,6 +56,12 @@ Model::Moves DumbPlayer::getMoves() {
 				state_ = State::kNewCut;
 				break;
 			case State::kCut: {
+				if (cut_.router.isFinished()) {
+					state_ = State::kNewCut;
+				} else {
+					return {{0, cut_.router.getNext(model_)}};
+				}
+#if 0
 				if (unit.pos == cut_.end) {
 					state_ = State::kNewCut;
 				} else if (cut_.can_go_fast) {
@@ -74,7 +80,7 @@ Model::Moves DumbPlayer::getMoves() {
 					Pos next_pos = neighbor(unit.pos, direction);
 					// if we're stepping off, check if safe
 					if (model_.getCell(next_pos).owner == 0) {
-						if (!IsSafe(next_pos)) {
+						if (!model_.IsSafeToMoveOutAndBack(next_pos)) {
 							direction = opposite(cut_.direction);
 							cut_.zigzag_tick = 0;
 						} else {
@@ -85,6 +91,7 @@ Model::Moves DumbPlayer::getMoves() {
 					return {{0, direction}};
 				}
 				break;
+#endif
 			}
 		}
 	}
@@ -159,18 +166,11 @@ void DumbPlayer::FindBestCut(const Pos& unit_pos) {
 		std::swap(cut_.start, cut_.end);
 		cut_.direction = opposite(cut_.direction);
 	}
-}
 
-bool DumbPlayer::IsSafe(Pos pos) const {
-	auto enemy_states = model_.allPossibleEnemyStates(2);
-	for (int i = 1; i <= 2; ++i) {
-		for (auto& enemy_state : enemy_states[i]) {
-			if (enemy_state.pos == pos) {
-				return false;
-			}
-		}
-	}
-	return true;
+	std::vector<Direction> router_directions(
+		std::abs(taxicabDistance(cut_.start, cut_.end)), cut_.direction);
+
+	cut_.router = SafeRouter{model_, std::move(router_directions)};
 }
 
 AABB DumbPlayer::FindBestArea(const Pos& unit_pos) const {

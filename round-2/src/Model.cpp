@@ -582,6 +582,18 @@ Matrix<int> Model::lookaheadEnemies(
 	return lookahead_matrix;
 }
 
+bool Model::IsSafeToMoveOutAndBack(const Pos& pos) const {
+	auto enemy_states = allPossibleEnemyStates(2);
+	for (int i = 1; i <= 2; ++i) {
+		for (auto& enemy_state : enemy_states[i]) {
+			if (enemy_state.pos == pos) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
 void Model::stepEnemy(Enemy& enemy, std::mt19937& rng_engine) {
 	auto possible_states = possibleEnemyStates(enemy);
 

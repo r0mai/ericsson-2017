@@ -246,4 +246,96 @@ std::vector<Pos> Diagonal::render(const Pos& origin, Direction dir) {
 	return vec;
 }
 
+// SafeRouter
+
+SafeRouter::SafeRouter(const Model& model, std::vector<Direction> directions, int unit_idx)
+	: unit_idx_(unit_idx)
+	, directions_(std::move(directions))
+{
+	// find a safe spot around the starting area to retreat to if needed
+	auto current_pos = model.getUnit(unit_idx_).pos;
+
+	auto up_pos = neighbor(current_pos, Direction::kUp);
+	auto down_pos = neighbor(current_pos, Direction::kDown);
+	auto right_pos = neighbor(current_pos, Direction::kRight);
+	auto left_pos = neighbor(current_pos, Direction::kLeft);
+
+	if (model.isValid(up_pos) && model.getCell(up_pos).owner == 1) {
+		directions_.insert(begin(directions_), Direction::kDown);
+	} else if (model.isValid(right_pos) && model.getCell(right_pos).owner == 1) {
+		directions_.insert(begin(directions_), Direction::kLeft);
+	} else if (model.isValid(down_pos) && model.getCell(down_pos).owner == 1) {
+		directions_.insert(begin(directions_), Direction::kUp);
+	} else if (model.isValid(left_pos) && model.getCell(left_pos).owner == 1) {
+		directions_.insert(begin(directions_), Direction::kRight);
+	} else {
+		next_direction_idx_ = 0;
+		assert(false);
+	}
+}
+
+Direction SafeRouter::getNext(const Model& model) {
+	auto next_direction = directions_[next_direction_idx_];
+	auto current_pos = model.getUnit(unit_idx_).pos;
+	auto next_pos = neighbor(current_pos, next_direction);
+
+	bool current_on_blue = model.getCell(current_pos).owner == 1;
+	bool next_on_blue = model.getCell(next_pos).owner == 1;
+
+	if (can_go_fast_) {
+		++next_direction_idx_;
+		return next_direction;
+	}
+
+	if (next_on_blue) {
+		// staying on blue
+		++next_direction_idx_;
+		return next_direction;
+	}
+
+	if (current_on_blue && model.IsSafeToMoveOutAndBack(next_pos)) {
+		can_go_fast_ = CanGoFast(model);
+		++next_direction_idx_;
+		return next_direction;
+	}
+
+	auto last_direction = directions_[next_direction_idx_ - 1];
+	--next_direction_idx_;
+	return opposite(last_direction);
+}
+
+bool SafeRouter::CanGoFast(const Model& model) const {
+	auto current_pos = model.getUnit(unit_idx_).pos;
+
+	const int kMaxLookahead = 80;
+	int end_distance = directions_.size() - next_direction_idx_;
+	if (end_distance > kMaxLookahead) {
+		return false;
+	}
+
+	bool success = false;
+	auto lookahead = model.lookaheadEnemies(end_distance + 1, 1000000, &success);
+	if (!success) {
+		std::cerr << "Too much lookahead" << std::endl;
+		return false;
+	}
+
+	int d = 0;
+	Pos p = neighbor(current_pos, directions_.at(next_direction_idx_ + d));
+	while (next_direction_idx_ + d + 1 < directions_.size()) {
+		int la_cell = lookahead(p.row, p.col);
+		if (la_cell != -1 && d < la_cell) {
+			return false;
+		}
+		++d;
+		p = neighbor(p, directions_.at(next_direction_idx_ + d));
+	}
+
+	return true;
+}
+
+bool SafeRouter::isFinished() const {
+	return next_direction_idx_ == directions_.size();
+}
+
 } // namespace evil

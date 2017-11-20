@@ -126,6 +126,8 @@ public:
 		const std::vector<EnemyState>& states,
 		int lookahead, int max_states = INT_MAX, bool* success = nullptr) const;
 
+	bool IsSafeToMoveOutAndBack(const Pos& pos) const;
+
 	void addBorder(int owner = 1, int thickness = 2);
 	bool stepAsServer(std::mt19937& rng_engine);
 	void stepEnemy(Enemy& enemy, std::mt19937& rng_engine);

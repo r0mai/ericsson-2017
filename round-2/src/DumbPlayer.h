@@ -2,6 +2,7 @@
 
 #include "AABB.h"
 #include "Player.h"
+#include "Fragment.h"
 
 namespace evil {
 
@@ -33,6 +34,7 @@ private:
 		Pos end;
 		Direction direction;
 		bool can_go_fast = false;
+		SafeRouter router;
 	} cut_;
 
 	Model model_;
