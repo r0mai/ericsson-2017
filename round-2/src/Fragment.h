@@ -114,11 +114,13 @@ public:
 	virtual bool isFinished() const override;
 private:
 
+	bool LastIsBlue(const Model& model) const;
 	bool CanGoFast(const Model& model) const;
 
 	int unit_idx_ = 0;
 	int next_direction_idx_ = 1;
 	bool can_go_fast_ = false;
+	Pos last_pos_;
 	std::vector<Direction> directions_;
 };
 

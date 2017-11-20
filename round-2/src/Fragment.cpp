@@ -255,6 +255,8 @@ SafeRouter::SafeRouter(const Model& model, std::vector<Direction> directions, in
 	// find a safe spot around the starting area to retreat to if needed
 	auto current_pos = model.getUnit(unit_idx_).pos;
 
+	last_pos_ = render(current_pos, directions_).front();
+
 	auto up_pos = neighbor(current_pos, Direction::kUp);
 	auto down_pos = neighbor(current_pos, Direction::kDown);
 	auto right_pos = neighbor(current_pos, Direction::kRight);
@@ -271,6 +273,11 @@ SafeRouter::SafeRouter(const Model& model, std::vector<Direction> directions, in
 	} else {
 		next_direction_idx_ = 0;
 		assert(false);
+		return;
+	}
+
+	if (!LastIsBlue(model)) {
+		directions_.push_back(opposite(directions_.back()));
 	}
 }
 
@@ -304,7 +311,14 @@ Direction SafeRouter::getNext(const Model& model) {
 	return opposite(last_direction);
 }
 
+bool SafeRouter::LastIsBlue(const Model& model) const {
+	return model.getCell(last_pos_).owner == 1;
+}
+
 bool SafeRouter::CanGoFast(const Model& model) const {
+	if (!LastIsBlue(model)) {
+		return false;
+	}
 	auto current_pos = model.getUnit(unit_idx_).pos;
 
 	const int kMaxLookahead = 80;
