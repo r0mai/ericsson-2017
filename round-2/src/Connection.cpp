@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netinet/tcp.h>
 #include <netinet/in.h>
 #include <netdb.h>
 #include <unistd.h>
@@ -20,6 +21,11 @@ bool Connection::connect(const char* host, int port) {
 	if (sockfd_ < 0) {
 		perror("socket() failed");
 		return false;
+	}
+
+	int enable = 1;
+	if (setsockopt(sockfd_, IPPROTO_TCP, TCP_NODELAY, &enable, sizeof(int)) < 0) {
+	    perror("setsockopt(SO_REUSEADDR) failed");
 	}
 
 	auto* server = gethostbyname(host);
