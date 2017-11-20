@@ -26,6 +26,7 @@ add_library(xonixLib
     src/Utils.cpp
     src/AABB.cpp
     src/Pos.cpp
+    src/Fragment.cpp
     src/protocol/Common.capnp.c++
     src/protocol/Command.capnp.c++
     src/protocol/Response.capnp.c++
