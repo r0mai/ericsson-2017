@@ -11,7 +11,7 @@ public:
 	using Message = std::unique_ptr<capnp::MallocMessageBuilder>;
 	using FutureMessage = std::future<Message>;
 
-	bool connect(const char* host = "ecovpn.dyndns.org", int port = 11224);
+	bool connect(const char* host, int port);
 	Message communicate(Message msg);
 	FutureMessage communicateAsync(Message msg);
 

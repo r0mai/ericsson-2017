@@ -71,12 +71,14 @@ void Gui::drawCell(const Pos& pos, const Cell& cell) {
 	auto color = owner_colors[cell.color];
 	drawCell(pos, color);
 
-	if (cell.color == 0 && pos.col + pos.row == map_w - 1) {
+	if (cell.color == 0 &&
+		(pos.col + pos.row == map_w - 1 ||
+		pos.col == map_h - 2))
+	{
 		drawDot(pos, sf::Color(0xee, 0xee, 0xee));
 	}
 
 }
-
 
 bool Gui::init(bool stepping) {
 	is_stepping_ = stepping;

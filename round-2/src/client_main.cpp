@@ -119,7 +119,7 @@ int main(int argc, char* argv[]) {
 	po::options_description desc("Allowed options");
 	desc.add_options()
 	    ("help,h", "Print help")
-	    ("host,H", po::value<std::string>()->default_value("ecovpn.dyndns.org"), "Server host")
+	    ("host,H", po::value<std::string>()->default_value("epb2017.dyndns.org"), "Server host")
 	    ("port,p", po::value<int>()->default_value(11224), "Server port")
 		("player,P", po::value<std::string>()->default_value("gui"), "Controller player")
 		("commands,c", po::value<std::string>(), "Commands file")
