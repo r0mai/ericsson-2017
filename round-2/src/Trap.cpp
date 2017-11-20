@@ -3,6 +3,7 @@
 #include <cassert>
 #include <array>
 
+
 namespace evil {
 
 Trap makeTrap(Direction axis0, Direction axis1) {
@@ -113,6 +114,19 @@ Pos renderTrigger2(const Pos& origin, const Trap& trap) {
 	return pos;
 }
 
+std::vector<Direction> makeClamp(Direction vd, Direction hd) {
+	auto vdx = opposite(vd);
+	auto hdx = opposite(hd);
 
+	return {
+		hd, hd, hd, vd, vdx, hdx, hdx, hdx,
+		vd, vd, vd,
+		hd, vd,
+		hd, vd,
+		hd, vd,
+		hd, hd, hd,
+		vdx, vdx, vdx, hdx, hd, vd, vd, vd,
+	};
+}
 
 } // namespace evil

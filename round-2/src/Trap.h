@@ -30,4 +30,6 @@ std::vector<Pos> renderTrap(const Pos& origin, const Trap& trap);
 Pos renderTrigger1(const Pos& origin, const Trap& trap);
 Pos renderTrigger2(const Pos& origin, const Trap& trap);
 
+std::vector<Direction> makeClamp(Direction vd, Direction hd);
+
 } // namespace evil
