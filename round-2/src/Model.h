@@ -84,6 +84,7 @@ public:
 	bool isValid(const Pos& pos) const;
 	Pos size() const;
 
+	Grid& getGrid();
 	const Grid& getGrid() const;
 	std::vector<Unit>& getUnits();
 	const std::vector<Unit>& getUnits() const;

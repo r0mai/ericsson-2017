@@ -11,6 +11,7 @@ int main(int argc, char** argv) {
 		("inside,i", po::value<int>()->default_value(7), "Zergs inside")
 		("outside,o", po::value<int>()->default_value(1), "Zergs outside")
 		("seed,s", po::value<int>()->default_value(0), "RNG seed")
+		("col", po::value<int>()->default_value(-1), "Draw col at N")
 	;
 
 	po::variables_map vm;
@@ -27,6 +28,7 @@ int main(int argc, char** argv) {
 	server.SetZergsInside(vm["inside"].as<int>());
 	server.SetZergsOutside(vm["outside"].as<int>());
 	server.SetSeed(vm["seed"].as<int>());
+	server.DrawColumn(vm["col"].as<int>());
 
 	server.Run();
 }

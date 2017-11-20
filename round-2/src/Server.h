@@ -25,6 +25,7 @@ private:
 class Server {
 public:
 	void SetSeed(int seed);
+	void DrawColumn(int col);
 	void SetZergsInside(int count);
 	void SetZergsOutside(int count);
 	void Run();
@@ -41,6 +42,8 @@ private:
 	int zergs_outside_ = 0;
 
 	std::tuple<Direction, Direction> GetRandomDirection();
+
+	int draw_col_ = -1;
 
 	ServerConnection connection_;
 	Model model_;

@@ -48,6 +48,10 @@ bool operator!=(const Pos& lhs, const Pos& rhs) {
 	return !(lhs == rhs);
 }
 
+Model::Grid& Model::getGrid() {
+	return grid_;
+}
+
 const Model::Grid& Model::getGrid() const {
 	return grid_;
 }

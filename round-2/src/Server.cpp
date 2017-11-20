@@ -85,6 +85,10 @@ void Server::SetSeed(int seed) {
 	mt_engine_.seed(seed);
 }
 
+void Server::DrawColumn(int col) {
+	draw_col_ = col;
+}
+
 void Server::SetZergsInside(int count) {
 	zergs_inside_ = count;
 }
@@ -183,6 +187,12 @@ void Server::InitModel(int enemies_in, int enemies_out, int border_thickness) {
 		enemy.pos.col = col_idx;
 		std::tie(enemy.v_dir, enemy.h_dir) = GetRandomDirection();
 		enemies.push_back(enemy);
+	}
+
+	if (draw_col_ >= 0) {
+		for (int r = 0; r < model_.getGrid().rows(); ++r) {
+			model_.getGrid()(r, draw_col_).owner = 1;
+		}
 	}
 }
 
