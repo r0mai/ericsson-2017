@@ -67,7 +67,7 @@ void Sequence::add(std::unique_ptr<Fragment> fragment) {
 	}
 }
 
-Direction Sequence::getNext(const Model& model) {
+Direction Sequence::getNextInternal(const Model& model) {
 	if (fragments_.empty()) {
 		return Direction::kNone;
 	}
@@ -83,9 +83,9 @@ Direction Sequence::getNext(const Model& model) {
 	return dir;
 }
 
-Direction Sequence::forceGetNext(const Model& model) {
+Direction Sequence::getNext(const Model& model) {
 	while (!isFinished()) {
-		auto dir = getNext(model);
+		auto dir = getNextInternal(model);
 		if (dir != Direction::kNone) {
 			return dir;
 		}
@@ -183,7 +183,7 @@ Spike::Spike(const Pos& origin, Direction dir)
 }
 
 Direction Spike::getNext(const Model& model) {
-	return seq_.forceGetNext(model);
+	return seq_.getNext(model);
 }
 
 bool Spike::isFinished() const {
@@ -226,7 +226,7 @@ Diagonal::Diagonal(const Pos& origin, Direction dir)
 }
 
 Direction Diagonal::getNext(const Model& model) {
-	return seq_.forceGetNext(model);
+	return seq_.getNext(model);
 }
 
 bool Diagonal::isFinished() const {

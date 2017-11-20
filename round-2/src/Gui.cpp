@@ -119,6 +119,7 @@ void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 		case sf::Keyboard::Num2: mode_ = Mode::kTrap; break;
 		case sf::Keyboard::Num3: mode_ = Mode::kSpike; break;
 		case sf::Keyboard::Num4: mode_ = Mode::kDiagonal; break;
+		case sf::Keyboard::Num5: mode_ = Mode::kClamp; break;
 		case sf::Keyboard::Space: toggleStepping(false); break;
 		case sf::Keyboard::Period: toggleStepping(true); break;
 		default: break;
@@ -145,6 +146,16 @@ void Gui::handleMouseButton(const sf::Event::MouseButtonEvent& ev) {
 		} else if (mode_ == Mode::kDiagonal) {
 			auto dir = toDirection(cycle_ % 4);
 			fragment_ = std::make_unique<Diagonal>(mouse_pos_, dir);
+		} else if (mode_ == Mode::kClamp) {
+			auto router = std::make_unique<Router>();
+			auto seq = std::make_unique<Sequence>();
+			auto axes = cycledAxes();
+			router->add(makeClamp(axes.first, axes.second));
+
+			seq->add(std::make_unique<Converge>(pos));
+			seq->add(std::move(router));
+			seq->add(std::make_unique<Librate>());
+			fragment_ = std::move(seq);
 		}
 	}
 }
@@ -228,10 +239,21 @@ void Gui::draw() {
 		for (auto pos : Diagonal::render(mouse_pos_, dir)) {
 			drawCell(pos, sf::Color(50, 230, 250, 100));
 		}
+	} else if (mode_ == Mode::kClamp) {
+		auto axes = cycledAxes();
+		drawCells(
+			render(mouse_pos_, makeClamp(axes.first, axes.second)),
+			sf::Color(50, 230, 250, 100));
 	} else {
 		drawCell(mouse_pos_, sf::Color(50, 230, 250, 100));
 	}
 	window_.display();
+}
+
+void Gui::drawCells(const std::vector<Pos>& vec, sf::Color color) {
+	for (auto pos : vec) {
+		drawCell(pos, color);
+	}
 }
 
 bool Gui::pollEvent(sf::Event& event) {
@@ -300,5 +322,11 @@ void Gui::toggleStepping(bool enable) {
 	is_stepping_ = enable;
 }
 
+std::pair<Direction, Direction> Gui::cycledAxes() {
+	auto mirror = !!((cycle_ % 8) / 4);
+	auto axis0 = toDirection(cycle_ % 4);
+	auto axis1 = mirror ? rotateCCW(axis0) : rotateCW(axis0);
+	return {axis0, axis1};
+}
 
 } // namespace evil

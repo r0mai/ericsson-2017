@@ -45,11 +45,12 @@ private:
 class Sequence : public Fragment {
 public:
 	void add(std::unique_ptr<Fragment> fragment);
-	Direction forceGetNext(const Model& model);
 	virtual Direction getNext(const Model& model) override;
 	virtual bool isFinished() const override;
 
 private:
+	Direction getNextInternal(const Model& model);
+
 	std::deque<std::unique_ptr<Fragment>> fragments_;
 };
 

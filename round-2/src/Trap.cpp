@@ -121,11 +121,20 @@ std::vector<Direction> makeClamp(Direction vd, Direction hd) {
 	return {
 		hd, hd, hd, vd, vdx, hdx, hdx, hdx,
 		vd, vd, vd,
+		// K * (hd, vd)
 		hd, vd,
 		hd, vd,
 		hd, vd,
+
 		hd, hd, hd,
 		vdx, vdx, vdx, hdx, hd, vd, vd, vd,
+		hdx, hdx, hdx,
+
+		// K * (vdx, hdx)
+		vdx, hdx,
+		vdx, hdx,
+		vdx, hdx,
+		vdx, vdx, vdx
 	};
 }
 

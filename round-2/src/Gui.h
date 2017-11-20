@@ -55,6 +55,7 @@ private:
 
 	void drawCell(const Pos& pos, const Cell& cell);
 	void drawCell(const Pos& pos, sf::Color color);
+	void drawCells(const std::vector<Pos>& vec, sf::Color color);
 	void drawDot(const Pos& pos, sf::Color color, float scale = 1.f);
 
 	Pos windowToPos(int x, int y) const;
@@ -66,6 +67,8 @@ private:
 	void toggleTrap(const Pos& origin, Direction axis0, Direction axis1);
 	void toggleCycle();
 	void toggleStepping(bool enable);
+
+	std::pair<Direction, Direction> cycledAxes();
 
 	sf::RenderWindow window_ {sf::VideoMode(window_w, window_h), "Window"};
 	Model model_;
@@ -84,6 +87,7 @@ private:
 		kTrap,
 		kSpike,
 		kDiagonal,
+		kClamp,
 		//
 		kModeCount
 	} mode_ = Mode::kNormal;
