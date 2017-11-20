@@ -107,6 +107,11 @@ std::vector<Command> load(const char* filename) {
 	return result;
 }
 
+template<typename Duration>
+auto asMs(Duration d) {
+	return std::chrono::duration_cast<std::chrono::milliseconds>(d).count();
+}
+
 int main(int argc, char* argv[]) {
 	namespace po = boost::program_options;
 
@@ -170,7 +175,11 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
+	using Clock = std::chrono::steady_clock;
+
 	std::future<evil::Connection::Message> future;
+	auto calc_start = Clock::now();
+	auto calc_end = Clock::now();
 
 	while (true) {
 		// gui phase
@@ -192,6 +201,9 @@ int main(int argc, char* argv[]) {
 			steps_ready = true;
 			auto moves = player->getMoves();
 			model.provision(moves);
+
+			calc_end = Clock::now();
+			// std::cout << "Calculation time = " << asMs(calc_end - calc_start) << "ms" << std::endl;
 			future = sendMoves(connection, moves);
 		}
 
@@ -202,6 +214,8 @@ int main(int argc, char* argv[]) {
 			}
 			auto response = getResponse(reader);
 			model = evil::Model::fromResponse(response);
+			calc_start = Clock::now();
+			// std::cout << "Network time = " << asMs(calc_start - calc_end) << "ms" << std::endl;
 			model_ready = true;
 		} else {
 			std::this_thread::yield();
