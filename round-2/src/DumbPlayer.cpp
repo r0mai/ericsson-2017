@@ -61,72 +61,9 @@ Model::Moves DumbPlayer::getMoves() {
 				} else {
 					return {{0, cut_.router.getNext(model_)}};
 				}
-#if 0
-				if (unit.pos == cut_.end) {
-					state_ = State::kNewCut;
-				} else if (cut_.can_go_fast) {
-					return {{0, cut_.direction}};
-				} else {
-					auto tick = cut_.zigzag_tick;
-					cut_.zigzag_tick += 1;
-					cut_.zigzag_tick %= 3;
-					Direction direction = Direction::kNone;
-					switch (tick) {
-						case 1: direction = opposite(cut_.direction); break;
-						case 0:
-						case 2: direction = cut_.direction; break;
-					}
-
-					Pos next_pos = neighbor(unit.pos, direction);
-					// if we're stepping off, check if safe
-					if (model_.getCell(next_pos).owner == 0) {
-						if (!model_.IsSafeToMoveOutAndBack(next_pos)) {
-							direction = opposite(cut_.direction);
-							cut_.zigzag_tick = 0;
-						} else {
-							// if safe to step off, we might be able to go fast
-							cut_.can_go_fast = CanGoFast(unit);
-						}
-					}
-					return {{0, direction}};
-				}
-				break;
-#endif
 			}
 		}
 	}
-}
-
-bool DumbPlayer::CanGoFast(const Unit& unit) const {
-	const int kMaxLookahead = 80;
-	int end_distance = taxicabDistance(unit.pos, cut_.end);
-	if (end_distance > kMaxLookahead) {
-		return false;
-	}
-
-	bool success = false;
-	auto lookahead = model_.lookaheadEnemies(
-		GetEnemiesInArea(cut_.aabb), end_distance + 1, 1000000, &success);
-	if (!success) {
-		std::cerr << "Too much lookahead" << std::endl;
-		return false;
-	}
-
-	int d = 1;
-	for (Pos p = neighbor(unit.pos, cut_.direction);
-		p != cut_.end;
-		p = neighbor(p, cut_.direction), ++d)
-	{
-		int la_cell = lookahead(p.row, p.col);
-		if (la_cell == -1) {
-			continue;
-		}
-		if (d-1 < la_cell) {
-			return false;
-		}
-	}
-
-	return true;
 }
 
 std::vector<EnemyState> DumbPlayer::GetEnemiesInArea(const AABB& aabb) const {
@@ -151,12 +88,10 @@ void DumbPlayer::FindBestCut(const Pos& unit_pos) {
 		cut_.start = {center.row, aabb.mins.col - 1};
 		cut_.end =   {center.row, aabb.maxs.col + 1};
 		cut_.direction = Direction::kRight;
-		cut_.zigzag_tick = 0;
 	} else {
 		cut_.start = {aabb.mins.row - 1, center.col};
 		cut_.end =   {aabb.maxs.row + 1, center.col};
 		cut_.direction = Direction::kDown;
-		cut_.zigzag_tick = 0;
 	}
 
 	auto start_distance = taxicabDistance(unit_pos, cut_.start);
