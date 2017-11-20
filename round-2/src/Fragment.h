@@ -46,8 +46,8 @@ class Sequence : public Fragment {
 public:
 	void add(std::unique_ptr<Fragment> fragment);
 	Direction forceGetNext(const Model& model);
-	virtual Direction getNext(const Model& model);
-	virtual bool isFinished() const;
+	virtual Direction getNext(const Model& model) override;
+	virtual bool isFinished() const override;
 
 private:
 	std::deque<std::unique_ptr<Fragment>> fragments_;
@@ -56,8 +56,8 @@ private:
 class Capture : public Fragment {
 public:
 	Capture(const Pos& origin, const Trap& trap);
-	virtual Direction getNext(const Model& model);
-	virtual bool isFinished() const;
+	virtual Direction getNext(const Model& model) override;
+	virtual bool isFinished() const override;
 
 private:
 	bool isTriggered(const Model& model) const;
