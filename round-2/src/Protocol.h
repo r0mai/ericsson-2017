@@ -4,3 +4,4 @@
 #include "protocol/Common.capnp.h"
 
 #include <capnp/serialize.h>
+#include <capnp/serialize-packed.h>

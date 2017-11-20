@@ -9,8 +9,6 @@
 #include <unistd.h>
 #include <iostream>
 
-#include <capnp/serialize.h>
-
 #include <SFML/Network.hpp>
 
 
@@ -50,21 +48,32 @@ bool Connection::connect(const char* host, int port) {
 	return true;
 }
 
-std::unique_ptr<capnp::MallocMessageBuilder> Connection::communicate(
+void readPackedMessageCopyFromFd(int fd, capnp::MessageBuilder& target,
+                           capnp::ReaderOptions options,
+						   kj::ArrayPtr<capnp::word> scratchSpace)
+{
+  kj::FdInputStream stream(fd);
+  readMessageCopy(stream, target, options, scratchSpace);
+}
+
+std::unique_ptr<Model> Connection::communicate(
 	std::unique_ptr<capnp::MallocMessageBuilder> message)
 {
 	auto response = std::make_unique<capnp::MallocMessageBuilder>();
-	capnp::writeMessageToFd(sockfd_, *message);
+	capnp::writePackedMessageToFd(sockfd_, *message);
 	try {
-		capnp::readMessageCopyFromFd(sockfd_, *response);
+		// capnp::readMessageCopyFromFd(sockfd_, *response);
+		capnp::PackedFdMessageReader reader(sockfd_);
+		auto response = reader.getRoot<protocol::Response>();
+		return std::make_unique<Model>(
+			evil::Model::fromResponse(protocol::Response::Reader{response}));
 	} catch(kj::Exception& ex) {
 		std::cerr << "Remote closed connection." << std::endl;
 		return {};
 	}
-	return response;
 }
 
-std::future<std::unique_ptr<capnp::MallocMessageBuilder>> Connection::communicateAsync(
+std::future<std::unique_ptr<Model>> Connection::communicateAsync(
 	std::unique_ptr<capnp::MallocMessageBuilder> message)
 {
 	return std::async([this, m = std::move(message)]() mutable {

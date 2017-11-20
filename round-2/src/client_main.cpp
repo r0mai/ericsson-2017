@@ -51,11 +51,10 @@ evil::Model login(evil::Connection& conn) {
 	auto login = commands.initLogin();
 	login.setTeam("prezident_evil");
 	login.setHash("stzq8jm94kf9iyw7353j9semae2sjorjvthakhzw");
-	auto reader = conn.communicate(std::move(message));
-	return evil::Model::fromResponse(getResponse(reader));
+	return *conn.communicate(std::move(message));
 }
 
-evil::Connection::FutureMessage sendMoves(
+std::future<std::unique_ptr<evil::Model>> sendMoves(
 	evil::Connection& conn,	const evil::Model::Moves& moves)
 {
 	auto msg = std::make_unique<capnp::MallocMessageBuilder>();
@@ -177,7 +176,7 @@ int main(int argc, char* argv[]) {
 
 	using Clock = std::chrono::steady_clock;
 
-	std::future<evil::Connection::Message> future;
+	std::future<std::unique_ptr<evil::Model>> future;
 	auto calc_start = Clock::now();
 	auto calc_end = Clock::now();
 
@@ -210,12 +209,11 @@ int main(int argc, char* argv[]) {
 		}
 
 		if (evil::isFutureReady(future)) {
-			auto reader = future.get();
-			if (!reader) {
+			auto model_ptr = future.get();
+			if (!model_ptr) {
 				return 0;
 			}
-			auto response = getResponse(reader);
-			model = evil::Model::fromResponse(response);
+			model = *model_ptr;
 			calc_start = Clock::now();
 			std::cout << "Network time = " << asMs(calc_start - calc_end) << "ms; calc time = " << calc_time << "ms" << std::endl;
 			model_ready = true;
