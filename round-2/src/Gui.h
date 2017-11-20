@@ -97,6 +97,19 @@ private:
 	Sequence seq_;
 };
 
+class Diagonal : public Fragment {
+public:
+	Diagonal(const Pos& origin, Direction dir);
+	virtual Direction getNext(const Model& model);
+	virtual bool isFinished() const;
+
+	static std::vector<Pos> render(const Pos& origin, Direction dir);
+
+private:
+	Pos origin_;
+	Sequence seq_;
+};
+
 
 // Gui /////////////////////////////////////////////////////////////////////////
 
@@ -170,6 +183,7 @@ private:
 		kNormal,
 		kTrap,
 		kSpike,
+		kDiagonal,
 		//
 		kModeCount
 	} mode_ = Mode::kNormal;

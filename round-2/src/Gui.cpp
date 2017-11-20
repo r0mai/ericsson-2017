@@ -239,6 +239,47 @@ std::vector<Pos> Spike::render(const Pos& origin, Direction dir) {
 }
 
 
+// Diagonal
+
+Diagonal::Diagonal(const Pos& origin, Direction dir)
+	: origin_(origin)
+{
+	auto conv = std::make_unique<Converge>(origin);
+	auto router = std::make_unique<Router>();
+
+	auto vd = dir;
+	auto hd = rotateCW(dir);
+	auto vdx = opposite(vd);
+	auto hdx = opposite(hd);
+
+	router->add({
+		vd, hd, hdx, vdx,
+	});
+
+	seq_.add(std::move(conv));
+	seq_.add(std::move(router));
+	seq_.add(std::make_unique<Librate>());
+}
+
+Direction Diagonal::getNext(const Model& model) {
+	return seq_.forceGetNext(model);
+}
+
+bool Diagonal::isFinished() const {
+	return seq_.isFinished();
+}
+
+std::vector<Pos> Diagonal::render(const Pos& origin, Direction dir) {
+	auto vd = dir;
+	auto hd = rotateCW(dir);
+	auto p0 = origin;
+	auto p1 = neighbor(p0, vd);
+	auto p2 = neighbor(p1, hd);
+
+	return {p0, p1, p2};
+}
+
+
 // Gui /////////////////////////////////////////////////////////////////////////
 
 Gui::Gui()
@@ -267,11 +308,18 @@ void Gui::drawDot(const Pos& pos, sf::Color color, float scale) {
 void Gui::drawCell(const Pos& pos, const Cell& cell) {
 	auto color = owner_colors[cell.color];
 	drawCell(pos, color);
+
+	if (cell.color == 0 && pos.col + pos.row == map_w - 1) {
+		drawDot(pos, sf::Color(0xee, 0xee, 0xee));
+	}
+
 }
 
 
 bool Gui::init(bool stepping) {
 	is_stepping_ = stepping;
+
+	window_.setVerticalSyncEnabled(true);
 	return true;
 }
 
@@ -308,6 +356,7 @@ void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 		case sf::Keyboard::Num1: mode_ = Mode::kNormal; break;
 		case sf::Keyboard::Num2: mode_ = Mode::kTrap; break;
 		case sf::Keyboard::Num3: mode_ = Mode::kSpike; break;
+		case sf::Keyboard::Num4: mode_ = Mode::kDiagonal; break;
 		case sf::Keyboard::Space: toggleStepping(false); break;
 		case sf::Keyboard::Period: toggleStepping(true); break;
 		default: break;
@@ -331,11 +380,16 @@ void Gui::handleMouseButton(const sf::Event::MouseButtonEvent& ev) {
 		} else if (mode_ == Mode::kSpike) {
 			auto dir = toDirection(cycle_ % 4);
 			fragment_ = std::make_unique<Spike>(mouse_pos_, dir);
+		} else if (mode_ == Mode::kDiagonal) {
+			auto dir = toDirection(cycle_ % 4);
+			fragment_ = std::make_unique<Diagonal>(mouse_pos_, dir);
 		}
 	}
 }
 
 bool Gui::update() {
+	std::this_thread::sleep_for(std::chrono::milliseconds(8));
+
 	sf::Event event;
 	while (window_.pollEvent(event)) {
 		switch (event.type) {
@@ -405,6 +459,11 @@ void Gui::draw() {
 	} else if (mode_ == Mode::kSpike) {
 		auto dir = toDirection(cycle_ % 4);
 		for (auto pos : Spike::render(mouse_pos_, dir)) {
+			drawCell(pos, sf::Color(50, 230, 250, 100));
+		}
+	} else if (mode_ == Mode::kDiagonal) {
+		auto dir = toDirection(cycle_ % 4);
+		for (auto pos : Diagonal::render(mouse_pos_, dir)) {
 			drawCell(pos, sf::Color(50, 230, 250, 100));
 		}
 	} else {
