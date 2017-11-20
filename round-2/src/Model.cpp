@@ -96,6 +96,26 @@ void Model::setLevel(int level) {
 	level_ = level;
 }
 
+std::vector<EnemyState> Model::GetInsideEnemies() const {
+	std::vector<EnemyState> states;
+	for (auto& enemy : enemies_) {
+		if (getCell(enemy.pos).owner == 0) {
+			states.push_back(enemy);
+		}
+	}
+	return states;
+}
+
+std::vector<EnemyState> Model::GetOutsideEnemies() const {
+	std::vector<EnemyState> states;
+	for (auto& enemy : enemies_) {
+		if (getCell(enemy.pos).owner == 1) {
+			states.push_back(enemy);
+		}
+	}
+	return states;
+}
+
 Model Model::fromResponse(protocol::Response::Reader response) {
 	Model m;
 

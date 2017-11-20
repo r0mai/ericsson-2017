@@ -105,6 +105,9 @@ public:
 	void setTick(int tick);
 	void setLevel(int level);
 
+	std::vector<EnemyState> GetInsideEnemies() const;
+	std::vector<EnemyState> GetOutsideEnemies() const;
+
 	// after a step
 	std::vector<EnemyState> possibleEnemyStates(const EnemyState& enemy) const;
 	// after a step for all enemies
