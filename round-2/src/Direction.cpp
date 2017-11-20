@@ -82,5 +82,16 @@ Direction toDirection(int n) {
 	return Direction::kNone;
 }
 
+std::vector<Pos> render(const Pos& origin, const std::vector<Direction>& dirs) {
+	auto pos = origin;
+	std::vector<Pos> vec;
+
+	vec.push_back(pos);
+	for (auto dir : dirs) {
+		pos = neighbor(pos, dir);
+		vec.push_back(pos);
+	}
+	return vec;
+}
 
 } // namespace evil

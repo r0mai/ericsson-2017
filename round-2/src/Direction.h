@@ -22,6 +22,7 @@ Direction opposite(Direction dir);
 Direction rotateCW(Direction dir);
 Direction rotateCCW(Direction dir);
 std::vector<Direction> directions(const Pos& pos, const Pos& size);
+std::vector<Pos> render(const Pos& origin, const std::vector<Direction>& dirs);
 
 
 } // namespace evil
