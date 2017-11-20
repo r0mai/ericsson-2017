@@ -252,9 +252,13 @@ Diagonal::Diagonal(const Pos& origin, Direction dir)
 	auto vdx = opposite(vd);
 	auto hdx = opposite(hd);
 
-	router->add({
-		vd, hd, hdx, vdx,
-	});
+	std::vector<Direction> ds = {
+		vd, vdx, vd,
+		hd, hdx, hd };
+
+	for (int i = 0; i < 10; ++i) {
+		router->add(ds);
+	}
 
 	seq_.add(std::move(conv));
 	seq_.add(std::move(router));
@@ -270,13 +274,16 @@ bool Diagonal::isFinished() const {
 }
 
 std::vector<Pos> Diagonal::render(const Pos& origin, Direction dir) {
-	auto vd = dir;
-	auto hd = rotateCW(dir);
-	auto p0 = origin;
-	auto p1 = neighbor(p0, vd);
-	auto p2 = neighbor(p1, hd);
+	Direction ds[2] = {dir, rotateCW(dir)};
+	std::vector<Pos> vec;
+	auto pos = origin;
 
-	return {p0, p1, p2};
+	vec.push_back(pos);
+	for (int i = 0; i < 20; ++i) {
+		pos = neighbor(pos, ds[i % 2]);
+		vec.push_back(pos);
+	}
+	return vec;
 }
 
 
