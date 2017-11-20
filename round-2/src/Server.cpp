@@ -53,12 +53,12 @@ bool ServerConnection::Accept() {
 	return true;
 }
 
-std::unique_ptr<capnp::StreamFdMessageReader> ServerConnection::Read() {
-	return std::make_unique<capnp::StreamFdMessageReader>(newsockfd_);
+std::unique_ptr<capnp::PackedFdMessageReader> ServerConnection::Read() {
+	return std::make_unique<capnp::PackedFdMessageReader>(newsockfd_);
 }
 
 void ServerConnection::Write(std::unique_ptr<capnp::MallocMessageBuilder> message) {
-	capnp::writeMessageToFd(newsockfd_, *message);
+	capnp::writePackedMessageToFd(newsockfd_, *message);
 }
 
 ServerConnection::~ServerConnection() {

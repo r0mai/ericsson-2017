@@ -13,7 +13,7 @@ class ServerConnection {
 public:
 	bool Bind();
 	bool Accept();
-	std::unique_ptr<capnp::StreamFdMessageReader> Read();
+	std::unique_ptr<capnp::PackedFdMessageReader> Read();
 	void Write(std::unique_ptr<capnp::MallocMessageBuilder> message);
 
 	~ServerConnection();
