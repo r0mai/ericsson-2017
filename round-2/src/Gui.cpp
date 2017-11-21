@@ -153,14 +153,24 @@ void Gui::handleMouseButton(const sf::Event::MouseButtonEvent& ev) {
 			auto dir = toDirection(cycle_ % 4);
 			fragment_ = std::make_unique<Spike>(mouse_pos_, dir);
 		} else if (mode_ == Mode::kDiagonal) {
-			auto dir = toDirection(cycle_ % 4);
-			fragment_ = std::make_unique<Diagonal>(mouse_pos_, dir);
-		} else if (mode_ == Mode::kClamp) {
-			auto router = std::make_unique<Router>();
+			auto align = getAlignment();
+			auto diag = makeDiagonal(align, diag_w_);
+			auto router = std::make_unique<SafeRouter>(model_, diag);
 			auto seq = std::make_unique<Sequence>();
-			auto axes = cycledAxes();
-			router->add(makeClamp(axes.first, axes.second, clamp_w_));
-
+			seq->add(std::make_unique<Converge>(pos));
+			seq->add(std::move(router));
+			seq->add(std::make_unique<Librate>());
+			fragment_ = std::move(seq);
+		} else if (mode_ == Mode::kClamp) {
+			auto align = getAlignment();
+			auto clamp = makeClamp2(align, clamp_w_);
+#if 0
+			auto router = std::make_unique<Router>(
+			router->add(clamp);
+#else
+			auto router = std::make_unique<SafeRouter>(model_, clamp);
+#endif
+			auto seq = std::make_unique<Sequence>();
 			seq->add(std::make_unique<Converge>(pos));
 			seq->add(std::move(router));
 			seq->add(std::make_unique<Librate>());
@@ -244,14 +254,14 @@ void Gui::draw() {
 			drawCell(pos, sf::Color(50, 230, 250, 100));
 		}
 	} else if (mode_ == Mode::kDiagonal) {
-		auto dir = toDirection(cycle_ % 4);
-		for (auto pos : Diagonal::render(mouse_pos_, dir)) {
+		auto align = getAlignment();
+		for (auto pos : render(mouse_pos_, makeDiagonal(align, diag_w_))) {
 			drawCell(pos, sf::Color(50, 230, 250, 100));
 		}
 	} else if (mode_ == Mode::kClamp) {
-		auto axes = cycledAxes();
+		auto align = getAlignment();
 		drawCells(
-			render(mouse_pos_, makeClamp(axes.first, axes.second, clamp_w_)),
+			render(mouse_pos_, makeClamp2(align, clamp_w_)),
 			sf::Color(50, 230, 250, 100));
 	} else {
 		drawCell(mouse_pos_, sf::Color(50, 230, 250, 100));
@@ -337,7 +347,7 @@ void Gui::toggleStepping(bool enable) {
 	is_stepping_ = enable;
 }
 
-std::pair<Direction, Direction> Gui::cycledAxes() {
+Alignment Gui::getAlignment() {
 	auto mirror = !!((cycle_ % 8) / 4);
 	auto axis0 = toDirection(cycle_ % 4);
 	auto axis1 = mirror ? rotateCCW(axis0) : rotateCW(axis0);

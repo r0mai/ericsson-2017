@@ -79,25 +79,9 @@ private:
 	Direction snap_first_ = Direction::kNone;
 };
 
-
-
-
 class Spike : public Fragment {
 public:
 	Spike(const Pos& origin, Direction dir);
-	virtual Direction getNext(const Model& model) override;
-	virtual bool isFinished() const override;
-
-	static std::vector<Pos> render(const Pos& origin, Direction dir);
-
-private:
-	Pos origin_;
-	Sequence seq_;
-};
-
-class Diagonal : public Fragment {
-public:
-	Diagonal(const Pos& origin, Direction dir);
 	virtual Direction getNext(const Model& model) override;
 	virtual bool isFinished() const override;
 

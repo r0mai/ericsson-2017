@@ -267,54 +267,6 @@ std::vector<Pos> Spike::render(const Pos& origin, Direction dir) {
 	return vec;
 }
 
-
-// Diagonal
-
-Diagonal::Diagonal(const Pos& origin, Direction dir)
-	: origin_(origin)
-{
-	auto conv = std::make_unique<Converge>(origin);
-	auto router = std::make_unique<Router>();
-
-	auto vd = dir;
-	auto hd = rotateCW(dir);
-	auto vdx = opposite(vd);
-	auto hdx = opposite(hd);
-
-	std::vector<Direction> ds = {
-		vd, vdx, vd,
-		hd, hdx, hd };
-
-	for (int i = 0; i < 10; ++i) {
-		router->add(ds);
-	}
-
-	seq_.add(std::move(conv));
-	seq_.add(std::move(router));
-	seq_.add(std::make_unique<Librate>());
-}
-
-Direction Diagonal::getNext(const Model& model) {
-	return seq_.getNext(model);
-}
-
-bool Diagonal::isFinished() const {
-	return seq_.isFinished();
-}
-
-std::vector<Pos> Diagonal::render(const Pos& origin, Direction dir) {
-	Direction ds[2] = {dir, rotateCW(dir)};
-	std::vector<Pos> vec;
-	auto pos = origin;
-
-	vec.push_back(pos);
-	for (int i = 0; i < 20; ++i) {
-		pos = neighbor(pos, ds[i % 2]);
-		vec.push_back(pos);
-	}
-	return vec;
-}
-
 // SafeRouter
 
 SafeRouter::SafeRouter(const Model& model, std::vector<Direction> directions, int unit_idx)

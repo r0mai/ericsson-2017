@@ -71,7 +71,7 @@ private:
 	void toggleStepping(bool enable);
 	void toggleCapture();
 
-	std::pair<Direction, Direction> cycledAxes();
+	Alignment getAlignment();
 
 	sf::RenderWindow window_ {sf::VideoMode(window_w, window_h), "Window"};
 	Model model_;
@@ -82,6 +82,7 @@ private:
 	GuiPlayer player_;
 	Clock::time_point last_update_;
 	int clamp_w_ = 1;
+	int diag_w_ = 70;
 	int delay_ = 0;
 	int cycle_ = 0;
 	bool is_stepping_ = false;

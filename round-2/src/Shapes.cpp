@@ -57,4 +57,16 @@ std::vector<Direction> makeClamp2(const Alignment& align, int) {
 	};
 }
 
+std::vector<Direction> makeDiagonal(const Alignment& align, int size) {
+	auto hd = align.axis0;
+	auto vd = align.axis1;
+
+	std::vector<Direction> vec;
+	for (int i = 0; i < size; ++i) {
+		vec.push_back(vd);
+		vec.push_back(hd);
+	}
+	return vec;
+}
+
 } // namespace evil
