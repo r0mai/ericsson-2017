@@ -162,15 +162,39 @@ AABB DumbPlayer::FindBestArea(const Pos& unit_pos) const {
 			return lhs.aabb.area() < rhs.aabb.area();
 		})->aabb.area();
 
+	int largest_enemy_count = std::max_element(begin(areas), end(areas),
+		[](const auto& lhs, const auto& rhs) {
+			return lhs.enemy_count < rhs.enemy_count;
+		})->enemy_count;
+
+	int largest_dts = std::max_element(begin(areas), end(areas),
+		[](const auto& lhs, const auto& rhs) {
+			return lhs.distance_to_start < rhs.distance_to_start;
+		})->distance_to_start;
+
 	auto best_area = std::max_element(begin(areas), end(areas),
 		[&](const AreaDesc& lhs, const AreaDesc& rhs) {
 			double lhs_norm_area = lhs.area / double(largest_area);
 			double rhs_norm_area = rhs.area / double(largest_area);
 
-			double lhs_score = (180 - lhs.distance_to_start) * lhs_norm_area;
-			double rhs_score = (180 - rhs.distance_to_start) * rhs_norm_area;
+			if (lhs_norm_area > 0.8) { lhs_norm_area = 1.0; }
+			if (rhs_norm_area > 0.8) { rhs_norm_area = 1.0; }
 
-			return lhs_score < rhs_score;
+			double lhs_norm_enemy_count = lhs.enemy_count / double(largest_enemy_count);
+			double rhs_norm_enemy_count = rhs.enemy_count / double(largest_enemy_count);
+
+			if (lhs_norm_area != rhs_norm_area) {
+				return lhs_norm_area < rhs_norm_area;
+			}
+
+			double lhs_norm_dts = lhs.distance_to_start;
+			double rhs_norm_dts = rhs.distance_to_start;
+
+			if (lhs.distance_to_start != rhs.distance_to_start) {
+				return lhs.distance_to_start > rhs.distance_to_start;
+			}
+
+			return lhs.enemy_count > rhs.enemy_count;
 		}
 	);
 
