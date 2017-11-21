@@ -157,6 +157,15 @@ AABB DumbPlayer::FindBestArea(const Pos& unit_pos) const {
 		return {};
 	}
 
+	if (gui_) {
+		auto clicked_pos = gui_->lastClickedPosAndClear();
+		for (auto& area : areas) {
+			if (area.aabb.contains(clicked_pos)) {
+				return area.aabb;
+			}
+		}
+	}
+
 	int largest_area = std::max_element(begin(areas), end(areas),
 		[](const auto& lhs, const auto& rhs) {
 			return lhs.aabb.area() < rhs.aabb.area();
@@ -173,7 +182,7 @@ AABB DumbPlayer::FindBestArea(const Pos& unit_pos) const {
 		})->distance_to_start;
 
 	double norm_time = model_.getTick() / double(model_.maxTick());
-	double area_round_threshold = 0.4 + 0.6*(1-norm_time);
+	double area_round_threshold = 0.5 + 0.5*(1-norm_time);
 
 	auto best_area = std::max_element(begin(areas), end(areas),
 		[&](const AreaDesc& lhs, const AreaDesc& rhs) {

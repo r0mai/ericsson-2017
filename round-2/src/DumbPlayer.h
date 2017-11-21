@@ -3,11 +3,14 @@
 #include "AABB.h"
 #include "Player.h"
 #include "Fragment.h"
+#include "Gui.h"
 
 namespace evil {
 
 class DumbPlayer : public Player {
 public:
+	DumbPlayer(Gui* gui = nullptr) : gui_(gui) {}
+
 	virtual void update(const Model& model) override;
 	virtual bool isReady() const override;
 	virtual Model::Moves getMoves() override;
@@ -33,6 +36,7 @@ private:
 		SafeRouter router;
 	} cut_;
 
+	Gui* gui_ = nullptr;
 	Model model_;
 	State state_;
 };

@@ -149,7 +149,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	evil::Gui gui;
-	evil::DumbPlayer dumb;
+	evil::DumbPlayer dumb(&gui);
 	gui.init(stepping);
 
 	auto model = login(connection);

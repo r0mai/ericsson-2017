@@ -27,6 +27,8 @@ public:
 	Direction getDirection() const;
 	Player& getPlayer();
 
+	Pos lastClickedPosAndClear();
+
 private:
 	using Clock = std::chrono::steady_clock;
 
@@ -74,6 +76,7 @@ private:
 	Model model_;
 	Direction dir_ = Direction::kUp;
 	Pos mouse_pos_;
+	Pos last_clicked_pos_;
 
 	GuiPlayer player_;
 	Clock::time_point last_update_;

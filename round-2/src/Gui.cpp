@@ -130,6 +130,7 @@ void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 
 void Gui::handleMouseButton(const sf::Event::MouseButtonEvent& ev) {
 	auto pos = windowToPos(ev.x, ev.y);
+	last_clicked_pos_ = pos;
 	auto& cell = model_.getCell(pos);
 	if (cell.owner == 1) {
 		if (mode_ == Mode::kNormal) {
@@ -281,6 +282,12 @@ void Gui::close() {
 
 Player& Gui::getPlayer() {
 	return player_;
+}
+
+Pos Gui::lastClickedPosAndClear() {
+	auto tmp = last_clicked_pos_;
+	last_clicked_pos_ = {};
+	return tmp;
 }
 
 void Gui::onPlayerUpdate(const Model& model) {
