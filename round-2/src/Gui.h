@@ -59,6 +59,7 @@ private:
 	void drawCell(const Pos& pos, sf::Color color);
 	void drawCells(const std::vector<Pos>& vec, sf::Color color);
 	void drawDot(const Pos& pos, sf::Color color, float scale = 1.f);
+	void drawDirection(const Pos& pos, Direction h_dir, Direction v_dir);
 
 	Pos windowToPos(int x, int y) const;
 	void handleKeypress(const sf::Event::KeyEvent& ev);

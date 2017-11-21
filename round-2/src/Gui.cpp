@@ -235,6 +235,10 @@ void Gui::draw() {
 		drawDot(neighbor(unit.next_pos, dir_), sf::Color::Red);
 	}
 
+	for (auto& enemy : model_.getEnemies()) {
+		drawDirection(enemy.pos, enemy.h_dir, enemy.v_dir);
+	}
+
 	if (mode_ == Mode::kCapture) {
 		auto trap = makeAlignedTrap(model_, mouse_pos_, cycle_);
 		if (trap) {
@@ -267,6 +271,28 @@ void Gui::draw() {
 		drawCell(mouse_pos_, sf::Color(50, 230, 250, 100));
 	}
 	window_.display();
+}
+
+void Gui::drawDirection(const Pos& pos, Direction h_dir, Direction v_dir) {
+	sf::RectangleShape rectangle;
+	rectangle.setSize(sf::Vector2f((cell_w + cell_h) / 2., (cell_w + cell_h) / 10.));
+	rectangle.setFillColor(sf::Color::Green);
+	rectangle.setPosition((pos.col + 0.5) * cell_w, (pos.row + 0.5) * cell_h);
+	float angle = 0;
+	if (h_dir == Direction::kRight && v_dir == Direction::kUp) {
+		angle = -45;
+	} else if (h_dir == Direction::kRight && v_dir == Direction::kDown) {
+		angle = 45;
+	} else if (h_dir == Direction::kLeft && v_dir == Direction::kUp) {
+		angle = 225;
+	} else if (h_dir == Direction::kLeft && v_dir == Direction::kDown) {
+		angle = 135;
+	} else {
+		std::cout << "Invalid enemy direction: v = "
+		    << v_dir << ", h = " << h_dir << std::endl;
+	}
+	rectangle.setRotation(angle);
+	window_.draw(rectangle);
 }
 
 void Gui::drawCells(const std::vector<Pos>& vec, sf::Color color) {
