@@ -269,35 +269,29 @@ std::vector<Pos> Spike::render(const Pos& origin, Direction dir) {
 
 // SafeRouter
 
-SafeRouter::SafeRouter(const Model& model, std::vector<Direction> directions, int unit_idx)
+SafeRouter::SafeRouter(const Model& model, std::vector<Direction> dirs, int unit_idx)
 	: unit_idx_(unit_idx)
-	, directions_(std::move(directions))
+	, directions_(std::move(dirs))
 {
 	// find a safe spot around the starting area to retreat to if needed
-	auto current_pos = model.getUnit(unit_idx_).pos;
+	auto pos = model.getUnit(unit_idx_).pos;
+	last_pos_ = render(pos, directions_).back();
 
-	last_pos_ = render(current_pos, directions_).front();
+	bool found = false;
+	for (auto dir : directions(pos, model.size())) {
+		if (model.getCell(neighbor(pos, dir)).owner == 1) {
+			directions_.insert(begin(directions_), opposite(dir));
+			found = true;
+		}
+	}
 
-	auto up_pos = neighbor(current_pos, Direction::kUp);
-	auto down_pos = neighbor(current_pos, Direction::kDown);
-	auto right_pos = neighbor(current_pos, Direction::kRight);
-	auto left_pos = neighbor(current_pos, Direction::kLeft);
-
-	if (model.isValid(up_pos) && model.getCell(up_pos).owner == 1) {
-		directions_.insert(begin(directions_), Direction::kDown);
-	} else if (model.isValid(right_pos) && model.getCell(right_pos).owner == 1) {
-		directions_.insert(begin(directions_), Direction::kLeft);
-	} else if (model.isValid(down_pos) && model.getCell(down_pos).owner == 1) {
-		directions_.insert(begin(directions_), Direction::kUp);
-	} else if (model.isValid(left_pos) && model.getCell(left_pos).owner == 1) {
-		directions_.insert(begin(directions_), Direction::kRight);
-	} else {
+	if (!found) {
 		next_direction_idx_ = 0;
 		assert(false);
 		return;
 	}
 
-	if (!LastIsBlue(model)) {
+	if (!lastIsBlue(model)) {
 		directions_.push_back(opposite(directions_.back()));
 	}
 }
@@ -322,7 +316,7 @@ Direction SafeRouter::getNext(const Model& model) {
 	}
 
 	if (current_on_blue && model.IsSafeToMoveOutAndBack(next_pos)) {
-		can_go_fast_ = CanGoFast(model);
+		can_go_fast_ = canGoFast(model);
 		++next_direction_idx_;
 		return next_direction;
 	}
@@ -332,12 +326,12 @@ Direction SafeRouter::getNext(const Model& model) {
 	return opposite(last_direction);
 }
 
-bool SafeRouter::LastIsBlue(const Model& model) const {
+bool SafeRouter::lastIsBlue(const Model& model) const {
 	return model.getCell(last_pos_).owner == 1;
 }
 
-bool SafeRouter::CanGoFast(const Model& model) const {
-	if (!LastIsBlue(model)) {
+bool SafeRouter::canGoFast(const Model& model) const {
+	if (!lastIsBlue(model)) {
 		return false;
 	}
 	auto current_pos = model.getUnit(unit_idx_).pos;
