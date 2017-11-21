@@ -172,13 +172,25 @@ AABB DumbPlayer::FindBestArea(const Pos& unit_pos) const {
 			return lhs.distance_to_start < rhs.distance_to_start;
 		})->distance_to_start;
 
+	double norm_time = model_.getTick() / double(model_.maxTick());
+	double area_round_threshold = 0.4 + 0.6*(1-norm_time);
+
 	auto best_area = std::max_element(begin(areas), end(areas),
 		[&](const AreaDesc& lhs, const AreaDesc& rhs) {
 			double lhs_norm_area = lhs.area / double(largest_area);
 			double rhs_norm_area = rhs.area / double(largest_area);
 
-			if (lhs_norm_area > 0.8) { lhs_norm_area = 1.0; }
-			if (rhs_norm_area > 0.8) { rhs_norm_area = 1.0; }
+			std::cout << "lhs: "
+				<< lhs_norm_area << ", "
+				<< lhs.distance_to_start << ", "
+				<< lhs.enemy_count << std::endl;
+			std::cout << "rhs: "
+				<< rhs_norm_area << ", "
+				<< rhs.distance_to_start << ", "
+				<< rhs.enemy_count << std::endl;
+
+			if (lhs_norm_area > area_round_threshold) { lhs_norm_area = 1.0; }
+			if (rhs_norm_area > area_round_threshold) { rhs_norm_area = 1.0; }
 
 			double lhs_norm_enemy_count = lhs.enemy_count / double(largest_enemy_count);
 			double rhs_norm_enemy_count = rhs.enemy_count / double(largest_enemy_count);
@@ -186,9 +198,6 @@ AABB DumbPlayer::FindBestArea(const Pos& unit_pos) const {
 			if (lhs_norm_area != rhs_norm_area) {
 				return lhs_norm_area < rhs_norm_area;
 			}
-
-			double lhs_norm_dts = lhs.distance_to_start;
-			double rhs_norm_dts = rhs.distance_to_start;
 
 			if (lhs.distance_to_start != rhs.distance_to_start) {
 				return lhs.distance_to_start > rhs.distance_to_start;
