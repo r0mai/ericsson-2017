@@ -33,7 +33,7 @@ Pos renderTrigger2(const Pos& origin, const Trap& trap);
 // --
 
 
-std::vector<Direction> makeClamp(Direction vd, Direction hd);
+std::vector<Direction> makeClamp(Direction vd, Direction hd, int width=1);
 
 bool checkCage(
 	const Model& model, const Pos& bounce,

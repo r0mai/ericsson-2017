@@ -81,6 +81,7 @@ private:
 
 	GuiPlayer player_;
 	Clock::time_point last_update_;
+	int clamp_w_ = 1;
 	int delay_ = 0;
 	int cycle_ = 0;
 	bool is_stepping_ = false;

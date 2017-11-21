@@ -73,7 +73,8 @@ void Gui::drawCell(const Pos& pos, const Cell& cell) {
 
 	if (cell.color == 0 &&
 		(pos.col + pos.row == map_w - 1 ||
-		pos.col == map_h - 2))
+		pos.col == map_h - 2 ||
+		pos.col == 2 + map_w - map_h - 1))
 	{
 		drawDot(pos, sf::Color(0xee, 0xee, 0xee));
 	}
@@ -124,6 +125,8 @@ void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 		case sf::Keyboard::Num5: mode_ = Mode::kClamp; break;
 		case sf::Keyboard::Space: toggleStepping(false); break;
 		case sf::Keyboard::Period: toggleStepping(true); break;
+		case sf::Keyboard::O: ++clamp_w_; break;
+		case sf::Keyboard::P: clamp_w_ = std::max(1, clamp_w_ - 1); break;
 
 		case sf::Keyboard::C: toggleCapture(); break;
 		default: break;
@@ -155,7 +158,7 @@ void Gui::handleMouseButton(const sf::Event::MouseButtonEvent& ev) {
 			auto router = std::make_unique<Router>();
 			auto seq = std::make_unique<Sequence>();
 			auto axes = cycledAxes();
-			router->add(makeClamp(axes.first, axes.second));
+			router->add(makeClamp(axes.first, axes.second, clamp_w_));
 
 			seq->add(std::make_unique<Converge>(pos));
 			seq->add(std::move(router));
@@ -247,7 +250,7 @@ void Gui::draw() {
 	} else if (mode_ == Mode::kClamp) {
 		auto axes = cycledAxes();
 		drawCells(
-			render(mouse_pos_, makeClamp(axes.first, axes.second)),
+			render(mouse_pos_, makeClamp(axes.first, axes.second, clamp_w_)),
 			sf::Color(50, 230, 250, 100));
 	} else {
 		drawCell(mouse_pos_, sf::Color(50, 230, 250, 100));
