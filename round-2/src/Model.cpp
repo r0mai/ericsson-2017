@@ -470,20 +470,20 @@ std::vector<EnemyState> Model::possibleEnemyStates(const EnemyState& enemy) cons
 
 	// can we continue moving forward
 	if (isValid(forward_p) && old_cell.owner == getCell(forward_p).owner) {
-		return {{forward_p, v, h}};
+		return {{forward_p, h, v}};
 	}
 
 	std::vector<EnemyState> possible_states;
 	possible_states.reserve(3);
 
 	if (isValid(backwards_p) && old_cell.owner == getCell(backwards_p).owner) {
-		possible_states.push_back({backwards_p, ov, oh});
+		possible_states.push_back({backwards_p, oh, ov});
 	}
 	if (isValid(side1_p) && old_cell.owner == getCell(side1_p).owner) {
-		possible_states.push_back({side1_p, v, oh});
+		possible_states.push_back({side1_p, oh, v});
 	}
 	if (isValid(side2_p) && old_cell.owner == getCell(side2_p).owner) {
-		possible_states.push_back({side2_p, ov, h});
+		possible_states.push_back({side2_p, h, ov});
 	}
 
 	if (!possible_states.empty()) {
@@ -497,10 +497,10 @@ std::vector<EnemyState> Model::possibleEnemyStates(const EnemyState& enemy) cons
 		auto lin_side2_p = neighbor(enemy.pos, oh);
 
 		if (isValid(lin_side1_p) && old_cell.owner == getCell(lin_side1_p).owner) {
-			possible_states.push_back({lin_side1_p, ov, h});
+			possible_states.push_back({lin_side1_p, h, ov});
 		}
 		if (isValid(lin_side2_p) && old_cell.owner == getCell(lin_side2_p).owner) {
-			possible_states.push_back({lin_side2_p, v, oh});
+			possible_states.push_back({lin_side2_p, oh, v});
 		}
 	}
 
@@ -513,10 +513,10 @@ std::vector<EnemyState> Model::possibleEnemyStates(const EnemyState& enemy) cons
 		auto lin_side4_p = neighbor(enemy.pos, h);
 
 		if (isValid(lin_side3_p) && old_cell.owner == getCell(lin_side3_p).owner) {
-			possible_states.push_back({lin_side3_p, v, oh});
+			possible_states.push_back({lin_side3_p, oh, v});
 		}
 		if (isValid(lin_side4_p) && old_cell.owner == getCell(lin_side4_p).owner) {
-			possible_states.push_back({lin_side4_p, ov, h});
+			possible_states.push_back({lin_side4_p, h, ov});
 		}
 	}
 	return possible_states;
