@@ -8,8 +8,6 @@
 
 namespace evil {
 
-
-// -- deprecated --
 struct Trap {
 	// Traps work by first plotting the `prepare` directions and then
 	// librating until an enemy shows up at the `trigger1` position,
@@ -30,10 +28,7 @@ boost::optional<Trap> makeAlignedTrap(const Model& model, const Pos& pos, int cy
 std::vector<Pos> renderTrap(const Pos& origin, const Trap& trap);
 Pos renderTrigger1(const Pos& origin, const Trap& trap);
 Pos renderTrigger2(const Pos& origin, const Trap& trap);
-// --
 
-
-std::vector<Direction> makeClamp(Direction vd, Direction hd, int width=1);
 
 bool checkCage(
 	const Model& model, const Pos& bounce,

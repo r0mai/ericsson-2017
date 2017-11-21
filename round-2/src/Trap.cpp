@@ -292,40 +292,5 @@ Pos renderTrigger2(const Pos& origin, const Trap& trap) {
 	return pos;
 }
 
-std::vector<Direction> makeClamp(Direction vd, Direction hd, int width) {
-	assert(width > 0);
-	auto vdx = opposite(vd);
-	auto hdx = opposite(hd);
-	auto k = 2 + width;
-
-	using Dirs = std::vector<Direction>;
-	Dirs part1 = {
-		hd, hd, hd, vd, vdx, hdx, hdx, hdx,
-		vd, vd, vd
-	};
-
-	Dirs part2 = {hd, vd}; // repeat `k` times
-	Dirs part3 = {
-		hd, hd, hd,
-		vdx, vdx, vdx, hdx, hd, vd, vd, vd,
-		hdx, hdx, hdx,
-	};
-
-	Dirs part4 = {vdx, hdx}; // repeat `k` times
-	Dirs part5 = {vdx, vdx, vdx};
-
-	Dirs vec;
-	std::copy(part1.begin(), part1.end(), std::back_inserter(vec));
-	for (int i = 0; i < k; ++i) {
-		std::copy(part2.begin(), part2.end(), std::back_inserter(vec));
-	}
-	std::copy(part3.begin(), part3.end(), std::back_inserter(vec));
-	for (int i = 0; i < k; ++i) {
-		std::copy(part4.begin(), part4.end(), std::back_inserter(vec));
-	}
-	std::copy(part5.begin(), part5.end(), std::back_inserter(vec));
-
-	return vec;
-}
 
 } // namespace evil

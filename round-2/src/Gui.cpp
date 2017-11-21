@@ -1,4 +1,5 @@
 #include "Gui.h"
+#include "Shapes.h"
 
 #include <iostream>
 #include <sstream>
