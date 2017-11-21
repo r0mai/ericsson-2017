@@ -118,12 +118,14 @@ void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 
 		case sf::Keyboard::Tab: toggleCycle(); break;
 		case sf::Keyboard::Num1: mode_ = Mode::kNormal; break;
-		case sf::Keyboard::Num2: mode_ = Mode::kTrap; break;
+		case sf::Keyboard::Num2: mode_ = Mode::kCapture; break;
 		case sf::Keyboard::Num3: mode_ = Mode::kSpike; break;
 		case sf::Keyboard::Num4: mode_ = Mode::kDiagonal; break;
 		case sf::Keyboard::Num5: mode_ = Mode::kClamp; break;
 		case sf::Keyboard::Space: toggleStepping(false); break;
 		case sf::Keyboard::Period: toggleStepping(true); break;
+
+		case sf::Keyboard::C: toggleCapture(); break;
 		default: break;
 	}
 }
@@ -138,11 +140,11 @@ void Gui::handleMouseButton(const sf::Event::MouseButtonEvent& ev) {
 			seq->add(std::make_unique<Converge>(pos));
 			seq->add(std::make_unique<Librate>());
 			fragment_ = std::move(seq);
-		} else if (mode_ == Mode::kTrap) {
-			auto trap = makeAlignedTrap(model_, mouse_pos_, cycle_);
-			if (trap) {
-				fragment_ = std::make_unique<Capture>(mouse_pos_, *trap);
-			}
+		} else if (mode_ == Mode::kCapture) {
+			// auto trap = makeAlignedTrap(model_, mouse_pos_, cycle_);
+			// if (trap) {
+			// 	fragment_ = std::make_unique<Capture>(mouse_pos_, *trap);
+			// }
 		} else if (mode_ == Mode::kSpike) {
 			auto dir = toDirection(cycle_ % 4);
 			fragment_ = std::make_unique<Spike>(mouse_pos_, dir);
@@ -219,7 +221,7 @@ void Gui::draw() {
 		drawDot(neighbor(unit.next_pos, dir_), sf::Color::Red);
 	}
 
-	if (mode_ == Mode::kTrap) {
+	if (mode_ == Mode::kCapture) {
 		auto trap = makeAlignedTrap(model_, mouse_pos_, cycle_);
 		if (trap) {
 			for (auto pos : renderTrap(mouse_pos_, *trap)) {
@@ -337,5 +339,21 @@ std::pair<Direction, Direction> Gui::cycledAxes() {
 	auto axis1 = mirror ? rotateCCW(axis0) : rotateCW(axis0);
 	return {axis0, axis1};
 }
+
+void Gui::toggleCapture() {
+	auto placements = getCagePlacements(model_);
+	for (auto& pm : placements) {
+		std::cerr << "P " << pm.bounce << " " << pm.bounce_t << " "
+			<< pm.origin_dst << std::endl;
+	}
+
+	if (placements.empty()) {
+		return;
+	}
+
+	auto& cc = placements.front();
+	fragment_ = std::make_unique<Capture>(cc.bounce, cc.align);
+}
+
 
 } // namespace evil

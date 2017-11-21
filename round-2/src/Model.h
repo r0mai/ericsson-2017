@@ -139,6 +139,9 @@ public:
 	void killUnit(int unit_idx);
 	void attackFinished(int unit, const Pos& last_attack_pos);
 
+	// Time until enemy bounces at position. Negative for outsiders.
+	std::pair<int, Pos> getEnemyBounce(const Enemy& enemy) const;
+
 	Direction adjustDirection(int unit_index, Direction dir) const;
 	void provision(const Moves& moves);
 
@@ -160,5 +163,8 @@ private:
 	int level_ = -1;
 	int owns_ = -1;
 };
+
+
+
 
 } // namespace evil

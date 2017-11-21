@@ -14,6 +14,11 @@ enum class Direction {
 	kNone
 };
 
+struct Alignment {
+	Direction axis0 = Direction::kRight;
+	Direction axis1 = Direction::kUp;
+};
+
 Direction toDirection(int n);
 
 Pos neighbor(const Pos& pos, Direction dir);

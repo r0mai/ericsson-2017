@@ -99,6 +99,74 @@ bool Sequence::isFinished() const {
 
 // Capture
 
+Capture::Capture(const Pos& bounce, const Alignment& align) {
+	trigger_ = getCageTrigger(bounce, align);
+	auto origin = getCageOrigin(bounce, align);
+	auto converge = std::make_unique<Converge>(origin);
+	auto prepare = std::make_unique<Router>();
+	prepare->add(getCagePrepare(align));
+
+	auto snap_dirs = getCageSnap(align);
+	snap_first_ = snap_dirs.front();
+	snap_dirs.erase(snap_dirs.begin());
+	snap_.add(snap_dirs);
+
+	seq_.add(std::move(converge));
+	seq_.add(std::move(prepare));
+}
+
+Direction Capture::getNext(const Model& model) {
+	if (phase_ == Phase::kPrepare) {
+		auto dir = seq_.getNext(model);
+		if (dir != Direction::kNone) {
+			return dir;
+		}
+		phase_ = Phase::kWait;
+	}
+
+	if (phase_ == Phase::kWait) {
+		auto offset = wait_ % 2;
+		++wait_;
+		if (isTriggered(model)) {
+			phase_ = Phase::kSnap;
+			if (offset == 0) {
+				return snap_first_;
+			}
+		} else {
+			return (offset == 0 ? snap_first_ : opposite(snap_first_));
+		}
+	}
+
+	if (phase_ == Phase::kSnap) {
+		if (!snap_.isFinished()) {
+			return snap_.getNext(model);
+		}
+		phase_ = Phase::kDone;
+	}
+
+	return lib_.getNext(model);
+}
+
+bool Capture::isTriggered(const Model& model) const {
+	bool triggered = false;
+	for (auto& enemy : model.getEnemies()) {
+		if (enemy.pos == trigger_) {
+			triggered = true;
+			break;
+		}
+	}
+	return triggered;
+}
+
+bool Capture::isFinished() const {
+	return false;
+}
+
+
+
+
+
+#if 0
 Capture::Capture(const Pos& origin, const Trap& trap)
 	: origin_(origin)
 	, trap_(trap)
@@ -160,6 +228,7 @@ bool Capture::isTriggered(const Model& model) const {
 bool Capture::isFinished() const {
 	return false;
 }
+#endif
 
 // Spike
 

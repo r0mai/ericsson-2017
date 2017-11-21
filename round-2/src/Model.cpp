@@ -766,4 +766,24 @@ const Unit& Model::getUnit(int index) const {
 	return units_[index];
 }
 
+std::pair<int, Pos> Model::getEnemyBounce(const Enemy& enemy) const {
+	// Note: this could return {-1, pos} for outside bouncers
+
+	int t = -1;
+	auto pos = enemy.pos;
+	auto v_dir = enemy.v_dir;
+	auto h_dir = enemy.h_dir;
+	Pos last = pos;
+
+	while (getCell(pos).owner != 1) {
+		++t;
+		last = pos;
+		pos = neighbor(pos, v_dir);
+		pos = neighbor(pos, h_dir);
+	}
+
+	return {t, last};
+}
+
+
 } // namespace evil

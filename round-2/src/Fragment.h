@@ -56,28 +56,31 @@ private:
 
 class Capture : public Fragment {
 public:
-	Capture(const Pos& origin, const Trap& trap);
+	Capture(const Pos& bounce, const Alignment& cage_alignment);
 	virtual Direction getNext(const Model& model) override;
 	virtual bool isFinished() const override;
 
 private:
 	bool isTriggered(const Model& model) const;
 
-	enum class Status {
-		kConverge,
-		kBuild,
+	enum class Phase {
+		kPrepare,
 		kWait,
 		kSnap,
 		kDone
-	} status_ = Status::kConverge;
+	} phase_ = Phase::kPrepare;
 
-	Pos origin_;
-	Pos trigger1_;
-	Pos trigger2_;
-	Pos snap_origin_;
-	Trap trap_;
-	std::unique_ptr<Fragment> fragment_;
+	Pos trigger_;
+	Sequence seq_;
+	Router snap_;
+	Librate lib_;
+
+	int wait_ = 0;
+	Direction snap_first_ = Direction::kNone;
 };
+
+
+
 
 class Spike : public Fragment {
 public:
@@ -123,5 +126,6 @@ private:
 	Pos last_pos_;
 	std::vector<Direction> directions_;
 };
+
 
 } // namespace evil

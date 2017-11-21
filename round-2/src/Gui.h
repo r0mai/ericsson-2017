@@ -69,6 +69,7 @@ private:
 	void toggleTrap(const Pos& origin, Direction axis0, Direction axis1);
 	void toggleCycle();
 	void toggleStepping(bool enable);
+	void toggleCapture();
 
 	std::pair<Direction, Direction> cycledAxes();
 
@@ -87,7 +88,7 @@ private:
 
 	enum Mode {
 		kNormal,
-		kTrap,
+		kCapture,
 		kSpike,
 		kDiagonal,
 		kClamp,
