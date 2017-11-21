@@ -1,6 +1,7 @@
 #include "Model.h"
 #include <cassert>
 #include <limits>
+#include <sstream>
 
 
 namespace evil {
@@ -745,13 +746,15 @@ Direction Model::directionTowards(const Pos& source_pos, const Pos& target_pos) 
 	return closer_dir;
 }
 
-void Model::dumpStatus(std::ostream& out) {
-	out << "L " << level_ << " ";
-	out << "T " << tick_ << " ";
-	out << "C " << getCoverage() << " ";
-	out << "H " << units_[0].health << " ";
-	out << units_[0].dir << " ";
-	out << status_ << std::endl;
+std::string Model::getTickInfo() const {
+	std::stringstream ss;
+	ss << "L " << level_ << " ";
+	ss << "T " << tick_ << " ";
+	ss << "C " << getCoverage() << " ";
+	ss << "H " << units_[0].health << " ";
+	ss << units_[0].dir << " ";
+	ss << status_;
+	return ss.str();
 }
 
 Pos Model::size() const {

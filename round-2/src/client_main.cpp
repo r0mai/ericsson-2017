@@ -179,7 +179,6 @@ int main(int argc, char* argv[]) {
 	std::future<std::unique_ptr<evil::Model>> future;
 	auto calc_start = Clock::now();
 	auto calc_end = Clock::now();
-
 	auto calc_time = asMs(calc_end - calc_start);
 
 	while (true) {
@@ -195,7 +194,9 @@ int main(int argc, char* argv[]) {
 			model_ready = false;
 			steps_ready = false;
 			player->update(model);
-			model.dumpStatus(std::cerr);
+			std::cerr << model.getTickInfo()
+				<< " - net " << asMs(calc_start - calc_end)
+				<< "ms calc " << calc_time << "ms" << std::endl;
 		}
 
 		if (!steps_ready && player->isReady()) {
@@ -215,7 +216,6 @@ int main(int argc, char* argv[]) {
 			}
 			model = *model_ptr;
 			calc_start = Clock::now();
-			std::cout << "Network time = " << asMs(calc_start - calc_end) << "ms; calc time = " << calc_time << "ms" << std::endl;
 			model_ready = true;
 		} else {
 			std::this_thread::yield();

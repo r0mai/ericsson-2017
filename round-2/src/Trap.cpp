@@ -115,7 +115,7 @@ std::vector<Direction> getCageSnap(const Alignment& cage_alignment) {
 
 int getCageStepsToBounce() {
 	// Note: this might use the model later to check optimal build times.
-	return 20;
+	return 21;
 }
 
 std::vector<CagePlacement> getCagePlacements(const Model& model) {

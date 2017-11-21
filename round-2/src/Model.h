@@ -102,6 +102,8 @@ public:
 	int getCoverage() const;
 	int maxTick() const;
 
+	std::string getTickInfo() const;
+
 	void setTick(int tick);
 	void setLevel(int level);
 
@@ -147,7 +149,7 @@ public:
 
 	Direction directionTowards(const Pos& src, const Pos& dst) const;
 
-	void dumpStatus(std::ostream& out);
+	void dumpStatus(std::ostream& out, bool newline=true);
 
 private:
 	void colorize();
