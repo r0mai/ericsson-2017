@@ -463,62 +463,87 @@ std::vector<EnemyState> Model::possibleEnemyStates(const EnemyState& enemy) cons
 
 	const auto& old_cell = getCell(enemy.pos);
 
-	auto forward_p   = neighbor(neighbor(enemy.pos,  v),  h);
-	auto backwards_p = neighbor(neighbor(enemy.pos, ov), oh);
-	auto side1_p     = neighbor(neighbor(enemy.pos,  v), oh);
-	auto side2_p     = neighbor(neighbor(enemy.pos, ov),  h);
+	// S1 HF FF
+	// VB ^> VF
+	// BB HB S2
 
+	auto forward_p        = neighbor(neighbor(enemy.pos,  v),  h);
+	auto backwards_p      = neighbor(neighbor(enemy.pos, ov), oh);
+	auto side1_p          = neighbor(neighbor(enemy.pos,  v), oh);
+	auto side2_p          = neighbor(neighbor(enemy.pos, ov),  h);
+	auto vert_forward_p   = neighbor(enemy.pos,  v);
+	auto vert_backwards_p = neighbor(enemy.pos, ov);
+	auto hori_forward_p   = neighbor(enemy.pos,  h);
+	auto hori_backwards_p = neighbor(enemy.pos, oh);
+
+	bool forward_b = isValid(forward_p) && old_cell.owner == getCell(forward_p).owner;
+	bool backwards_b = isValid(backwards_p) && old_cell.owner == getCell(backwards_p).owner;
+	bool side1_b = isValid(side1_p) && old_cell.owner == getCell(side1_p).owner;
+	bool side2_b = isValid(side2_p) && old_cell.owner == getCell(side2_p).owner;
+	bool vert_forward_b = isValid(vert_forward_p) && old_cell.owner == getCell(vert_forward_p).owner;
+	bool vert_backwards_b = isValid(vert_backwards_p) && old_cell.owner == getCell(vert_backwards_p).owner;
+	bool hori_forward_b = isValid(hori_forward_p) && old_cell.owner == getCell(hori_forward_p).owner;
+	bool hori_backwards_b = isValid(hori_backwards_p) && old_cell.owner == getCell(hori_backwards_p).owner;
+
+	// case 1
 	// can we continue moving forward
-	if (isValid(forward_p) && old_cell.owner == getCell(forward_p).owner) {
+	if (forward_b) {
+		std::cout << "case 1: 1" << std::endl;
 		return {{forward_p, h, v}};
 	}
 
 	std::vector<EnemyState> possible_states;
-	possible_states.reserve(3);
+	possible_states.reserve(8);
 
-	if (isValid(backwards_p) && old_cell.owner == getCell(backwards_p).owner) {
-		possible_states.push_back({backwards_p, oh, ov});
-	}
-	if (isValid(side1_p) && old_cell.owner == getCell(side1_p).owner) {
+	// case 2, 3, 4
+	if (side1_b && hori_forward_b) {
 		possible_states.push_back({side1_p, oh, v});
 	}
-	if (isValid(side2_p) && old_cell.owner == getCell(side2_p).owner) {
+	if (side2_b && vert_forward_b) {
 		possible_states.push_back({side2_p, h, ov});
 	}
-
-	if (!possible_states.empty()) {
-		return possible_states;
-	}
-
-	// edgy cases
-
-	{
-		auto lin_side1_p = neighbor(enemy.pos, ov);
-		auto lin_side2_p = neighbor(enemy.pos, oh);
-
-		if (isValid(lin_side1_p) && old_cell.owner == getCell(lin_side1_p).owner) {
-			possible_states.push_back({lin_side1_p, h, ov});
-		}
-		if (isValid(lin_side2_p) && old_cell.owner == getCell(lin_side2_p).owner) {
-			possible_states.push_back({lin_side2_p, oh, v});
-		}
+	if (!possible_states.empty() && backwards_b) {
+		possible_states.push_back({backwards_p, oh, ov});
 	}
 
 	if (!possible_states.empty()) {
+		std::cout << "case 2, 3, 4: " << possible_states.size() << std::endl;
 		return possible_states;
 	}
 
-	{
-		auto lin_side3_p = neighbor(enemy.pos, v);
-		auto lin_side4_p = neighbor(enemy.pos, h);
-
-		if (isValid(lin_side3_p) && old_cell.owner == getCell(lin_side3_p).owner) {
-			possible_states.push_back({lin_side3_p, oh, v});
-		}
-		if (isValid(lin_side4_p) && old_cell.owner == getCell(lin_side4_p).owner) {
-			possible_states.push_back({lin_side4_p, h, ov});
-		}
+	// case 5
+	if (hori_backwards_b) {
+		possible_states.push_back({hori_backwards_p, oh, ov});
 	}
+	if (vert_backwards_b) {
+		possible_states.push_back({vert_backwards_p, oh, ov});
+	}
+
+	if (!possible_states.empty()) {
+		std::cout << "case 5: " << possible_states.size() << std::endl;
+		return possible_states;
+	}
+
+	// case 6
+	if (backwards_b) {
+		possible_states.push_back({backwards_p, oh, ov});
+	}
+	if (side1_b) {
+		possible_states.push_back({side1_p, oh, v});
+	}
+	if (side2_b) {
+		possible_states.push_back({side2_p, h, ov});
+	}
+	if (hori_forward_b) {
+		possible_states.push_back({hori_forward_p, oh, v});
+	}
+	if (vert_forward_b) {
+		possible_states.push_back({vert_forward_p, h, ov});
+	}
+
+	assert(!possible_states.empty());
+
+	std::cout << "case 6: " << possible_states.size() << std::endl;
 	return possible_states;
 }
 
