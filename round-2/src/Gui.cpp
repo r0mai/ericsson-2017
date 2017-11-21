@@ -58,11 +58,11 @@ void Gui::drawCell(const Pos& pos, sf::Color color) {
 }
 
 void Gui::drawDot(const Pos& pos, sf::Color color, float scale) {
-    sf::CircleShape circ;
-    float r = 3.0f * scale;
+	sf::CircleShape circ;
+	float r = 3.0f * scale;
 
-    circ.setRadius(r);
-    circ.setOrigin(r, r);
+	circ.setRadius(r);
+	circ.setOrigin(r, r);
 	circ.setFillColor(color);
 	circ.setPosition((pos.col + 0.5f) * cell_w, (pos.row + 0.5f) * cell_h);
 	window_.draw(circ);
@@ -275,9 +275,14 @@ void Gui::draw() {
 
 void Gui::drawDirection(const Pos& pos, Direction h_dir, Direction v_dir) {
 	sf::RectangleShape rectangle;
-	rectangle.setSize(sf::Vector2f((cell_w + cell_h) / 2., (cell_w + cell_h) / 10.));
-	rectangle.setFillColor(sf::Color::Green);
+	auto size = sf::Vector2f((cell_w + cell_h) / 3, (cell_w + cell_h) / 8.0);
+
+	rectangle.setSize(size);
+	rectangle.setFillColor(sf::Color::White);
 	rectangle.setPosition((pos.col + 0.5) * cell_w, (pos.row + 0.5) * cell_h);
+	rectangle.setOrigin(0, size.y / 2.0);
+
+
 	float angle = 0;
 	if (h_dir == Direction::kRight && v_dir == Direction::kUp) {
 		angle = -45;
@@ -289,7 +294,7 @@ void Gui::drawDirection(const Pos& pos, Direction h_dir, Direction v_dir) {
 		angle = 135;
 	} else {
 		std::cout << "Invalid enemy direction: v = "
-		    << v_dir << ", h = " << h_dir << std::endl;
+			<< v_dir << ", h = " << h_dir << std::endl;
 	}
 	rectangle.setRotation(angle);
 	window_.draw(rectangle);

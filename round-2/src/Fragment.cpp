@@ -162,10 +162,6 @@ bool Capture::isFinished() const {
 	return false;
 }
 
-
-
-
-
 #if 0
 Capture::Capture(const Pos& origin, const Trap& trap)
 	: origin_(origin)
