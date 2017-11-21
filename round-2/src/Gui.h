@@ -91,8 +91,6 @@ private:
 
 	enum Mode {
 		kNormal,
-		kCapture,
-		kSpike,
 		kDiagonal,
 		kClamp,
 		//

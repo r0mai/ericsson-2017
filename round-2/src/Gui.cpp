@@ -120,8 +120,6 @@ void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 
 		case sf::Keyboard::Tab: toggleCycle(); break;
 		case sf::Keyboard::Num1: mode_ = Mode::kNormal; break;
-		case sf::Keyboard::Num2: mode_ = Mode::kCapture; break;
-		case sf::Keyboard::Num3: mode_ = Mode::kSpike; break;
 		case sf::Keyboard::Num4: mode_ = Mode::kDiagonal; break;
 		case sf::Keyboard::Num5: mode_ = Mode::kClamp; break;
 		case sf::Keyboard::Space: toggleStepping(false); break;
@@ -144,14 +142,6 @@ void Gui::handleMouseButton(const sf::Event::MouseButtonEvent& ev) {
 			seq->add(std::make_unique<Converge>(pos));
 			seq->add(std::make_unique<Librate>());
 			fragment_ = std::move(seq);
-		} else if (mode_ == Mode::kCapture) {
-			// auto trap = makeAlignedTrap(model_, mouse_pos_, cycle_);
-			// if (trap) {
-			// 	fragment_ = std::make_unique<Capture>(mouse_pos_, *trap);
-			// }
-		} else if (mode_ == Mode::kSpike) {
-			auto dir = toDirection(cycle_ % 4);
-			fragment_ = std::make_unique<Spike>(mouse_pos_, dir);
 		} else if (mode_ == Mode::kDiagonal) {
 			auto align = getAlignment();
 			auto diag = makeDiagonal(align, diag_w_);
@@ -239,25 +229,7 @@ void Gui::draw() {
 		drawDirection(enemy.pos, enemy.h_dir, enemy.v_dir);
 	}
 
-	if (mode_ == Mode::kCapture) {
-		auto trap = makeAlignedTrap(model_, mouse_pos_, cycle_);
-		if (trap) {
-			for (auto pos : renderTrap(mouse_pos_, *trap)) {
-				drawCell(pos, sf::Color(50, 230, 250, 100));
-			}
-		} else {
-			trap = makeTrap(Direction::kUp,
-				cycle_ % 2 != 0 ? Direction::kLeft : Direction::kRight);
-			for (auto pos : renderTrap(mouse_pos_, *trap)) {
-				drawCell(pos, sf::Color(180, 180, 180, 80));
-			}
-		}
-	} else if (mode_ == Mode::kSpike) {
-		auto dir = toDirection(cycle_ % 4);
-		for (auto pos : Spike::render(mouse_pos_, dir)) {
-			drawCell(pos, sf::Color(50, 230, 250, 100));
-		}
-	} else if (mode_ == Mode::kDiagonal) {
+	if (mode_ == Mode::kDiagonal) {
 		auto align = getAlignment();
 		for (auto pos : render(mouse_pos_, makeDiagonal(align, diag_w_))) {
 			drawCell(pos, sf::Color(50, 230, 250, 100));
