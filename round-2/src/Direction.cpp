@@ -65,7 +65,7 @@ Direction rotateCCW(Direction dir) {
 	return dir;
 }
 
-std::vector<Direction> directions(const Pos& pos, const Pos& size) {
+std::vector<Direction> getDirections(const Pos& pos, const Pos& size) {
 	std::vector<Direction> vec;
 	if (pos.col > 0) { vec.push_back(Direction::kLeft); }
 	if (pos.row > 0) { vec.push_back(Direction::kUp); }
