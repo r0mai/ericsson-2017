@@ -94,4 +94,12 @@ std::vector<Pos> render(const Pos& origin, const std::vector<Direction>& dirs) {
 	return vec;
 }
 
+std::vector<Direction> reverse_if(std::vector<Direction> vec, bool reverse) {
+	if (reverse) {
+		std::reverse(vec.begin(), vec.end());
+	}
+	return vec;
+}
+
+
 } // namespace evil
