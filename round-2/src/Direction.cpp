@@ -1,6 +1,7 @@
 #include "Direction.h"
 #include <cassert>
 #include <tuple>
+#include <algorithm>
 
 namespace evil {
 
