@@ -218,7 +218,6 @@ SafeRouter::SafeRouter(std::vector<Direction> dirs, int unit_idx)
 bool SafeRouter::init(const Model& model) {
 	// find a safe spot around the starting area to retreat to if needed
 	auto pos = model.getUnit(unit_idx_).pos;
-	std::cerr << "!" << pos << std::endl;
 	last_pos_ = render(pos, directions_).back();
 
 	bool found = false;
