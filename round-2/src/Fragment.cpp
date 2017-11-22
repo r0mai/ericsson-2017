@@ -35,6 +35,7 @@ Direction Converge::getNext(const Model& model) {
 
 	auto dir = model.directionTowards(unit.pos, target_);
 	assert(dir != Direction::kNone);
+	dir = model.SafeBlueMove(unit.pos, dir);
 
 	is_finished_ = neighbor(unit.pos, dir) == target_;
 	return dir;

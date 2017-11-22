@@ -134,6 +134,8 @@ public:
 
 	bool IsSafeToMoveOutAndBack(const Pos& pos) const;
 
+	Direction SafeBlueMove(const Pos& pos, Direction dir) const;
+
 	void addBorder(int owner = 1, int thickness = 2);
 	bool stepAsServer(std::mt19937& rng_engine);
 	void stepEnemy(Enemy& enemy, std::mt19937& rng_engine);

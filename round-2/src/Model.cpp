@@ -670,6 +670,32 @@ bool Model::IsSafeToMoveOutAndBack(const Pos& pos) const {
 	return true;
 }
 
+Direction Model::SafeBlueMove(const Pos& pos, Direction dir) const {
+	auto la = lookaheadEnemies(GetOutsideEnemies(), 1);
+
+	Pos requested_pos = neighbor(pos, dir);
+
+	if (la(requested_pos.row, requested_pos.col) != 1) {
+		return dir;
+	}
+
+	auto a = rotateCW(dir);
+	auto b = rotateCW(a);
+	auto c = rotateCW(b);
+
+	auto isBlueAndSafe = [&](const Pos& p) {
+		return isValid(p) && getCell(p).owner == 1 && la(p.row, p.col) != 1;
+	};
+
+	if (isBlueAndSafe(neighbor(pos, a))) { return a; }
+	if (isBlueAndSafe(neighbor(pos, b))) { return b; }
+	if (isBlueAndSafe(neighbor(pos, c))) { return c; }
+
+	std::cout << "No safe moves from SafeBlueMove" << std::endl;
+	// nothing seems to be safe
+	return dir;
+}
+
 void Model::stepEnemy(Enemy& enemy, std::mt19937& rng_engine) {
 	auto possible_states = possibleEnemyStates(enemy);
 
