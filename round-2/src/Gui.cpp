@@ -122,8 +122,8 @@ void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 		case sf::Keyboard::L: toggleLibrate(); break;
 		case sf::Keyboard::F: delay_ = 0; break;
 		case sf::Keyboard::D: delay_ = 100; break;
-//		case sf::Keyboard::S: delay_ = 200; break;
-//		case sf::Keyboard::A: delay_ = 1000; break;
+		// case sf::Keyboard::S: delay_ = 200; break;
+		// case sf::Keyboard::A: delay_ = 1000; break;
 
 		case sf::Keyboard::Tab: toggleCycle(); break;
 		case sf::Keyboard::Num1: mode_ = Mode::kNormal; break;
