@@ -65,6 +65,7 @@ private:
 	void handleKeypress(const sf::Event::KeyEvent& ev);
 	void handleMouseButton(const sf::Event::MouseButtonEvent& ev);
 
+	void setFragment(std::unique_ptr<Fragment> fragment);
 	void toggleLibrate();
 	void toggleManual(Direction dir);
 	void toggleTrap(const Pos& origin, Direction axis0, Direction axis1);
@@ -83,7 +84,7 @@ private:
 	GuiPlayer player_;
 	Clock::time_point last_update_;
 	int clamp_w_ = 1;
-	int diag_w_ = 70;
+	int diag_w_ = 10;
 	int delay_ = 0;
 	int cycle_ = 0;
 	bool is_stepping_ = false;

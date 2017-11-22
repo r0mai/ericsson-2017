@@ -10,12 +10,29 @@ Converge::Converge(const Pos& target)
 	: target_(target)
 {}
 
-Direction Converge::getNext(const Model& model) {
-	auto& unit = model.getUnit(0);
+bool Converge::init(const Model& model) {
+	auto& unit = model.getUnit(unit_idx_);
+	if (unit.pos == target_) {
+		is_finished_ = true;
+		return false;
+	}
+
 	auto dir = model.directionTowards(unit.pos, target_);
-	is_finished_ = (
-		dir == Direction::kNone ||
-		neighbor(unit.pos, dir) == target_);
+	if (dir == Direction::kNone) {
+		is_finished_ = true;
+		return false;
+	}
+
+	return true;
+}
+
+
+Direction Converge::getNext(const Model& model) {
+	auto& unit = model.getUnit(unit_idx_);
+	auto dir = model.directionTowards(unit.pos, target_);
+	assert(dir != Direction::kNone);
+
+	is_finished_ = neighbor(unit.pos, dir) == target_;
 	return dir;
 }
 
@@ -24,6 +41,10 @@ bool Converge::isFinished() const {
 }
 
 // Librate
+
+bool Librate::init(const Model& model) {
+	return true;
+}
 
 Direction Librate::getNext(const Model& model) {
 	return opposite(model.getUnit(0).dir);
@@ -45,6 +66,10 @@ void Router::add(const std::vector<Direction>& dirs) {
 	}
 }
 
+bool Router::init(const Model& model) {
+	return !isFinished();
+}
+
 Direction Router::getNext(const Model& model) {
 	if (dirs_.empty()) {
 		return Direction::kNone;
@@ -62,35 +87,44 @@ bool Router::isFinished() const {
 // Sequence
 
 void Sequence::add(std::unique_ptr<Fragment> fragment) {
-	if (!fragment->isFinished()) {
-		fragments_.push_back(std::move(fragment));
-	}
-}
-
-Direction Sequence::getNextInternal(const Model& model) {
-	if (fragments_.empty()) {
-		return Direction::kNone;
-	}
-
-	assert(fragments_.front()->isFinished() == false);
-	auto dir = fragments_.front()->getNext(model);
-
-	// clean up
-	while (!fragments_.empty() && fragments_.front()->isFinished()) {
-		fragments_.pop_front();
-	}
-
-	return dir;
+	fragments_.push_back(std::move(fragment));
 }
 
 Direction Sequence::getNext(const Model& model) {
-	while (!isFinished()) {
-		auto dir = getNextInternal(model);
-		if (dir != Direction::kNone) {
-			return dir;
+	if (isFinished()) {
+		return Direction::kNone;
+	}
+
+	while (fragments_.front()->isFinished()) {
+		fragments_.pop_front();
+		while (!isFinished()) {
+			auto& next = fragments_.front();
+			if (!next->init(model)) {
+				fragments_.pop_front();
+			} else {
+				break;
+			}
 		}
 	}
-	return Direction::kNone;
+
+	if (isFinished()) {
+		return Direction::kNone;
+	}
+
+	return fragments_.front()->getNext(model);
+}
+
+bool Sequence::init(const Model& model) {
+	while (!isFinished()) {
+		auto& frag = fragments_.front();
+		if (!frag->init(model)) {
+			fragments_.pop_front();
+		} else {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 bool Sequence::isFinished() const {
@@ -103,9 +137,7 @@ Capture::Capture(const Pos& bounce, const Alignment& align) {
 	trigger_ = getCageTrigger(bounce, align);
 	auto origin = getCageOrigin(bounce, align);
 	auto converge = std::make_unique<Converge>(origin);
-	auto prepare = std::make_unique<Router>();
-	prepare->add(getCagePrepare(align));
-
+	auto prepare = std::make_unique<SafeRouter>(getCagePrepare(align));
 	auto snap_dirs = getCageSnap(align);
 	snap_first_ = snap_dirs.front();
 	snap_dirs.erase(snap_dirs.begin());
@@ -129,6 +161,7 @@ Direction Capture::getNext(const Model& model) {
 		++wait_;
 		if (isTriggered(model)) {
 			phase_ = Phase::kSnap;
+			// FIXME: snap and lib are not initialized
 			if (offset == 0) {
 				return snap_first_;
 			}
@@ -147,6 +180,10 @@ Direction Capture::getNext(const Model& model) {
 	return lib_.getNext(model);
 }
 
+bool Capture::init(const Model& model) {
+	return seq_.init(model);
+}
+
 bool Capture::isTriggered(const Model& model) const {
 	bool triggered = false;
 	for (auto& enemy : model.getEnemies()) {
@@ -163,51 +200,17 @@ bool Capture::isFinished() const {
 }
 
 
-// Spike
-
-Spike::Spike(const Pos& origin, Direction dir)
-	: origin_(origin)
-{
-	auto conv = std::make_unique<Converge>(origin);
-	auto router = std::make_unique<Router>();
-
-	for (int i = 0; i < 2; ++i) {
-		router->add(dir);
-	}
-
-	for (int i = 0; i < 2; ++i) {
-		router->add(opposite(dir));
-	}
-
-	seq_.add(std::move(conv));
-	seq_.add(std::move(router));
-	seq_.add(std::make_unique<Librate>());
-}
-
-Direction Spike::getNext(const Model& model) {
-	return seq_.getNext(model);
-}
-
-bool Spike::isFinished() const {
-	return seq_.isFinished();
-}
-
-std::vector<Pos> Spike::render(const Pos& origin, Direction dir) {
-	std::vector<Pos> vec;
-	vec.push_back(origin);
-	vec.push_back(neighbor(origin, dir));
-	vec.push_back(neighbor(origin, dir, 2));
-	return vec;
-}
-
 // SafeRouter
 
-SafeRouter::SafeRouter(const Model& model, std::vector<Direction> dirs, int unit_idx)
+SafeRouter::SafeRouter(std::vector<Direction> dirs, int unit_idx)
 	: unit_idx_(unit_idx)
 	, directions_(std::move(dirs))
-{
+{}
+
+bool SafeRouter::init(const Model& model) {
 	// find a safe spot around the starting area to retreat to if needed
 	auto pos = model.getUnit(unit_idx_).pos;
+	std::cerr << "!" << pos << std::endl;
 	last_pos_ = render(pos, directions_).back();
 
 	bool found = false;
@@ -215,18 +218,23 @@ SafeRouter::SafeRouter(const Model& model, std::vector<Direction> dirs, int unit
 		if (model.getCell(neighbor(pos, dir)).owner == 1) {
 			directions_.insert(begin(directions_), opposite(dir));
 			found = true;
+			break;
 		}
 	}
 
 	if (!found) {
 		next_direction_idx_ = 0;
 		assert(false);
-		return;
+		return false;
+	} else {
+		next_direction_idx_ = 1;
 	}
 
 	if (!lastIsBlue(model)) {
 		directions_.push_back(opposite(directions_.back()));
 	}
+
+	return true;
 }
 
 Direction SafeRouter::getNext(const Model& model) {

@@ -95,12 +95,19 @@ void Gui::setDrawModel(Model model) {
 }
 
 void Gui::toggleLibrate() {
-	fragment_ = std::make_unique<Librate>();
+	setFragment(std::make_unique<Librate>());
 }
 
 void Gui::toggleManual(Direction dir) {
 	dir_ = dir;
 	fragment_.reset();
+}
+
+void Gui::setFragment(std::unique_ptr<Fragment> fragment) {
+	fragment_ = std::move(fragment);
+	if (fragment_) {
+		fragment_->init(model_);
+	}
 }
 
 void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
@@ -141,30 +148,25 @@ void Gui::handleMouseButton(const sf::Event::MouseButtonEvent& ev) {
 			auto seq = std::make_unique<Sequence>();
 			seq->add(std::make_unique<Converge>(pos));
 			seq->add(std::make_unique<Librate>());
-			fragment_ = std::move(seq);
+			setFragment(std::move(seq));
 		} else if (mode_ == Mode::kDiagonal) {
 			auto align = getAlignment();
 			auto diag = makeDiagonal(align, diag_w_);
-			auto router = std::make_unique<SafeRouter>(model_, diag);
+			auto router = std::make_unique<SafeRouter>(diag);
 			auto seq = std::make_unique<Sequence>();
 			seq->add(std::make_unique<Converge>(pos));
 			seq->add(std::move(router));
 			seq->add(std::make_unique<Librate>());
-			fragment_ = std::move(seq);
+			setFragment(std::move(seq));
 		} else if (mode_ == Mode::kClamp) {
 			auto align = getAlignment();
 			auto clamp = makeClamp2(align, clamp_w_);
-#if 0
-			auto router = std::make_unique<Router>(
-			router->add(clamp);
-#else
-			auto router = std::make_unique<SafeRouter>(model_, clamp);
-#endif
+			auto router = std::make_unique<SafeRouter>(clamp);
 			auto seq = std::make_unique<Sequence>();
 			seq->add(std::make_unique<Converge>(pos));
 			seq->add(std::move(router));
 			seq->add(std::make_unique<Librate>());
-			fragment_ = std::move(seq);
+			setFragment(std::move(seq));
 		}
 	}
 }
@@ -369,7 +371,7 @@ void Gui::toggleCapture() {
 	}
 
 	auto& cc = placements.front();
-	fragment_ = std::make_unique<Capture>(cc.bounce, cc.align);
+	setFragment(std::make_unique<Capture>(cc.bounce, cc.align));
 }
 
 

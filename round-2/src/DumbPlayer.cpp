@@ -105,7 +105,8 @@ void DumbPlayer::FindBestCut(const Pos& unit_pos) {
 	std::vector<Direction> router_directions(
 		std::abs(taxicabDistance(cut_.start, cut_.end)), cut_.direction);
 
-	cut_.router = SafeRouter{model_, std::move(router_directions)};
+	cut_.router = SafeRouter{std::move(router_directions)};
+	cut_.router.init(model_);
 }
 
 AABB DumbPlayer::FindBestArea(const Pos& unit_pos) const {
