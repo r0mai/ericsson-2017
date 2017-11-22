@@ -73,6 +73,9 @@ private:
 	void toggleStepping(bool enable);
 	void toggleCapture();
 	void toggleHardcore();
+	void toggleZorroBegin();
+	void toggleZorroConquerLeft();
+	void toggleZorroConquerRight();
 
 	Alignment getAlignment();
 
