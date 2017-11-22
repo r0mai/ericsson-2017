@@ -99,19 +99,17 @@ void Sequence::add(std::unique_ptr<Fragment> fragment) {
 }
 
 Direction Sequence::getNext(const Model& model) {
-	if (isFinished()) {
+	if (fragments_.empty()) {
 		return Direction::kNone;
 	}
 
-	while (fragments_.front()->isFinished()) {
+	while (!fragments_.empty() && fragments_[0]->isFinished()) {
 		fragments_.pop_front();
-		while (!isFinished()) {
-			auto& next = fragments_.front();
-			if (!next->init(model)) {
-				fragments_.pop_front();
-			} else {
-				break;
-			}
+		if (fragments_.empty()) {
+			break;
+		}
+		if (fragments_[0]->init(model)) {
+			break;
 		}
 	}
 
@@ -119,7 +117,7 @@ Direction Sequence::getNext(const Model& model) {
 		return Direction::kNone;
 	}
 
-	return fragments_.front()->getNext(model);
+	return fragments_[0]->getNext(model);
 }
 
 bool Sequence::init(const Model& model) {
@@ -145,7 +143,7 @@ Capture::Capture(const Pos& bounce, const Alignment& align) {
 	trigger_ = getCageTrigger(bounce, align);
 	auto origin = getCageOrigin(bounce, align);
 	auto converge = std::make_unique<Converge>(origin);
-	auto prepare = std::make_unique<SafeRouter>(getCagePrepare(align));
+	auto prepare = std::make_unique<Router>(getCagePrepare(align));
 	auto snap_dirs = getCageSnap(align);
 	snap_first_ = snap_dirs.front();
 	snap_dirs.erase(snap_dirs.begin());

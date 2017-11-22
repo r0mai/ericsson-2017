@@ -72,6 +72,7 @@ private:
 	void toggleCycle();
 	void toggleStepping(bool enable);
 	void toggleCapture();
+	void toggleHardcore();
 
 	Alignment getAlignment();
 

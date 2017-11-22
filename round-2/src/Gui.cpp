@@ -134,6 +134,7 @@ void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 		case sf::Keyboard::O: ++clamp_w_; break;
 		case sf::Keyboard::P: clamp_w_ = std::max(1, clamp_w_ - 1); break;
 		case sf::Keyboard::R: reverse_ = !reverse_; break;
+		case sf::Keyboard::H: toggleHardcore(); break;
 
 		case sf::Keyboard::C: toggleCapture(); break;
 		default: break;
@@ -375,5 +376,25 @@ void Gui::toggleCapture() {
 	setFragment(std::make_unique<Capture>(cc.bounce, cc.align));
 }
 
+void Gui::toggleHardcore() {
+	auto seq = std::make_unique<Sequence>();
+	auto go_origin = std::make_unique<Converge>(Pos{1, 21});
+	auto go_down = std::make_unique<Converge>(Pos{77, 98});
+	auto clamp_align = Alignment{Direction::kRight, Direction::kUp};
+	auto diag_align = Alignment{Direction::kUp, Direction::kLeft};
+	auto clamp = makeClamp2(clamp_align);
+	auto diag = makeDiagonal(diag_align, 70);
+	std::reverse(clamp.begin(), clamp.end());
+
+	auto clamp_route = std::make_unique<SafeRouter>(clamp);
+	auto diag_route = std::make_unique<SafeRouter>(diag);
+
+	seq->add(std::move(go_origin));
+	seq->add(std::move(clamp_route));
+	seq->add(std::move(go_down));
+	seq->add(std::move(diag_route));
+	seq->add(std::make_unique<Librate>());
+	setFragment(std::move(seq));
+}
 
 } // namespace evil
