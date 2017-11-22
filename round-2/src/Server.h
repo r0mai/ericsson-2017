@@ -34,6 +34,7 @@ private:
 	bool AcceptLogin();
 	void InitModel(int enemies_in, int enemies_out, int border_thickness = 2);
 	bool RunGame();
+	void ResetRandomEngine();
 
 	// inclusive
 	int GetRandom(int low, int high);
@@ -48,6 +49,7 @@ private:
 	ServerConnection connection_;
 	Model model_;
 
+	int seed_ = 0;
 	std::mt19937 mt_engine_;
 };
 

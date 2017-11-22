@@ -82,7 +82,14 @@ bool Server::AcceptLogin() {
 }
 
 void Server::SetSeed(int seed) {
-	mt_engine_.seed(seed);
+	seed_ = seed;
+	mt_engine_.seed(seed_);
+}
+
+void Server::ResetRandomEngine() {
+	if (seed_ != 0) {
+		mt_engine_.seed(seed_);
+	}
 }
 
 void Server::DrawColumn(int col) {
@@ -131,6 +138,7 @@ void Server::Run() {
 				continue;
 			}
 
+			ResetRandomEngine();
 			InitModel(zergs_inside_, zergs_outside_);
 
 			if (!RunGame()) {
