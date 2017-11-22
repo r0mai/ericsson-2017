@@ -30,5 +30,8 @@ std::vector<Direction> getDirections(const Pos& pos, const Pos& size);
 std::vector<Pos> render(const Pos& origin, const std::vector<Direction>& dirs);
 
 std::vector<Direction> reverse_if(std::vector<Direction> vec, bool reverse);
+// <h_dir, v_dir>
+std::pair<Direction, Direction> rotateCW(Direction h_dir, Direction v_dir);
+std::pair<Direction, Direction> rotateCCW(Direction h_dir, Direction v_dir);
 
 } // namespace evil

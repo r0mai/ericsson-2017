@@ -1,6 +1,6 @@
 #include "Direction.h"
 #include <cassert>
-
+#include <tuple>
 
 namespace evil {
 
@@ -63,6 +63,32 @@ Direction rotateCCW(Direction dir) {
 	}
 
 	return dir;
+}
+
+std::pair<Direction, Direction> rotateCW(Direction h_dir, Direction v_dir) {
+	if (h_dir == Direction::kRight && v_dir == Direction::kUp) {
+		return {h_dir, opposite(v_dir)};
+	}
+	if (h_dir == Direction::kRight && v_dir == Direction::kDown) {
+		return {opposite(h_dir), v_dir};
+	}
+	if (h_dir == Direction::kLeft && v_dir == Direction::kDown) {
+		return {h_dir, opposite(v_dir)};
+	}
+	if (h_dir == Direction::kLeft&& v_dir == Direction::kUp) {
+		return {opposite(h_dir), v_dir};
+	}
+	assert(false);
+	return {};
+}
+
+std::pair<Direction, Direction> rotateCCW(Direction h_dir, Direction v_dir) {
+	// fuck it
+	std::tie(h_dir, v_dir) = rotateCW(h_dir, v_dir);
+	std::tie(h_dir, v_dir) = rotateCW(h_dir, v_dir);
+	std::tie(h_dir, v_dir) = rotateCW(h_dir, v_dir);
+
+	return {h_dir, v_dir};
 }
 
 std::vector<Direction> getDirections(const Pos& pos, const Pos& size) {

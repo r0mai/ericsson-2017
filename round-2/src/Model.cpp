@@ -461,29 +461,47 @@ std::vector<EnemyState> Model::possibleEnemyStates(const EnemyState& enemy) cons
 	auto ov = opposite(enemy.v_dir);
 	auto oh = opposite(enemy.h_dir);
 
+	Direction cw_h;
+	Direction cw_v;
+	Direction ccw_h;
+	Direction ccw_v;
+
+	std::tie(cw_h, cw_v) = rotateCW(h, v);
+	std::tie(ccw_h, ccw_v) = rotateCCW(h, v);
+
+	assert(cw_h == Direction::kLeft || cw_h == Direction::kRight);
+	assert(cw_h == Direction::kLeft || cw_h == Direction::kRight);
+
 	const auto& old_cell = getCell(enemy.pos);
 
-	// S1 HF FF
-	// VB ^> VF
-	// BB HB S2
+	auto between = [](const Pos& p1, const Pos& p2) -> Pos {
+		assert(p1.row == p2.row || p1.col == p2.col);
+		assert(taxicabDistance(p1, p2) == 2);
 
-	auto forward_p        = neighbor(neighbor(enemy.pos,  v),  h);
-	auto backwards_p      = neighbor(neighbor(enemy.pos, ov), oh);
-	auto side1_p          = neighbor(neighbor(enemy.pos,  v), oh);
-	auto side2_p          = neighbor(neighbor(enemy.pos, ov),  h);
-	auto vert_forward_p   = neighbor(enemy.pos,  v);
-	auto vert_backwards_p = neighbor(enemy.pos, ov);
-	auto hori_forward_p   = neighbor(enemy.pos,  h);
-	auto hori_backwards_p = neighbor(enemy.pos, oh);
+		return {(p1.row + p2.row) / 2, (p1.col + p2.col) / 2};
+	};
+
+	// LL LF FF
+	// LB ^> RF
+	// BB RB RR
+
+	auto forward_p   = neighbor(neighbor(enemy.pos,  v),  h);
+	auto backwards_p = neighbor(neighbor(enemy.pos, ov), oh);
+	auto right_p     = neighbor(neighbor(enemy.pos, cw_v), cw_h);
+	auto left_p      = neighbor(neighbor(enemy.pos, ccw_v), ccw_h);
+	auto rf_p        = between(forward_p, right_p);
+	auto lf_p        = between(forward_p, left_p);
+	auto rb_p        = between(backwards_p, right_p);
+	auto lb_p        = between(backwards_p, left_p);
 
 	bool forward_b = isValid(forward_p) && old_cell.owner == getCell(forward_p).owner;
 	bool backwards_b = isValid(backwards_p) && old_cell.owner == getCell(backwards_p).owner;
-	bool side1_b = isValid(side1_p) && old_cell.owner == getCell(side1_p).owner;
-	bool side2_b = isValid(side2_p) && old_cell.owner == getCell(side2_p).owner;
-	bool vert_forward_b = isValid(vert_forward_p) && old_cell.owner == getCell(vert_forward_p).owner;
-	bool vert_backwards_b = isValid(vert_backwards_p) && old_cell.owner == getCell(vert_backwards_p).owner;
-	bool hori_forward_b = isValid(hori_forward_p) && old_cell.owner == getCell(hori_forward_p).owner;
-	bool hori_backwards_b = isValid(hori_backwards_p) && old_cell.owner == getCell(hori_backwards_p).owner;
+	bool right_b = isValid(right_p) && old_cell.owner == getCell(right_p).owner;
+	bool left_b = isValid(left_p) && old_cell.owner == getCell(left_p).owner;
+	bool rf_b = isValid(rf_p) && old_cell.owner == getCell(rf_p).owner;
+	bool lf_b = isValid(lf_p) && old_cell.owner == getCell(lf_p).owner;
+	bool rb_b = isValid(rb_p) && old_cell.owner == getCell(rb_p).owner;
+	bool lb_b = isValid(lb_p) && old_cell.owner == getCell(lb_p).owner;
 
 	// case 1
 	// can we continue moving forward
@@ -496,11 +514,11 @@ std::vector<EnemyState> Model::possibleEnemyStates(const EnemyState& enemy) cons
 	possible_states.reserve(8);
 
 	// case 2, 3, 4
-	if (side1_b && hori_forward_b) {
-		possible_states.push_back({side1_p, oh, v});
+	if (left_b && lf_b) {
+		possible_states.push_back({left_p, ccw_h, ccw_v});
 	}
-	if (side2_b && vert_forward_b) {
-		possible_states.push_back({side2_p, h, ov});
+	if (right_b && rf_b) {
+		possible_states.push_back({right_p, cw_h, cw_v});
 	}
 	if (!possible_states.empty() && backwards_b) {
 		possible_states.push_back({backwards_p, oh, ov});
@@ -512,11 +530,11 @@ std::vector<EnemyState> Model::possibleEnemyStates(const EnemyState& enemy) cons
 	}
 
 	// case 5
-	if (hori_backwards_b) {
-		possible_states.push_back({hori_backwards_p, oh, ov});
+	if (lb_b) {
+		possible_states.push_back({lb_p, oh, ov});
 	}
-	if (vert_backwards_b) {
-		possible_states.push_back({vert_backwards_p, oh, ov});
+	if (rb_b) {
+		possible_states.push_back({rb_p, oh, ov});
 	}
 
 	if (!possible_states.empty()) {
@@ -528,17 +546,17 @@ std::vector<EnemyState> Model::possibleEnemyStates(const EnemyState& enemy) cons
 	if (backwards_b) {
 		possible_states.push_back({backwards_p, oh, ov});
 	}
-	if (side1_b) {
-		possible_states.push_back({side1_p, oh, v});
+	if (left_b) {
+		possible_states.push_back({left_p, ccw_h, ccw_v});
 	}
-	if (side2_b) {
-		possible_states.push_back({side2_p, h, ov});
+	if (right_b) {
+		possible_states.push_back({right_p, cw_h, cw_v});
 	}
-	if (hori_forward_b) {
-		possible_states.push_back({hori_forward_p, oh, v});
+	if (lf_b) {
+		possible_states.push_back({lf_p, ccw_h, ccw_v});
 	}
-	if (vert_forward_b) {
-		possible_states.push_back({vert_forward_p, h, ov});
+	if (rf_b) {
+		possible_states.push_back({rf_p, cw_h, cw_v});
 	}
 
 	assert(!possible_states.empty());
