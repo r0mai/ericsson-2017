@@ -333,6 +333,14 @@ bool Model::stepAsServer(std::mt19937& rng_engine) {
 		stepUnit(i);
 	}
 
+	for (auto& enemy : enemies_) {
+		for (int i = 0; i < units_.size(); ++i) {
+			if (units_[i].pos == enemy.pos) {
+				killUnit(i);
+			}
+		}
+	}
+
 	return true;
 }
 
