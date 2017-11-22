@@ -703,14 +703,14 @@ Direction Model::directionTowards(const Pos& source_pos, const Pos& target_pos) 
 			return cell.owner == 1;
 		});
 
-	auto pos = getUnit(0).pos;
-	auto dst = dst_matrix.at(pos);
+	auto dst = dst_matrix.at(source_pos);
 	auto closer_dir = Direction::kNone;
 
 	if (dst == -1) {
+		// source is not on blue
 		dst = std::numeric_limits<int>::max();
 
-		for (auto nb_dir : directions(source_pos, size())) {
+		for (auto nb_dir : getDirections(source_pos, size())) {
 			auto nb_pos = neighbor(source_pos, nb_dir);
 			for (int row = 0; row < grid_.rows(); ++row) {
 				for (int col = 0; col < grid_.cols(); ++col) {
@@ -730,7 +730,7 @@ Direction Model::directionTowards(const Pos& source_pos, const Pos& target_pos) 
 			}
 		}
 	} else {
-		for (auto nb_dir : directions(source_pos, size())) {
+		for (auto nb_dir : getDirections(source_pos, size())) {
 			auto nb_pos = neighbor(source_pos, nb_dir);
 			auto nb_dst = dst_matrix.at(nb_pos);
 			if (nb_dst == -1) {

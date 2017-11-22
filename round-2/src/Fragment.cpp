@@ -219,7 +219,7 @@ bool SafeRouter::init(const Model& model) {
 	last_pos_ = render(pos, directions_).back();
 
 	bool found = false;
-	for (auto dir : directions(pos, model.size())) {
+	for (auto dir : getDirections(pos, model.size())) {
 		if (model.getCell(neighbor(pos, dir)).owner == 1) {
 			directions_.insert(begin(directions_), opposite(dir));
 			found = true;
