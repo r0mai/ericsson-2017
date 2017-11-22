@@ -77,7 +77,7 @@ std::future<std::unique_ptr<evil::Model>> sendMoves(
 struct Command {
 	int level = -1;
 	int tick = -1;
-	evil::Direction dir = evil::Direction::kNone;
+	evil::Model::Moves moves;
 };
 
 std::vector<Command> load(const char* filename) {
@@ -91,19 +91,20 @@ std::vector<Command> load(const char* filename) {
 	while (std::getline(fs, line)) {
 		std::stringstream ss(line);
 		Command cmd;
-		char ch;
-		int _ = 0;
+		int units;
 
 		ss >> cmd.level;
 		ss >> cmd.tick;
-		ss >> _;
-		ss >> _;
-		ss >> ch;
-
-		cmd.dir = toDirection(ch);
-		if (cmd.dir == evil::Direction::kNone) {
-			break;
+		ss >> units;
+		for (int i = 0; i < units; ++i) {
+			int unit = 0;
+			char ch;
+			ss >> unit >> ch;
+			auto dir = toDirection(ch);
+			assert(dir != evil::Direction::kNone);
+			cmd.moves.push_back({unit, dir});
 		}
+
 		result.push_back(cmd);
 	}
 
