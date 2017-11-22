@@ -185,14 +185,34 @@ void Server::InitModel(int enemies_in, int enemies_out, int border_thickness) {
 	}
 
 	for (int i = 0; i < enemies_out; ++i) {
+		int row = 0;
+		int col = 0;
+		switch (GetRandom(0, 3)) {
+			case 0:
+				row = GetRandom(0, grid.rows() - 1);
+				col = GetRandom(0, border_thickness - 1);
+				break;
+			case 1:
+				row = GetRandom(0, border_thickness - 1);
+				col = GetRandom(0, grid.cols() - 1);
+				break;
+			case 2:
+				row = GetRandom(0, grid.rows() - 1);
+				col = GetRandom(grid.cols() - border_thickness, grid.cols() - 1);
+				break;
+			case 3:
+				row = GetRandom(grid.rows() - border_thickness, grid.rows() - 1);
+				col = GetRandom(0, grid.cols() - 1);
+				break;
+		}
 		int row_idx = GetRandom(0, border_thickness - 1);
 		int col_idx = GetRandom(0, border_thickness - 1);
 		if (GetRandom(0, 1)) { row_idx = grid.rows() - row_idx - 1; }
 		if (GetRandom(0, 1)) { col_idx = grid.cols() - col_idx - 1; }
 
 		Enemy enemy;
-		enemy.pos.row = row_idx;
-		enemy.pos.col = col_idx;
+		enemy.pos.row = row;
+		enemy.pos.col = col;
 		std::tie(enemy.v_dir, enemy.h_dir) = GetRandomDirection();
 		enemies.push_back(enemy);
 	}
