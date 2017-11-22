@@ -13,6 +13,8 @@
 #include <memory>
 #include <chrono>
 #include <thread>
+#include <ctime>
+#include <iomanip>
 
 #include <boost/program_options.hpp>
 
@@ -90,9 +92,14 @@ std::vector<Command> load(const char* filename) {
 		std::stringstream ss(line);
 		Command cmd;
 		char ch;
+		int _ = 0;
+
 		ss >> cmd.level;
 		ss >> cmd.tick;
+		ss >> _;
+		ss >> _;
 		ss >> ch;
+
 		cmd.dir = toDirection(ch);
 		if (cmd.dir == evil::Direction::kNone) {
 			break;
@@ -106,9 +113,31 @@ std::vector<Command> load(const char* filename) {
 	return result;
 }
 
+void saveMoves(std::ostream& out,
+	const evil::Model& model, const evil::Model::Moves& moves)
+{
+	out << model.getLevel() << " ";
+	out << model.getTick() << " ";
+	out << moves.size();
+	for (auto m : moves) {
+		out << " " << m.first << " " << m.second;
+	}
+	out << "\n";
+}
+
+
 template<typename Duration>
 auto asMs(Duration d) {
 	return std::chrono::duration_cast<std::chrono::milliseconds>(d).count();
+}
+
+
+std::string expandtime(const char* fmt) {
+	auto t = std::time(nullptr);
+	auto tm = *std::localtime(&t);
+	std::stringstream ss;
+	ss << std::put_time(&tm, fmt);
+	return ss.str();
 }
 
 int main(int argc, char* argv[]) {
@@ -139,12 +168,17 @@ int main(int argc, char* argv[]) {
 		cmds = load(vm["commands"].as<std::string>().c_str());
 	}
 
-	// Autoplay
-	auto cmd_it = begin(cmds);
-	auto cmd_next = evil::Direction::kNone;
+	auto host = vm["host"].as<std::string>();
+	std::string prefix = (host == "localhost" ? "local_" : "remote_");
+	auto filename = "saves/" + prefix + expandtime("%m%d_%H%M%S") + ".txt";
+	std::ofstream outfile(filename);
+	if (outfile.fail()) {
+		std::cerr << "error: cannot write savefile: " << filename << std::endl;
+		return 1;
+	}
 
 	evil::Connection connection;
-	if (!connection.connect(vm["host"].as<std::string>().c_str(), vm["port"].as<int>())) {
+	if (!connection.connect(host.c_str(), vm["port"].as<int>())) {
 		return 1;
 	}
 
@@ -202,6 +236,7 @@ int main(int argc, char* argv[]) {
 		if (!steps_ready && player->isReady()) {
 			steps_ready = true;
 			auto moves = player->getMoves();
+			saveMoves(outfile, model, moves);
 			model.provision(moves);
 
 			calc_end = Clock::now();
