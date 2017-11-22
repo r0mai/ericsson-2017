@@ -133,6 +133,7 @@ void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 		case sf::Keyboard::Period: toggleStepping(true); break;
 		case sf::Keyboard::O: ++clamp_w_; break;
 		case sf::Keyboard::P: clamp_w_ = std::max(1, clamp_w_ - 1); break;
+		case sf::Keyboard::R: reverse_ = !reverse_; break;
 
 		case sf::Keyboard::C: toggleCapture(); break;
 		default: break;
@@ -160,7 +161,7 @@ void Gui::handleMouseButton(const sf::Event::MouseButtonEvent& ev) {
 			setFragment(std::move(seq));
 		} else if (mode_ == Mode::kClamp) {
 			auto align = getAlignment();
-			auto clamp = makeClamp2(align, clamp_w_);
+			auto clamp = reverse_if(makeClamp2(align, clamp_w_), reverse_);
 			auto router = std::make_unique<SafeRouter>(clamp);
 			auto seq = std::make_unique<Sequence>();
 			seq->add(std::make_unique<Converge>(pos));
@@ -239,7 +240,7 @@ void Gui::draw() {
 	} else if (mode_ == Mode::kClamp) {
 		auto align = getAlignment();
 		drawCells(
-			render(mouse_pos_, makeClamp2(align, clamp_w_)),
+			render(mouse_pos_, reverse_if(makeClamp2(align, clamp_w_), reverse_)),
 			sf::Color(50, 230, 250, 100));
 	} else {
 		drawCell(mouse_pos_, sf::Color(50, 230, 250, 100));

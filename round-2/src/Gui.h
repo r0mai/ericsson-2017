@@ -89,6 +89,7 @@ private:
 	int cycle_ = 0;
 	bool is_stepping_ = false;
 	bool step_ready_ = false;
+	bool reverse_ = false;
 
 	enum Mode {
 		kNormal,
