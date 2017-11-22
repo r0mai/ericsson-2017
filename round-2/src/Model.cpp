@@ -470,7 +470,9 @@ std::vector<EnemyState> Model::possibleEnemyStates(const EnemyState& enemy) cons
 	std::tie(ccw_h, ccw_v) = rotateCCW(h, v);
 
 	assert(cw_h == Direction::kLeft || cw_h == Direction::kRight);
-	assert(cw_h == Direction::kLeft || cw_h == Direction::kRight);
+	assert(ccw_h == Direction::kLeft || ccw_h == Direction::kRight);
+	assert(cw_v == Direction::kUp || cw_v == Direction::kDown);
+	assert(ccw_v == Direction::kUp || ccw_v == Direction::kDown);
 
 	const auto& old_cell = getCell(enemy.pos);
 
@@ -506,7 +508,6 @@ std::vector<EnemyState> Model::possibleEnemyStates(const EnemyState& enemy) cons
 	// case 1
 	// can we continue moving forward
 	if (forward_b) {
-		std::cout << "case 1: 1" << std::endl;
 		return {{forward_p, h, v}};
 	}
 
@@ -525,20 +526,20 @@ std::vector<EnemyState> Model::possibleEnemyStates(const EnemyState& enemy) cons
 	}
 
 	if (!possible_states.empty()) {
-		std::cout << "case 2, 3, 4: " << possible_states.size() << std::endl;
 		return possible_states;
 	}
 
 	// case 5
-	if (lb_b) {
-		possible_states.push_back({lb_p, oh, ov});
-	}
-	if (rb_b) {
-		possible_states.push_back({rb_p, oh, ov});
+	if (!backwards_b && !forward_b && !left_b && !right_b && !lf_b && !rf_b) {
+		if (lb_b) {
+			possible_states.push_back({lb_p, oh, ov});
+		}
+		if (rb_b) {
+			possible_states.push_back({rb_p, oh, ov});
+		}
 	}
 
 	if (!possible_states.empty()) {
-		std::cout << "case 5: " << possible_states.size() << std::endl;
 		return possible_states;
 	}
 
@@ -561,7 +562,6 @@ std::vector<EnemyState> Model::possibleEnemyStates(const EnemyState& enemy) cons
 
 	assert(!possible_states.empty());
 
-	std::cout << "case 6: " << possible_states.size() << std::endl;
 	return possible_states;
 }
 

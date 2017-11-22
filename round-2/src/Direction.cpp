@@ -75,7 +75,7 @@ std::pair<Direction, Direction> rotateCW(Direction h_dir, Direction v_dir) {
 	if (h_dir == Direction::kLeft && v_dir == Direction::kDown) {
 		return {h_dir, opposite(v_dir)};
 	}
-	if (h_dir == Direction::kLeft&& v_dir == Direction::kUp) {
+	if (h_dir == Direction::kLeft && v_dir == Direction::kUp) {
 		return {opposite(h_dir), v_dir};
 	}
 	assert(false);
