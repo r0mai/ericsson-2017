@@ -55,6 +55,8 @@ public:
 
 class Router : public Fragment {
 public:
+	Router() = default;
+	Router(const std::vector<Direction>& dirs);
 	void add(Direction dir);
 	void add(const std::vector<Direction>& dirs);
 	virtual bool init(const Model& model) override;

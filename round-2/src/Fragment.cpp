@@ -26,9 +26,13 @@ bool Converge::init(const Model& model) {
 	return true;
 }
 
-
 Direction Converge::getNext(const Model& model) {
 	auto& unit = model.getUnit(unit_idx_);
+	if (unit.pos == target_) {
+		is_finished_ = true;
+		return Direction::kNone;
+	}
+
 	auto dir = model.directionTowards(unit.pos, target_);
 	assert(dir != Direction::kNone);
 
@@ -55,6 +59,10 @@ bool Librate::isFinished() const {
 }
 
 // Router
+
+Router::Router(const std::vector<Direction>& dirs) {
+	add(dirs);
+}
 
 void Router::add(Direction dir) {
 	dirs_.push_back(dir);
