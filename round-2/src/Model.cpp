@@ -587,7 +587,7 @@ std::vector<std::vector<EnemyState>> Model::allPossibleEnemyStates(
 {
 	std::vector<EnemyState> initial_states(enemies_.size());
 	for (int i = 0; i < enemies_.size(); ++i) {
-		initial_states.push_back(enemies_[i]);
+		initial_states[i] = enemies_[i];
 	}
 	return allPossibleEnemyStates(initial_states, step, max_states, success);
 }
