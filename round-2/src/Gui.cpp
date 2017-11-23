@@ -31,15 +31,27 @@ Gui::GuiPlayer::GuiPlayer(Gui* gui)
 {}
 
 void Gui::GuiPlayer::update(const Model& model) {
-	gui_->onPlayerUpdate(model);
+	if (player_) {
+		player_->update(model);
+	} else {
+		gui_->onPlayerUpdate(model);
+	}
 }
 
 bool Gui::GuiPlayer::isReady() const {
-	return gui_->isReady();
+	return gui_->isReady() && (!player_ || player_->isReady());
 }
 
 Model::Moves Gui::GuiPlayer::getMoves() {
-	return gui_->getMoves();
+	if (player_) {
+		return player_->getMoves();
+	} else {
+		return gui_->getMoves();
+	}
+}
+
+void Gui::GuiPlayer::setPlayer(std::unique_ptr<Player> player) {
+	player_ = std::move(player);
 }
 
 
@@ -110,6 +122,10 @@ void Gui::setFragment(std::unique_ptr<Fragment> fragment) {
 	}
 }
 
+void Gui::setPlayer(std::unique_ptr<Player> player) {
+	player_.setPlayer(std::move(player));
+}
+
 void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 	switch (ev.code) {
 		case sf::Keyboard::X: fragment_.reset(); break;
@@ -143,6 +159,7 @@ void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 		case sf::Keyboard::G: toggleZorroConquerRight2(); break;
 
 		case sf::Keyboard::C: toggleCapture(); break;
+		case sf::Keyboard::F2: setPlayer(nullptr); toggleLibrate(); break;
 		default: break;
 	}
 }
@@ -323,6 +340,7 @@ void Gui::onPlayerUpdate(const Model& model) {
 	model_ = model;
 	last_update_ = Clock::now();
 	step_ready_ = false;
+
 }
 
 bool Gui::isReady() {

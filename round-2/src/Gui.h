@@ -24,6 +24,7 @@ public:
 	void draw();
 	void setDrawModel(Model model);
 	bool pollEvent(sf::Event& event);
+	void setPlayer(std::unique_ptr<Player> player);
 	Direction getDirection() const;
 	Player& getPlayer();
 
@@ -43,12 +44,14 @@ private:
 		: public Player {
 	public:
 		GuiPlayer(Gui* gui);
+		void setPlayer(std::unique_ptr<Player> player);
 		virtual void update(const Model& model) override;
 		virtual bool isReady() const override;
 		virtual Model::Moves getMoves() override;
 
 	private:
 		Gui* gui_;
+		std::unique_ptr<Player> player_;
 	};
 
 	void onPlayerUpdate(const Model& model);
@@ -88,8 +91,8 @@ private:
 	Direction dir_ = Direction::kUp;
 	Pos mouse_pos_;
 	Pos last_clicked_pos_;
-
 	GuiPlayer player_;
+
 	Clock::time_point last_update_;
 	int clamp_w_ = 1;
 	int diag_w_ = 10;

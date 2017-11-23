@@ -113,8 +113,8 @@ int main(int argc, char* argv[]) {
 	    return 1;
 	}
 
-	evil::Replayer replayer;
-	bool use_replay = false;
+	std::unique_ptr<evil::Replayer> replayer;
+
 	if (vm.count("commands")) {
 		auto filename = vm["commands"].as<std::string>();
 		std::ifstream infile(filename);
@@ -122,8 +122,8 @@ int main(int argc, char* argv[]) {
 			std::cerr << "error: cannot open " << filename << std::endl;
 			return 1;
 		}
-		replayer.load(infile);
-		use_replay = true;
+		replayer = std::make_unique<evil::Replayer>();
+		replayer->load(infile);
 	}
 
 	auto host = vm["host"].as<std::string>();
@@ -158,10 +158,11 @@ int main(int argc, char* argv[]) {
 
 	auto player_string = vm["player"].as<std::string>();
 	evil::Player* player = nullptr;
-	if (use_replay) {
-		player = &replayer;
-	} else if (player_string == "gui") {
+	if (player_string == "gui") {
 		player = &gui.getPlayer();
+		if (replayer) {
+			gui.setPlayer(std::move(replayer));
+		}
 	} else if (player_string == "dumb") {
 		player = &dumb;
 	} else if (player_string == "zorro") {
