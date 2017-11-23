@@ -129,6 +129,7 @@ int main(int argc, char* argv[]) {
 	std::string prefix = (host == "localhost" ? "local_" : "remote_");
 	auto filename = "saves/" + prefix + expandtime("%m%d_%H%M%S") + ".txt";
 	std::ofstream outfile(filename);
+
 	if (outfile.fail()) {
 		std::cerr << "error: cannot write savefile: " << filename << std::endl;
 		return 1;
@@ -173,6 +174,14 @@ int main(int argc, char* argv[]) {
 	auto calc_start = Clock::now();
 	auto calc_end = Clock::now();
 	auto calc_time = asMs(calc_end - calc_start);
+
+	struct OnExit {
+		std::string msg;
+		OnExit(const std::string& msg) : msg(msg) {}
+		~OnExit() {
+			std::cerr << msg << std::endl;
+		}
+	} on_exit("Saved moves to " + filename);
 
 	while (true) {
 		// gui phase
