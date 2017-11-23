@@ -69,4 +69,14 @@ std::vector<Direction> makeDiagonal(const Alignment& align, int size) {
 	return vec;
 }
 
+int getDiagCol(int row, const Alignment& diag_align, const Pos& origin) {
+	auto d = row - origin.row;
+	return neighbor(origin, diag_align.axis1, d).col;
+}
+
+int getDiagRow(int col, const Alignment& diag_align, const Pos& origin) {
+	auto d = col - origin.col;
+	return neighbor(origin, diag_align.axis0, d).row;
+}
+
 } // namespace evil

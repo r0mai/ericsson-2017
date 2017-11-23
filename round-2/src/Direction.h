@@ -23,6 +23,7 @@ Direction toDirection(int n);
 
 Pos neighbor(const Pos& pos, Direction dir);
 Pos neighbor(const Pos& pos, Direction dir, int repeat);
+Alignment opposite(Alignment align);
 Direction opposite(Direction dir);
 Direction rotateCW(Direction dir);
 Direction rotateCCW(Direction dir);

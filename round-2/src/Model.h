@@ -66,6 +66,8 @@ protocol::Direction toProtocolDirection(Direction dir);
 
 bool operator==(const Pos& lhs, const Pos& rhs);
 bool operator!=(const Pos& lhs, const Pos& rhs);
+bool operator==(const Alignment& lhs, const Alignment& rhs);
+bool operator!=(const Alignment& lhs, const Alignment& rhs);
 
 std::ostream& operator<<(std::ostream& out, Direction dir);
 

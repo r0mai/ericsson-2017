@@ -49,6 +49,14 @@ bool operator!=(const Pos& lhs, const Pos& rhs) {
 	return !(lhs == rhs);
 }
 
+bool operator==(const Alignment& lhs, const Alignment& rhs) {
+	return lhs.axis0 == rhs.axis0 && lhs.axis1 == rhs.axis1;
+}
+
+bool operator!=(const Alignment& lhs, const Alignment& rhs) {
+	return !(lhs == rhs);
+}
+
 Model::Grid& Model::getGrid() {
 	return grid_;
 }

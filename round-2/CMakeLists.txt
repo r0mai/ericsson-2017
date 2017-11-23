@@ -22,6 +22,7 @@ add_library(xonixLib
     src/Server.cpp
     src/Direction.cpp
     src/DumbPlayer.cpp
+    src/ZorroPlayer.cpp
     src/Trap.cpp
     src/Utils.cpp
     src/AABB.cpp

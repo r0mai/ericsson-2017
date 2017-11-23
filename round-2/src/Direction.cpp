@@ -29,6 +29,10 @@ Pos neighbor(const Pos& pos, Direction dir, int repeat) {
 	return pos;
 }
 
+Alignment opposite(Alignment align) {
+	return {opposite(align.axis0), opposite(align.axis1)};
+}
+
 Direction opposite(Direction dir) {
 	switch (dir) {
 		case Direction::kLeft: return Direction::kRight;
@@ -127,6 +131,5 @@ std::vector<Direction> reverse_if(std::vector<Direction> vec, bool reverse) {
 	}
 	return vec;
 }
-
 
 } // namespace evil

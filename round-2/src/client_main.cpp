@@ -7,6 +7,7 @@
 #include "Client.h"
 #include "DumbPlayer.h"
 #include "Replayer.h"
+#include "ZorroPlayer.h"
 
 #include <iostream>
 #include <fstream>
@@ -144,6 +145,8 @@ int main(int argc, char* argv[]) {
 	evil::DumbPlayer dumb(&gui);
 	gui.init(stepping);
 
+	evil::ZorroPlayer zorro;
+
 	auto model = login(connection);
 	auto model_ready = true;
 	auto steps_ready = false;
@@ -161,6 +164,8 @@ int main(int argc, char* argv[]) {
 		player = &gui.getPlayer();
 	} else if (player_string == "dumb") {
 		player = &dumb;
+	} else if (player_string == "zorro") {
+		player = &zorro;
 	}
 
 	if (!player) {
