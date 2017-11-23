@@ -120,10 +120,8 @@ void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 		case sf::Keyboard::Right: toggleManual(Direction::kRight); break;
 		case sf::Keyboard::Left: toggleManual(Direction::kLeft); break;
 		case sf::Keyboard::L: toggleLibrate(); break;
-//		case sf::Keyboard::F: delay_ = 0; break;
-		case sf::Keyboard::D: delay_ = 100; break;
-		// case sf::Keyboard::S: delay_ = 200; break;
-		// case sf::Keyboard::A: delay_ = 1000; break;
+		case sf::Keyboard::LBracket: delay_ = std::min(delay_ + delay_ / 2 + 20, 1000); break;
+		case sf::Keyboard::RBracket: delay_ = std::max(delay_ - delay_ / 2 - 20, 0); break;
 
 		case sf::Keyboard::Tab: toggleCycle(); break;
 		case sf::Keyboard::Num1: mode_ = Mode::kNormal; break;
