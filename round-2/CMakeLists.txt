@@ -28,6 +28,7 @@ add_library(xonixLib
     src/Pos.cpp
     src/Fragment.cpp
     src/Shapes.cpp
+    src/Replayer.cpp
     src/protocol/Common.capnp.c++
     src/protocol/Command.capnp.c++
     src/protocol/Response.capnp.c++
