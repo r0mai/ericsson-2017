@@ -77,6 +77,10 @@ private:
 	void toggleZorroConquerLeft();
 	void toggleZorroConquerRight();
 
+	void toggleZorroBegin2();
+	void toggleZorroConquerLeft2();
+	void toggleZorroConquerRight2();
+
 	Alignment getAlignment();
 
 	sf::RenderWindow window_ {sf::VideoMode(window_w, window_h), "Window"};

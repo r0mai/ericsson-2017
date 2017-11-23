@@ -120,7 +120,7 @@ void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 		case sf::Keyboard::Right: toggleManual(Direction::kRight); break;
 		case sf::Keyboard::Left: toggleManual(Direction::kLeft); break;
 		case sf::Keyboard::L: toggleLibrate(); break;
-		case sf::Keyboard::F: delay_ = 0; break;
+//		case sf::Keyboard::F: delay_ = 0; break;
 		case sf::Keyboard::D: delay_ = 100; break;
 		// case sf::Keyboard::S: delay_ = 200; break;
 		// case sf::Keyboard::A: delay_ = 1000; break;
@@ -135,9 +135,14 @@ void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 		case sf::Keyboard::P: clamp_w_ = std::max(1, clamp_w_ - 1); break;
 		case sf::Keyboard::R: reverse_ = !reverse_; break;
 		case sf::Keyboard::H: toggleHardcore(); break;
+
 		case sf::Keyboard::Z: toggleZorroBegin(); break;
 		case sf::Keyboard::A: toggleZorroConquerLeft(); break;
 		case sf::Keyboard::S: toggleZorroConquerRight(); break;
+
+		case sf::Keyboard::V: toggleZorroBegin2(); break;
+		case sf::Keyboard::F: toggleZorroConquerLeft2(); break;
+		case sf::Keyboard::G: toggleZorroConquerRight2(); break;
 
 		case sf::Keyboard::C: toggleCapture(); break;
 		default: break;
@@ -470,6 +475,78 @@ void Gui::toggleZorroConquerRight() {
 		auto go_origin = std::make_unique<Converge>(Pos{1, 27});
 		auto diag_align = Alignment{Direction::kDown, Direction::kRight};
 		auto diag = makeDiagonal(diag_align, 73);
+		auto diag_route = std::make_unique<Router>(diag);
+
+		seq->add(std::move(go_origin));
+		seq->add(std::move(diag_route));
+	}
+
+	seq->add(std::make_unique<Librate>());
+	setFragment(std::move(seq));
+}
+
+void Gui::toggleZorroBegin2() {
+	auto seq = std::make_unique<Sequence>();
+	auto go_origin = std::make_unique<Converge>(Pos{1, 21});
+
+	auto make_spike = std::make_unique<SafeRouter>(
+		std::vector<Direction>(79, Direction::kDown));
+
+	auto diag_align = Alignment{Direction::kUp, Direction::kRight};
+	auto diag = makeDiagonal(diag_align, 77);
+	auto diag_route = std::make_unique<SafeRouter>(diag);
+
+	seq->add(std::move(go_origin));
+	seq->add(std::move(make_spike));
+	seq->add(std::move(diag_route));
+
+
+	seq->add(std::make_unique<Librate>());
+	setFragment(std::move(seq));
+}
+
+void Gui::toggleZorroConquerLeft2() {
+	auto seq = std::make_unique<Sequence>();
+
+	bool is_down = model_.getUnit(0).pos.row > 70;
+	if (is_down) {
+		auto go_origin = std::make_unique<Converge>(Pos{73, 21});
+		auto diag_align = Alignment{Direction::kUp, Direction::kRight};
+		auto diag = makeDiagonal(diag_align, 75);
+		auto diag_route = std::make_unique<Router>(diag);
+
+		seq->add(std::move(go_origin));
+		seq->add(std::move(diag_route));
+	} else {
+		auto go_origin = std::make_unique<Converge>(Pos{1, 94});
+		auto diag_align = Alignment{Direction::kDown, Direction::kLeft};
+		auto diag = makeDiagonal(diag_align, 73);
+		auto diag_route = std::make_unique<Router>(diag);
+
+		seq->add(std::move(go_origin));
+		seq->add(std::move(diag_route));
+	}
+
+	seq->add(std::make_unique<Librate>());
+	setFragment(std::move(seq));
+}
+
+void Gui::toggleZorroConquerRight2() {
+	auto seq = std::make_unique<Sequence>();
+
+	bool is_down = model_.getUnit(0).pos.row > 70;
+	if (is_down) {
+		auto go_origin = std::make_unique<Converge>(Pos{78, 26});
+		auto diag_align = Alignment{Direction::kUp, Direction::kRight};
+		auto diag = makeDiagonal(diag_align, 76);
+		auto diag_route = std::make_unique<Router>(diag);
+
+		seq->add(std::move(go_origin));
+		seq->add(std::move(diag_route));
+	} else {
+		auto go_origin = std::make_unique<Converge>(Pos{7, 98});
+		auto diag_align = Alignment{Direction::kDown, Direction::kLeft};
+		auto diag = makeDiagonal(diag_align, 76);
 		auto diag_route = std::make_unique<Router>(diag);
 
 		seq->add(std::move(go_origin));
