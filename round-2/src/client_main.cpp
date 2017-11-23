@@ -6,6 +6,7 @@
 #include "Model.h"
 #include "Client.h"
 #include "DumbPlayer.h"
+#include "Replayer.h"
 
 #include <iostream>
 #include <fstream>
@@ -33,17 +34,6 @@ protocol::Direction toProtocol(evil::Direction dir) {
 		case evil::Direction::kNone: return protocol::Direction(-1);
 	}
 	return protocol::Direction(-1);
-}
-
-evil::Direction toDirection(char ch) {
-	switch (ch) {
-		case '>': return evil::Direction::kRight;
-		case '<': return evil::Direction::kLeft;
-		case '^': return evil::Direction::kUp;
-		case 'v': return evil::Direction::kDown;
-		default: break;
-	}
-	return evil::Direction::kNone;
 }
 
 evil::Model login(evil::Connection& conn) {
@@ -74,46 +64,6 @@ std::future<std::unique_ptr<evil::Model>> sendMoves(
 	return conn.communicateAsync(std::move(msg));
 }
 
-struct Command {
-	int level = -1;
-	int tick = -1;
-	evil::Model::Moves moves;
-};
-
-std::vector<Command> load(const char* filename) {
-	std::ifstream fs(filename);
-	if (fs.fail()) {
-		return {};
-	}
-
-	std::string line;
-	std::vector<Command> result;
-	while (std::getline(fs, line)) {
-		std::stringstream ss(line);
-		Command cmd;
-		int units;
-
-		ss >> cmd.level;
-		ss >> cmd.tick;
-		ss >> units;
-		for (int i = 0; i < units; ++i) {
-			int unit = 0;
-			char ch;
-			ss >> unit >> ch;
-			auto dir = toDirection(ch);
-			assert(dir != evil::Direction::kNone);
-			cmd.moves.push_back({unit, dir});
-		}
-
-		result.push_back(cmd);
-	}
-
-	std::cerr
-		<< "Loaded " << result.size()
-		<< " commands from " << filename << std::endl;
-	return result;
-}
-
 void saveMoves(std::ostream& out,
 	const evil::Model& model, const evil::Model::Moves& moves)
 {
@@ -126,12 +76,10 @@ void saveMoves(std::ostream& out,
 	out << "\n";
 }
 
-
 template<typename Duration>
 auto asMs(Duration d) {
 	return std::chrono::duration_cast<std::chrono::milliseconds>(d).count();
 }
-
 
 std::string expandtime(const char* fmt) {
 	auto t = std::time(nullptr);
@@ -164,9 +112,17 @@ int main(int argc, char* argv[]) {
 	    return 1;
 	}
 
-	std::vector<Command> cmds;
+	evil::Replayer replayer;
+	bool use_replay = false;
 	if (vm.count("commands")) {
-		cmds = load(vm["commands"].as<std::string>().c_str());
+		auto filename = vm["commands"].as<std::string>();
+		std::ifstream infile(filename);
+		if (infile.fail()) {
+			std::cerr << "error: cannot open " << filename << std::endl;
+			return 1;
+		}
+		replayer.load(infile);
+		use_replay = true;
 	}
 
 	auto host = vm["host"].as<std::string>();
@@ -198,7 +154,9 @@ int main(int argc, char* argv[]) {
 
 	auto player_string = vm["player"].as<std::string>();
 	evil::Player* player = nullptr;
-	if (player_string == "gui") {
+	if (use_replay) {
+		player = &replayer;
+	} else if (player_string == "gui") {
 		player = &gui.getPlayer();
 	} else if (player_string == "dumb") {
 		player = &dumb;

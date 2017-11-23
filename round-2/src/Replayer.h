@@ -8,6 +8,7 @@ namespace evil {
 
 class Replayer : public Player {
 public:
+	void load(std::istream& input);
 	void addMoves(int level, int tick, const Model::Moves& moves);
 
 	virtual void update(const Model& model) override;
