@@ -97,6 +97,7 @@ int main(int argc, char* argv[]) {
 
 	bool stepping = false;
 	bool local = false;
+	int gui_after = 0;
 	po::options_description desc("Allowed options");
 	desc.add_options()
 	    ("help,h", "Print help")
@@ -108,6 +109,7 @@ int main(int argc, char* argv[]) {
 		("stepping,s", po::bool_switch(&stepping), "Start in stepping mode")
 		("strategy,S", po::value<std::string>(), "Strategy index file")
 		("no-gui,n", po::bool_switch(), "Disable gui")
+		("gui-after,g", po::value<int>(&gui_after)->default_value(0), "Enable gui after level")
 	;
 
 	po::variables_map vm;
@@ -215,9 +217,10 @@ int main(int argc, char* argv[]) {
 
 	auto enable_gui = !vm["no-gui"].as<bool>();
 
+	auto level = 0;
 	while (true) {
 		// gui phase
-		if (enable_gui) {
+		if (enable_gui && level >= gui_after) {
 			gui.setDrawModel(model);
 			if (!gui.update()) {
 				break;
@@ -252,6 +255,7 @@ int main(int argc, char* argv[]) {
 				return 0;
 			}
 			model = *model_ptr;
+			level = model.getLevel();
 			calc_start = Clock::now();
 			model_ready = true;
 		} else {
