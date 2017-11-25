@@ -25,6 +25,7 @@ add_library(xonixLib
     src/ZorroPlayer.cpp
     src/ZorroStrategyA.cpp
     src/ZorroStrategyB.cpp
+    src/ZorroStrategyC.cpp
     src/ZorroStrategyManager.cpp
     src/Trap.cpp
     src/Utils.cpp

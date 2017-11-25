@@ -43,5 +43,4 @@ private:
 	ZorroStrategyManager strategy_manager_;
 };
 
-}
-
+} // namespace

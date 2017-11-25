@@ -59,6 +59,31 @@ bool Librate::isFinished() const {
 	return false;
 }
 
+// LibrateUntil
+
+LibrateUntil::LibrateUntil(Condition cond)
+	: cond_(cond)
+{}
+
+bool LibrateUntil::init(const Model& model) {
+	if (cond_(model)) {
+		is_finished_ = true;
+		return false;
+	}
+	return true;
+}
+
+Direction LibrateUntil::getNext(const Model& model) {
+	if (cond_(model)) {
+		is_finished_ = true;
+	}
+	return opposite(model.getUnit(0).dir);
+}
+
+bool LibrateUntil::isFinished() const {
+	return is_finished_;
+}
+
 // Router
 
 Router::Router(const std::vector<Direction>& dirs) {

@@ -44,7 +44,6 @@ FragmentPtr makeZorroSlice(const Alignment& align) {
 	seq->add(std::move(do_spike));
 	seq->add(std::move(go_diag));
 	seq->add(std::move(do_diag));
-	seq->add(std::make_unique<Librate>()); // todo - collision here
 	return std::move(seq);
 }
 
@@ -86,7 +85,6 @@ FragmentPtr makeZorroFinishInside(const Alignment& align) {
 
 	auto f_if = std::make_unique<If>(cond, std::move(seq1), std::move(seq2));
 	seq->add(std::move(f_if));
-	seq->add(std::make_unique<Librate>());
 	return std::move(seq);
 }
 
@@ -128,11 +126,10 @@ FragmentPtr makeZorroFinishOutside(const Alignment& align) {
 
 	auto f_if = std::make_unique<If>(cond, std::move(seq1), std::move(seq2));
 	seq->add(std::move(f_if));
-	seq->add(std::make_unique<Librate>());
 	return std::move(seq);
 }
 
-bool canZorroFinishIniside(const Alignment& align, const Model& model) {
+bool isDangerousInside(const Enemy& enemy, const Alignment& align, const Model& model) {
 	auto vd = align.axis0;
 	auto hd = align.axis1;
 	auto vdx = opposite(vd);
@@ -140,26 +137,30 @@ bool canZorroFinishIniside(const Alignment& align, const Model& model) {
 
 	auto p0 = reorient(Pos{76, 21}, align);
 
+	if (relativeHorizontal(p0, enemy.pos) != hd) {
+		return false;
+	}
+
+	auto delta_h = std::abs(enemy.pos.col - p0.col);
+	auto p1 = neighbor(neighbor(p0, hd, delta_h), vdx, delta_h);
+
+	if (relativeVertical(p1, enemy.pos) != vdx) {
+		return false;
+	}
+
+	auto delta_v = std::abs(enemy.pos.row - p1.row);
+	if (delta_v > 3) {
+		return true;
+	}
+
+	return
+		((enemy.v_dir == vd && enemy.h_dir == hd) ||
+		(enemy.v_dir == vdx && enemy.h_dir == hdx));
+}
+
+bool canZorroFinishInside(const Alignment& align, const Model& model) {
 	for (auto& enemy : model.getInsideEnemies()) {
-		if (relativeHorizontal(p0, enemy.pos) != hd) {
-			continue;
-		}
-
-		auto delta_h = std::abs(enemy.pos.col - p0.col);
-		auto p1 = neighbor(neighbor(p0, hd, delta_h), vdx, delta_h);
-
-		if (relativeVertical(p1, enemy.pos) != vdx) {
-			continue;
-		}
-
-		auto delta_v = std::abs(enemy.pos.row - p1.row);
-		if (delta_v > 3) {
-			return false;
-		}
-
-		if ((enemy.v_dir == vd && enemy.h_dir == hd) ||
-			(enemy.v_dir == vdx && enemy.h_dir == hdx))
-		{
+		if (isDangerousInside(enemy, align, model)) {
 			return false;
 		}
 	}
@@ -167,7 +168,7 @@ bool canZorroFinishIniside(const Alignment& align, const Model& model) {
 	return true;
 }
 
-bool canZorroFinishOutside(const Alignment& align, const Model& model) {
+bool isDangerousOutside(const Enemy& enemy, const Alignment& align, const Model& model) {
 	auto vd = align.axis0;
 	auto hd = align.axis1;
 	auto vdx = opposite(vd);
@@ -175,26 +176,30 @@ bool canZorroFinishOutside(const Alignment& align, const Model& model) {
 
 	auto p0 = reorient(Pos{76, 21}, align);
 
+	if (relativeHorizontal(p0, enemy.pos) != hd) {
+		return false;
+	}
+
+	auto delta_h = std::abs(enemy.pos.col - p0.col);
+	auto p1 = neighbor(neighbor(p0, hd, delta_h), vdx, delta_h);
+
+	if (relativeVertical(p1, enemy.pos) != vd) {
+		return false;
+	}
+
+	auto delta_v = std::abs(enemy.pos.row - p1.row);
+	if (delta_v > 4) {
+		return true;
+	}
+
+	return
+		((enemy.v_dir == vd && enemy.h_dir == hd) ||
+		(enemy.v_dir == vdx && enemy.h_dir == hdx));
+}
+
+bool canZorroFinishOutside(const Alignment& align, const Model& model) {
 	for (auto& enemy : model.getInsideEnemies()) {
-		if (relativeHorizontal(p0, enemy.pos) != hd) {
-			continue;
-		}
-
-		auto delta_h = std::abs(enemy.pos.col - p0.col);
-		auto p1 = neighbor(neighbor(p0, hd, delta_h), vdx, delta_h);
-
-		if (relativeVertical(p1, enemy.pos) != vd) {
-			continue;
-		}
-
-		auto delta_v = std::abs(enemy.pos.row - p1.row);
-		if (delta_v > 4) {
-			return false;
-		}
-
-		if ((enemy.v_dir == vd && enemy.h_dir == hd) ||
-			(enemy.v_dir == vdx && enemy.h_dir == hdx))
-		{
+		if (isDangerousOutside(enemy, align, model)) {
 			return false;
 		}
 	}
@@ -212,5 +217,66 @@ bool isZorroFinishedOutside(const Alignment& align, const Model& model) {
 	return model.getCell(pos).owner == 1;
 }
 
+#if 0
+FragmentPtr makeFullZorro(const Alignment& align) {
+	auto cond_inside = [align](const Model& model) {
+		return
+			!isZorroFinishedInside(align, model) &&
+			canZorroFinishInside(align, model);
+	};
+
+	auto cond_outside = [align](const Model& model) {
+		return
+			!isZorroFinishedOutside(align, model) &&
+			canZorroFinishOutside(align, model);
+	};
+
+	auto lib_both = std::make_unique<LibrateUntil>(
+		[cond_inside, cond_outside](const Model& model) {
+			return cond_inside(model) || cond_outside(model);
+		});
+
+	auto lib_in = std::make_unique<LibrateUntil>(
+		[cond_inside](const Model& model) {
+			return cond_inside(model);
+		});
+
+	auto lib_out = std::make_unique<LibrateUntil>(
+		[cond_outside](const Model& model) {
+			return cond_outside(model);
+		});
+
+	// fragments
+
+	auto finish_in1 = makeZorroFinishInside(align);
+	auto finish_out1 = makeZorroFinishOutside(align);
+	auto finish_in2 = makeZorroFinishInside(align);
+	auto finish_out2 = makeZorroFinishOutside(align);
+
+	auto seq_in = std::make_unique<Sequence>();
+	auto seq_out = std::make_unique<Sequence>();
+
+	seq_in->add(std::move(finish_in1));
+	seq_in->add(std::move(lib_out));
+	seq_in->add(std::move(finish_out2));
+
+	seq_out->add(std::move(finish_out1));
+	seq_in->add(std::move(lib_in));
+	seq_out->add(std::move(finish_in2));
+
+	auto slice = makeZorroSlice(align, false);
+	auto finish = std::make_unique<If>(cond_inside,
+		std::move(seq_in), std::move(seq_out));
+
+	auto seq = std::make_unique<Sequence>();
+	seq->add(std::move(slice));
+	seq->add(std::move(lib_both));
+	seq->add(std::move(finish));
+	seq->add(std::make_unique<Librate>());
+
+	return std::move(seq);
+}
+
+#endif
 
 } // namespace evil

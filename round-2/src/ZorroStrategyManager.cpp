@@ -5,6 +5,7 @@
 
 #include "ZorroStrategyA.h"
 #include "ZorroStrategyB.h"
+#include "ZorroStrategyC.h"
 
 namespace evil {
 
@@ -12,6 +13,7 @@ namespace {
 
 ZorroStrategyA strategy_A;
 ZorroStrategyB strategy_B;
+ZorroStrategyC strategy_C;
 
 struct Strategy {
 	ZorroStrategy* strategy;
@@ -19,6 +21,10 @@ struct Strategy {
 };
 
 std::vector<Strategy> strategy_varioations{
+	Strategy{&strategy_C, 0},
+	Strategy{&strategy_C, 10},
+	Strategy{&strategy_C, 20},
+	//
 	Strategy{&strategy_A, 0},
 	Strategy{&strategy_B, 0},
 	Strategy{&strategy_A, 120},
@@ -90,7 +96,7 @@ ZorroStrategy* ZorroStrategyManager::getStrategy(int level) {
 int ZorroStrategyManager::getStrategyIndexForLevel(int level) {
 	assert(level <= level_strategies_.size());
 	if (level == level_strategies_.size()) {
-		level_strategies_.push_back(1);
+		level_strategies_.push_back(0);
 	}
 	return level_strategies_[level];
 }

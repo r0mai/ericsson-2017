@@ -519,15 +519,18 @@ void Gui::toggleZorroConquerRight() {
 }
 
 void Gui::toggleZorroBegin2() {
-	setFragment(makeZorroSlice({Direction::kDown, Direction::kRight}));
+	auto align = Alignment{Direction::kDown, Direction::kRight};
+	setFragment(makeZorroSlice(align));
 }
 
 void Gui::toggleZorroConquerLeft2() {
-	setFragment(makeZorroFinishInside({Direction::kDown, Direction::kRight}));
+	auto align = Alignment{Direction::kDown, Direction::kRight};
+	setFragment(makeZorroFinishInside(align));
 }
 
 void Gui::toggleZorroConquerRight2() {
-	setFragment(makeZorroFinishOutside({Direction::kDown, Direction::kRight}));
+	auto align = Alignment{Direction::kDown, Direction::kRight};
+	setFragment(makeZorroFinishOutside(align));
 }
 
 } // namespace evil

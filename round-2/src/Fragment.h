@@ -30,6 +30,7 @@ public:
 	virtual Direction getNext(const Model& model) = 0;
 };
 
+using Condition = std::function<bool(const Model& model)>;
 using FragmentPtr = std::unique_ptr<Fragment>;
 
 
@@ -54,6 +55,19 @@ public:
 	virtual bool init(const Model& model) override;
 	virtual bool isFinished() const override;
 	virtual Direction getNext(const Model& model) override;
+};
+
+
+class LibrateUntil : public Fragment {
+public:
+	LibrateUntil(Condition cond);
+	virtual bool init(const Model& model) override;
+	virtual bool isFinished() const override;
+	virtual Direction getNext(const Model& model) override;
+
+private:
+	bool is_finished_ = false;
+	Condition cond_;
 };
 
 
@@ -87,8 +101,6 @@ private:
 
 class If : public Fragment {
 public:
-	using Condition = std::function<bool(const Model& model)>;
-
 	If(Condition cond, FragmentPtr true_frag, FragmentPtr false_frag);
 	virtual bool init(const Model& model) override;
 	virtual bool isFinished() const override;
