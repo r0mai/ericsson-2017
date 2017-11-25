@@ -17,8 +17,10 @@
 #include <thread>
 #include <ctime>
 #include <iomanip>
+#include <functional>
 
 #include <boost/program_options.hpp>
+
 
 protocol::Response::Reader getResponse(
 	std::unique_ptr<capnp::MallocMessageBuilder>& reader)
@@ -94,10 +96,12 @@ int main(int argc, char* argv[]) {
 	namespace po = boost::program_options;
 
 	bool stepping = false;
+	bool local = false;
 	po::options_description desc("Allowed options");
 	desc.add_options()
 	    ("help,h", "Print help")
 	    ("host,H", po::value<std::string>()->default_value("epb2017.dyndns.org"), "Server host")
+	    ("local,l", po::bool_switch(&local), "Local mode")
 	    ("port,p", po::value<int>()->default_value(11224), "Server port")
 		("player,P", po::value<std::string>()->default_value("gui"), "Controller player")
 		("commands,c", po::value<std::string>(), "Commands file")
@@ -128,6 +132,10 @@ int main(int argc, char* argv[]) {
 	}
 
 	auto host = vm["host"].as<std::string>();
+	if (local) {
+		host = "localhost";
+	}
+
 	std::string prefix = (host == "localhost" ? "local_" : "remote_");
 	auto filename = "saves/" + prefix + expandtime("%m%d_%H%M%S") + ".txt";
 	std::ofstream outfile(filename);
@@ -191,12 +199,18 @@ int main(int argc, char* argv[]) {
 	auto calc_time = asMs(calc_end - calc_start);
 
 	struct OnExit {
-		std::string msg;
-		OnExit(const std::string& msg) : msg(msg) {}
+		std::function<void()> func;
+		OnExit(std::function<void()> func) : func(func) {}
 		~OnExit() {
-			std::cerr << msg << std::endl;
+			func();
 		}
-	} on_exit("Saved moves to " + filename);
+	} on_exit([&]{
+		std::cerr << "Saved moves to " << filename << std::endl;
+		if (save_zorro_strategies) {
+			auto filename = vm["strategy"].as<std::string>();
+			zorro.SaveStrategies(filename);
+		}
+	});
 
 	while (true) {
 		// gui phase
@@ -230,10 +244,6 @@ int main(int argc, char* argv[]) {
 		if (evil::isFutureReady(future)) {
 			auto model_ptr = future.get();
 			if (!model_ptr) {
-				if (save_zorro_strategies) {
-					auto filename = vm["strategy"].as<std::string>();
-					zorro.SaveStrategies(filename);
-				}
 				return 0;
 			}
 			model = *model_ptr;
@@ -242,11 +252,6 @@ int main(int argc, char* argv[]) {
 		} else {
 			std::this_thread::yield();
 		}
-	}
-
-	if (save_zorro_strategies) {
-		auto filename = vm["strategy"].as<std::string>();
-		zorro.SaveStrategies(filename);
 	}
 
 	return 0;
