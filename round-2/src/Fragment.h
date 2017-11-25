@@ -150,4 +150,15 @@ private:
 };
 
 
+class SafeLibrate : public Fragment {
+public:
+	// target_pos must be blue
+	virtual bool init(const Model& model) override;
+	virtual bool isFinished() const override;
+	virtual Direction getNext(const Model& model) override;
+private:
+
+	Pos target_pos_;
+};
+
 } // namespace evil

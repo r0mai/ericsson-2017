@@ -354,4 +354,25 @@ Direction If::getNext(const Model& model) {
 	}
 }
 
+// SafeLibrateAround
+
+bool SafeLibrate::init(const Model& model) {
+	target_pos_ = model.getUnit(0).pos;
+	return true;
+}
+
+bool SafeLibrate::isFinished() const {
+	return false;
+}
+
+Direction SafeLibrate::getNext(const Model& model) {
+	auto& unit = model.getUnit(0);
+	auto preferred_direction = model.directionTowards(unit.pos, target_pos_);
+	auto dir = model.SafeBlueMove(unit.pos, preferred_direction);
+	if (dir == Direction::kNone) {
+		dir = Direction::kRight;
+	}
+	return dir;
+}
+
 } // namespace evil
