@@ -33,10 +33,11 @@ add_library(xonixLib
     src/Fragment.cpp
     src/Shapes.cpp
     src/Replayer.cpp
+    src/Strategy.cpp
     src/protocol/Common.capnp.c++
     src/protocol/Command.capnp.c++
     src/protocol/Response.capnp.c++
-    )
+)
 
 add_executable(xonix src/client_main.cpp)
 add_executable(server src/server_main.cpp)

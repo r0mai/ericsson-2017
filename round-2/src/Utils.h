@@ -6,6 +6,8 @@
 #include <vector>
 #include <deque>
 #include <cassert>
+#include <iterator>
+#include <algorithm>
 
 #include "AABB.h"
 #include "Direction.h"
@@ -118,5 +120,10 @@ Matrix<int> distanceFill(const Pos& origin, const Pos& end, Func fn) {
 	return dst_matrix;
 }
 
+template<typename T>
+std::vector<T> concat(std::vector<T> vec, const std::vector<T>& rhs) {
+	std::copy(rhs.begin(), rhs.end(), std::back_inserter(vec));
+	return std::move(vec);
+}
 
 } // namespace evil

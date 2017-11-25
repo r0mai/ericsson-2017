@@ -96,4 +96,33 @@ std::vector<Direction> makeInverseTrap(const Alignment& align) {
 	};
 }
 
+std::vector<Direction> makeSafeSpike(const Alignment& align, int size) {
+	// axis0 - small parts
+	// axis1 - long part
+
+	auto hd = align.axis0;
+	auto vd = align.axis1;
+	auto hdx = opposite(hd);
+	auto vdx = opposite(vd);
+
+	assert(size > 7);
+	std::vector<Direction> pre = {vd, vd, hd, vd, hd, hdx, hdx};
+	std::vector<Direction> body(size - 6, vd);
+	std::vector<Direction> post = {hd, hd, hdx, vd, hdx, vd, vd};
+	return concat(concat(pre, body), post);
+}
+
+std::vector<Direction> makeDiagonal2(const Alignment& align, int size) {
+	auto a0 = align.axis0;
+	auto a1 = align.axis1;
+
+	std::vector<Direction> vec;
+	for (int i = 0; i < size; ++i) {
+		vec.push_back(a0);
+		vec.push_back(a1);
+	}
+	return vec;
+}
+
+
 } // namespace evil

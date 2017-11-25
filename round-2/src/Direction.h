@@ -20,6 +20,8 @@ struct Alignment {
 };
 
 Direction toDirection(int n);
+bool isHorizontal(Direction dir);
+bool isVertical(Direction dir);
 
 Pos neighbor(const Pos& pos, Direction dir);
 Pos neighbor(const Pos& pos, Direction dir, int repeat);

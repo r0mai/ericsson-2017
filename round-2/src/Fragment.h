@@ -2,6 +2,8 @@
 
 #include "Trap.h"
 #include "Model.h"
+#include <memory>
+
 
 namespace evil {
 
@@ -11,7 +13,7 @@ public:
 
 	/**
 	 * Called once, just before the first `getNext()`, with the same `Model`.
-	 * Returns true if the Fragment is not finished.
+	 * Returns true :the Fragment is not finished.
 	 */
 	virtual bool init(const Model& model) = 0;
 
@@ -27,6 +29,8 @@ public:
 	 */
 	virtual Direction getNext(const Model& model) = 0;
 };
+
+using FragmentPtr = std::unique_ptr<Fragment>;
 
 
 class Converge : public Fragment {
@@ -76,7 +80,24 @@ public:
 	virtual Direction getNext(const Model& model) override;
 
 private:
+	bool initFirst(const Model& model);
+	bool initialized_ = false;
 	std::deque<std::unique_ptr<Fragment>> fragments_;
+};
+
+class If : public Fragment {
+public:
+	using Condition = std::function<bool(const Model& model)>;
+
+	If(Condition cond, FragmentPtr true_frag, FragmentPtr false_frag);
+	virtual bool init(const Model& model) override;
+	virtual bool isFinished() const override;
+	virtual Direction getNext(const Model& model) override;
+
+private:
+	Condition cond_;
+	FragmentPtr true_;
+	FragmentPtr false_;
 };
 
 

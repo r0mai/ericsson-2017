@@ -132,4 +132,12 @@ std::vector<Direction> reverse_if(std::vector<Direction> vec, bool reverse) {
 	return vec;
 }
 
+bool isHorizontal(Direction dir) {
+	return dir == Direction::kLeft || dir == Direction::kRight;
+}
+
+bool isVertical(Direction dir) {
+	return dir == Direction::kUp || dir == Direction::kDown;
+}
+
 } // namespace evil

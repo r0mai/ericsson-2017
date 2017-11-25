@@ -99,44 +99,45 @@ void Sequence::add(std::unique_ptr<Fragment> fragment) {
 	fragments_.push_back(std::move(fragment));
 }
 
-Direction Sequence::getNext(const Model& model) {
-	if (fragments_.empty()) {
-		return Direction::kNone;
-	}
-
-	while (!fragments_.empty() && fragments_[0]->isFinished()) {
-		fragments_.pop_front();
-		if (fragments_.empty()) {
-			break;
-		}
-		if (fragments_[0]->init(model)) {
-			break;
-		}
-	}
-
-	if (isFinished()) {
-		return Direction::kNone;
-	}
-
-	return fragments_[0]->getNext(model);
+bool Sequence::init(const Model& model) {
+	return initFirst(model);
 }
 
-bool Sequence::init(const Model& model) {
-	while (!isFinished()) {
-		auto& frag = fragments_.front();
-		if (!frag->init(model)) {
-			fragments_.pop_front();
-		} else {
-			return true;
-		}
+Direction Sequence::getNext(const Model& model) {
+	if (!initFirst(model)) {
+		return Direction::kNone;
 	}
 
-	return false;
+	auto& first = fragments_[0];
+	auto dir = first->getNext(model);
+
+	if (first->isFinished()) {
+		initialized_ = false;
+		fragments_.pop_front();
+	}
+	return dir;
+}
+
+bool Sequence::initFirst(const Model& model) {
+	if (initialized_) {
+		return true;
+	}
+
+	while (!fragments_.empty()) {
+		if (fragments_[0]->init(model)) {
+			initialized_ = true;
+			break;
+		} else {
+			fragments_.pop_front();
+		}
+	}
+	return initialized_;
 }
 
 bool Sequence::isFinished() const {
 	return fragments_.empty();
 }
+
 
 // Capture
 
@@ -313,6 +314,44 @@ bool SafeRouter::canGoFast(const Model& model) const {
 
 bool SafeRouter::isFinished() const {
 	return next_direction_idx_ == directions_.size();
+}
+
+// If
+
+If::If(Condition cond, FragmentPtr true_frag, FragmentPtr false_frag)
+	: cond_(cond)
+	, true_(std::move(true_frag))
+	, false_(std::move(false_frag))
+{}
+
+bool If::init(const Model& model) {
+	if (cond_(model)) {
+		false_.reset();
+	} else {
+		true_.reset();
+	}
+
+	if (true_) {
+		return true_->init(model);
+	} else {
+		return false_->init(model);
+	}
+}
+
+bool If::isFinished() const {
+	if (true_) {
+		return true_->isFinished();
+	} else {
+		return false_->isFinished();
+	}
+}
+
+Direction If::getNext(const Model& model) {
+	if (true_) {
+		return true_->getNext(model);
+	} else {
+		return false_->getNext(model);
+	}
 }
 
 } // namespace evil
