@@ -24,6 +24,7 @@ std::vector<Strategy> strategy_varioations{
 	Strategy{&strategy_C, 0},
 	Strategy{&strategy_C, 10},
 	Strategy{&strategy_C, 20},
+	Strategy{&strategy_C, 40},
 	//
 	Strategy{&strategy_A, 0},
 	Strategy{&strategy_B, 0},
