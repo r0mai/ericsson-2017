@@ -143,6 +143,8 @@ void Gui::handleKeypress(const sf::Event::KeyEvent& ev) {
 		case sf::Keyboard::Num1: mode_ = Mode::kNormal; break;
 		case sf::Keyboard::Num4: mode_ = Mode::kDiagonal; break;
 		case sf::Keyboard::Num5: mode_ = Mode::kClamp; break;
+		case sf::Keyboard::Num6: mode_ = Mode::kInverse; break;
+
 		case sf::Keyboard::Space: toggleStepping(false); break;
 		case sf::Keyboard::Period: toggleStepping(true); break;
 		case sf::Keyboard::O: ++clamp_w_; break;
@@ -187,6 +189,15 @@ void Gui::handleMouseButton(const sf::Event::MouseButtonEvent& ev) {
 			auto align = getAlignment();
 			auto clamp = reverse_if(makeClamp2(align, clamp_w_), reverse_);
 			auto router = std::make_unique<SafeRouter>(clamp);
+			auto seq = std::make_unique<Sequence>();
+			seq->add(std::make_unique<Converge>(pos));
+			seq->add(std::move(router));
+			seq->add(std::make_unique<Librate>());
+			setFragment(std::move(seq));
+		} else if (mode_ == Mode::kInverse) {
+			auto align = getAlignment();
+			auto shape = reverse_if(makeInverseTrap(align), reverse_);
+			auto router = std::make_unique<SafeRouter>(shape);
 			auto seq = std::make_unique<Sequence>();
 			seq->add(std::make_unique<Converge>(pos));
 			seq->add(std::move(router));
@@ -265,6 +276,11 @@ void Gui::draw() {
 		auto align = getAlignment();
 		drawCells(
 			render(mouse_pos_, reverse_if(makeClamp2(align, clamp_w_), reverse_)),
+			sf::Color(50, 230, 250, 100));
+	} else if (mode_ == Mode::kInverse) {
+		auto align = getAlignment();
+		drawCells(
+			render(mouse_pos_, reverse_if(makeInverseTrap(align), reverse_)),
 			sf::Color(50, 230, 250, 100));
 	} else {
 		drawCell(mouse_pos_, sf::Color(50, 230, 250, 100));

@@ -81,4 +81,19 @@ int getDiagRow(int col, const Alignment& diag_align, const Pos& origin) {
 	return neighbor(origin, direction, diff).row;
 }
 
+std::vector<Direction> makeInverseTrap(const Alignment& align) {
+	auto hd = align.axis0;
+	auto vd = align.axis1;
+
+	auto hdx = opposite(hd);
+	auto vdx = opposite(vd);
+
+	return {
+		hd, hd, vd, vd, vd,
+		vdx, hd, vdx, hd, vdx, hd,
+		hdx, hdx, hdx,
+		vdx, hdx, vdx, hdx
+	};
+}
+
 } // namespace evil

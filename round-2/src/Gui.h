@@ -106,6 +106,7 @@ private:
 		kNormal,
 		kDiagonal,
 		kClamp,
+		kInverse,
 		//
 		kModeCount
 	} mode_ = Mode::kNormal;
