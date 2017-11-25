@@ -23,6 +23,9 @@ add_library(xonixLib
     src/Direction.cpp
     src/DumbPlayer.cpp
     src/ZorroPlayer.cpp
+    src/ZorroStrategyA.cpp
+    src/ZorroStrategyB.cpp
+    src/ZorroStrategyManager.cpp
     src/Trap.cpp
     src/Utils.cpp
     src/AABB.cpp
@@ -33,7 +36,7 @@ add_library(xonixLib
     src/protocol/Common.capnp.c++
     src/protocol/Command.capnp.c++
     src/protocol/Response.capnp.c++
-)
+    )
 
 add_executable(xonix src/client_main.cpp)
 add_executable(server src/server_main.cpp)

@@ -70,13 +70,15 @@ std::vector<Direction> makeDiagonal(const Alignment& align, int size) {
 }
 
 int getDiagCol(int row, const Alignment& diag_align, const Pos& origin) {
-	auto d = row - origin.row;
-	return neighbor(origin, diag_align.axis1, d).col;
+	auto diff = origin.row - row;
+	auto direction = diag_align.axis0 == Direction::kUp ? diag_align.axis1 : opposite(diag_align.axis1);
+	return neighbor(origin, direction, diff).col;
 }
 
 int getDiagRow(int col, const Alignment& diag_align, const Pos& origin) {
-	auto d = col - origin.col;
-	return neighbor(origin, diag_align.axis0, d).row;
+	auto diff = origin.col - col;
+	auto direction = diag_align.axis1 == Direction::kLeft ? diag_align.axis0 : opposite(diag_align.axis0);
+	return neighbor(origin, direction, diff).row;
 }
 
 } // namespace evil

@@ -102,6 +102,7 @@ int main(int argc, char* argv[]) {
 		("player,P", po::value<std::string>()->default_value("gui"), "Controller player")
 		("commands,c", po::value<std::string>(), "Commands file")
 		("stepping,s", po::bool_switch(&stepping), "Start in stepping mode")
+		("strategy,S", po::value<std::string>(), "Strategy index file")
 	;
 
 	po::variables_map vm;
@@ -146,6 +147,13 @@ int main(int argc, char* argv[]) {
 	gui.init(stepping);
 
 	evil::ZorroPlayer zorro;
+	bool save_zorro_strategies = false;
+	if (vm.count("strategy")) {
+		auto filename = vm["strategy"].as<std::string>();
+		zorro.LoadPreviousStrategies(filename);
+		save_zorro_strategies = true;
+	}
+
 
 	auto model = login(connection);
 	auto model_ready = true;
@@ -167,6 +175,7 @@ int main(int argc, char* argv[]) {
 		player = &dumb;
 	} else if (player_string == "zorro") {
 		player = &zorro;
+
 	}
 
 	if (!player) {
@@ -191,20 +200,20 @@ int main(int argc, char* argv[]) {
 
 	while (true) {
 		// gui phase
-		gui.setDrawModel(model);
-		if (!gui.update()) {
-			break;
-		}
-		gui.draw();
+//		gui.setDrawModel(model);
+//		if (!gui.update()) {
+//			break;
+//		}
+//		gui.draw();
 
 		// player phase
 		if (model_ready) {
 			model_ready = false;
 			steps_ready = false;
 			player->update(model);
-			std::cerr << model.getTickInfo()
-				<< " - net " << asMs(calc_start - calc_end)
-				<< "ms calc " << calc_time << "ms" << std::endl;
+//			std::cerr << model.getTickInfo()
+//				<< " - net " << asMs(calc_start - calc_end)
+//				<< "ms calc " << calc_time << "ms" << std::endl;
 		}
 
 		if (!steps_ready && player->isReady()) {
@@ -221,6 +230,10 @@ int main(int argc, char* argv[]) {
 		if (evil::isFutureReady(future)) {
 			auto model_ptr = future.get();
 			if (!model_ptr) {
+				if (save_zorro_strategies) {
+					auto filename = vm["strategy"].as<std::string>();
+					zorro.SaveStrategies(filename);
+				}
 				return 0;
 			}
 			model = *model_ptr;
@@ -229,6 +242,11 @@ int main(int argc, char* argv[]) {
 		} else {
 			std::this_thread::yield();
 		}
+	}
+
+	if (save_zorro_strategies) {
+		auto filename = vm["strategy"].as<std::string>();
+		zorro.SaveStrategies(filename);
 	}
 
 	return 0;
