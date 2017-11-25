@@ -175,7 +175,7 @@ void Gui::handleMouseButton(const sf::Event::MouseButtonEvent& ev) {
 		if (mode_ == Mode::kNormal) {
 			auto seq = std::make_unique<Sequence>();
 			seq->add(std::make_unique<Converge>(pos));
-			seq->add(std::make_unique<Librate>());
+			seq->add(std::make_unique<SafeLibrate>());
 			setFragment(std::move(seq));
 		} else if (mode_ == Mode::kDiagonal) {
 			auto align = getAlignment();
@@ -184,7 +184,7 @@ void Gui::handleMouseButton(const sf::Event::MouseButtonEvent& ev) {
 			auto seq = std::make_unique<Sequence>();
 			seq->add(std::make_unique<Converge>(pos));
 			seq->add(std::move(router));
-			seq->add(std::make_unique<Librate>());
+			seq->add(std::make_unique<SafeLibrate>());
 			setFragment(std::move(seq));
 		} else if (mode_ == Mode::kClamp) {
 			auto align = getAlignment();
@@ -193,7 +193,7 @@ void Gui::handleMouseButton(const sf::Event::MouseButtonEvent& ev) {
 			auto seq = std::make_unique<Sequence>();
 			seq->add(std::make_unique<Converge>(pos));
 			seq->add(std::move(router));
-			seq->add(std::make_unique<Librate>());
+			seq->add(std::make_unique<SafeLibrate>());
 			setFragment(std::move(seq));
 		} else if (mode_ == Mode::kInverse) {
 			auto align = getAlignment();
@@ -202,7 +202,7 @@ void Gui::handleMouseButton(const sf::Event::MouseButtonEvent& ev) {
 			auto seq = std::make_unique<Sequence>();
 			seq->add(std::make_unique<Converge>(pos));
 			seq->add(std::move(router));
-			seq->add(std::make_unique<Librate>());
+			seq->add(std::make_unique<SafeLibrate>());
 			setFragment(std::move(seq));
 		}
 	}
@@ -434,7 +434,7 @@ void Gui::toggleHardcore() {
 	seq->add(std::move(clamp_route));
 	seq->add(std::move(go_down));
 	seq->add(std::move(diag_route));
-	seq->add(std::make_unique<Librate>());
+	seq->add(std::make_unique<SafeLibrate>());
 	setFragment(std::move(seq));
 }
 
@@ -462,7 +462,7 @@ void Gui::toggleZorroBegin() {
 	seq->add(std::move(diag_route));
 
 
-	seq->add(std::make_unique<Librate>());
+	seq->add(std::make_unique<SafeLibrate>());
 	setFragment(std::move(seq));
 }
 
@@ -488,7 +488,7 @@ void Gui::toggleZorroConquerLeft() {
 		seq->add(std::move(diag_route));
 	}
 
-	seq->add(std::make_unique<Librate>());
+	seq->add(std::make_unique<SafeLibrate>());
 	setFragment(std::move(seq));
 }
 
@@ -514,7 +514,7 @@ void Gui::toggleZorroConquerRight() {
 		seq->add(std::move(diag_route));
 	}
 
-	seq->add(std::make_unique<Librate>());
+	seq->add(std::make_unique<SafeLibrate>());
 	setFragment(std::move(seq));
 }
 

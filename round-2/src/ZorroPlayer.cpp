@@ -107,7 +107,7 @@ void ZorroPlayer::setConquerRightFragment() {
 }
 
 std::unique_ptr<Fragment> ZorroPlayer::CreateWaitingFragment() {
-	return std::make_unique<Librate>();
+	return std::make_unique<SafeLibrate>();
 }
 
 void ZorroPlayer::LoadPreviousStrategies(const std::string& filename) {
