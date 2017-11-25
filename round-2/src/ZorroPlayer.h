@@ -36,6 +36,7 @@ private:
 	void setConquerLeftFragment();
 	void setConquerRightFragment();
 
+	int last_level_ = -1;
 	State state_ = State::kNewMap;
 	std::unique_ptr<Fragment> fragment_;
 	Model model_;

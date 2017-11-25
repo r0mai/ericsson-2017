@@ -10,13 +10,16 @@ namespace evil {
 
 
 void ZorroPlayer::update(const Model& model) {
-	if (model.getLevel() != model_.getLevel()) {
-		setWaitingFragment();
+	auto level = model.getLevel();
+	model_ = model;
+	if (level != last_level_) {
+		last_level_ = level;
 		state_ = State::kNewMap;
+		model_ = model;
+		setWaitingFragment();
+
 	}
 
-
-	model_ = model;
 	if (model_.getTick() < strategy_manager_.getSkipTicksNo(model_.getLevel())) {
 		return;
 	}
