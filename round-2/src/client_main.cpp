@@ -200,20 +200,20 @@ int main(int argc, char* argv[]) {
 
 	while (true) {
 		// gui phase
-//		gui.setDrawModel(model);
-//		if (!gui.update()) {
-//			break;
-//		}
-//		gui.draw();
+		gui.setDrawModel(model);
+		if (!gui.update()) {
+			break;
+		}
+		gui.draw();
 
 		// player phase
 		if (model_ready) {
 			model_ready = false;
 			steps_ready = false;
 			player->update(model);
-//			std::cerr << model.getTickInfo()
-//				<< " - net " << asMs(calc_start - calc_end)
-//				<< "ms calc " << calc_time << "ms" << std::endl;
+			std::cerr << model.getTickInfo()
+				<< " - net " << asMs(calc_start - calc_end)
+				<< "ms calc " << calc_time << "ms" << std::endl;
 		}
 
 		if (!steps_ready && player->isReady()) {

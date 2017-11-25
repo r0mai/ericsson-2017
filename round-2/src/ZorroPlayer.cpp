@@ -30,7 +30,6 @@ void ZorroPlayer::update(const Model& model) {
 			setConquerLeftFragment();
 		}
 	} else if (state_ == State::kNewMap) {
-		std::cout << "New level: " << model_.getLevel() << std::endl;
 		state_ = State::kInitializing;
 		strategy_ = strategy_manager_.getStrategy(model_.getLevel());
 		setInitFragment();
