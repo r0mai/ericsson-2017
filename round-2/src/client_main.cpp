@@ -107,6 +107,7 @@ int main(int argc, char* argv[]) {
 		("commands,c", po::value<std::string>(), "Commands file")
 		("stepping,s", po::bool_switch(&stepping), "Start in stepping mode")
 		("strategy,S", po::value<std::string>(), "Strategy index file")
+		("no-gui,n", po::bool_switch(), "Disable gui")
 	;
 
 	po::variables_map vm;
@@ -212,13 +213,17 @@ int main(int argc, char* argv[]) {
 		}
 	});
 
+	auto enable_gui = !vm["no-gui"].as<bool>();
+
 	while (true) {
 		// gui phase
-		gui.setDrawModel(model);
-		if (!gui.update()) {
-			break;
+		if (enable_gui) {
+			gui.setDrawModel(model);
+			if (!gui.update()) {
+				break;
+			}
+			gui.draw();
 		}
-		gui.draw();
 
 		// player phase
 		if (model_ready) {
