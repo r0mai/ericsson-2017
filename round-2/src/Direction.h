@@ -25,6 +25,10 @@ bool isVertical(Direction dir);
 
 Pos neighbor(const Pos& pos, Direction dir);
 Pos neighbor(const Pos& pos, Direction dir, int repeat);
+
+Direction relativeVertical(const Pos& origin, const Pos& rhs);
+Direction relativeHorizontal(const Pos& origin, const Pos& rhs);
+
 Alignment opposite(Alignment align);
 Direction opposite(Direction dir);
 Direction rotateCW(Direction dir);

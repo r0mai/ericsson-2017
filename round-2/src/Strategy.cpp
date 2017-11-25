@@ -104,7 +104,7 @@ FragmentPtr makeZorroFinishOutside(const Alignment& align) {
 	auto start2 = reorient(Pos{5, 98}, align);
 	auto align2 = Alignment{hdx, vd};
 	auto f_start2 = std::make_unique<Converge>(start2);
-	auto f_diag2 = std::make_unique<Router>(makeDiagonal2(align2, 70));
+	auto f_diag2 = std::make_unique<Router>(makeDiagonal2(align2, 73));
 
 	auto cond = [start1, start2](const Model& model) -> bool {
 		auto& unit = model.getUnit(0);
@@ -130,6 +130,86 @@ FragmentPtr makeZorroFinishOutside(const Alignment& align) {
 	seq->add(std::move(f_if));
 	seq->add(std::make_unique<Librate>());
 	return std::move(seq);
+}
+
+bool canZorroFinishIniside(const Alignment& align, const Model& model) {
+	auto vd = align.axis0;
+	auto hd = align.axis1;
+	auto vdx = opposite(vd);
+	auto hdx = opposite(hd);
+
+	auto p0 = reorient(Pos{76, 21}, align);
+
+	for (auto& enemy : model.getInsideEnemies()) {
+		if (relativeHorizontal(p0, enemy.pos) != hd) {
+			continue;
+		}
+
+		auto delta_h = std::abs(enemy.pos.col - p0.col);
+		auto p1 = neighbor(neighbor(p0, hd, delta_h), vdx, delta_h);
+
+		if (relativeVertical(p1, enemy.pos) != vdx) {
+			continue;
+		}
+
+		auto delta_v = std::abs(enemy.pos.row - p1.row);
+		if (delta_v > 3) {
+			return false;
+		}
+
+		if ((enemy.v_dir == vd && enemy.h_dir == hd) ||
+			(enemy.v_dir == vdx && enemy.h_dir == hdx))
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool canZorroFinishOutside(const Alignment& align, const Model& model) {
+	auto vd = align.axis0;
+	auto hd = align.axis1;
+	auto vdx = opposite(vd);
+	auto hdx = opposite(hd);
+
+	auto p0 = reorient(Pos{76, 21}, align);
+
+	for (auto& enemy : model.getInsideEnemies()) {
+		if (relativeHorizontal(p0, enemy.pos) != hd) {
+			continue;
+		}
+
+		auto delta_h = std::abs(enemy.pos.col - p0.col);
+		auto p1 = neighbor(neighbor(p0, hd, delta_h), vdx, delta_h);
+
+		if (relativeVertical(p1, enemy.pos) != vd) {
+			continue;
+		}
+
+		auto delta_v = std::abs(enemy.pos.row - p1.row);
+		if (delta_v > 4) {
+			return false;
+		}
+
+		if ((enemy.v_dir == vd && enemy.h_dir == hd) ||
+			(enemy.v_dir == vdx && enemy.h_dir == hdx))
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool isZorroFinishedInside(const Alignment& align, const Model& model) {
+	auto pos = reorient(Pos{21, 41}, align);
+	return model.getCell(pos).owner == 1;
+}
+
+bool isZorroFinishedOutside(const Alignment& align, const Model& model) {
+	auto pos = reorient(Pos{58, 78}, align);
+	return model.getCell(pos).owner == 1;
 }
 
 

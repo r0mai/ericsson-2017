@@ -292,7 +292,7 @@ bool SafeRouter::canGoFast(const Model& model) const {
 
 	bool success = false;
 	auto lookahead = model.lookaheadEnemies(
-		model.GetInsideEnemies(), end_distance + 1, 1000000, &success);
+		model.getInsideEnemies(), end_distance + 1, 1000000, &success);
 	if (!success) {
 		std::cerr << "Too much lookahead" << std::endl;
 		return false;

@@ -140,4 +140,22 @@ bool isVertical(Direction dir) {
 	return dir == Direction::kUp || dir == Direction::kDown;
 }
 
+Direction relativeVertical(const Pos& origin, const Pos& rhs) {
+	if (origin.row < rhs.row) {
+		return Direction::kDown;
+	} else if (origin.row > rhs.row) {
+		return Direction::kUp;
+	}
+	return Direction::kNone;
+}
+
+Direction relativeHorizontal(const Pos& origin, const Pos& rhs) {
+	if (origin.col < rhs.col) {
+		return Direction::kRight;
+	} else if (origin.col > rhs.col) {
+		return Direction::kLeft;
+	}
+	return Direction::kNone;
+}
+
 } // namespace evil

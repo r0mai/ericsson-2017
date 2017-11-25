@@ -105,7 +105,7 @@ void Model::setLevel(int level) {
 	level_ = level;
 }
 
-std::vector<EnemyState> Model::GetInsideEnemies() const {
+std::vector<EnemyState> Model::getInsideEnemies() const {
 	std::vector<EnemyState> states;
 	for (auto& enemy : enemies_) {
 		if (getCell(enemy.pos).owner == 0) {
@@ -115,7 +115,7 @@ std::vector<EnemyState> Model::GetInsideEnemies() const {
 	return states;
 }
 
-std::vector<EnemyState> Model::GetOutsideEnemies() const {
+std::vector<EnemyState> Model::getOutsideEnemies() const {
 	std::vector<EnemyState> states;
 	for (auto& enemy : enemies_) {
 		if (getCell(enemy.pos).owner == 1) {
@@ -679,7 +679,7 @@ bool Model::IsSafeToMoveOutAndBack(const Pos& pos) const {
 }
 
 Direction Model::SafeBlueMove(const Pos& pos, Direction dir) const {
-	auto la = lookaheadEnemies(GetOutsideEnemies(), 1);
+	auto la = lookaheadEnemies(getOutsideEnemies(), 1);
 
 	std::vector<Direction> directions;
 	directions.reserve(4);
