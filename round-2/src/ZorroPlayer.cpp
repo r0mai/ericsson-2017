@@ -20,7 +20,12 @@ void ZorroPlayer::update(const Model& model) {
 		state_ = State::kNewMap;
 		setWaitingFragment();
 	} else if (last_health_ != health) {
-		state_ = State::kNewMap;
+		if (state_ == State::kInitializing) {
+			state_ = State::kNewMap;
+		} else if (state_ == State::kConquering) {
+			state_ = State::kWaiting;
+		}
+
 		last_health_ = health;
 		setWaitingFragment();
 	}

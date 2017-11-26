@@ -34,7 +34,7 @@ std::unique_ptr<Fragment> ZorroStrategyA::createInitFragment(const Model& model)
 std::unique_ptr<Fragment> ZorroStrategyA::createConquerLeftFragment(const Model& model) {
 	auto seq = std::make_unique<Sequence>();
 
-	bool is_down = model.getUnit(0).pos.row > 70;
+	bool is_down = model.getUnit(0).pos.row > 39;
 	if (is_down) {
 		auto go_origin = std::make_unique<Converge>(Pos{78, 93});
 		auto diag_align = Alignment{Direction::kUp, Direction::kLeft};
@@ -59,7 +59,7 @@ std::unique_ptr<Fragment> ZorroStrategyA::createConquerLeftFragment(const Model&
 std::unique_ptr<Fragment> ZorroStrategyA::createConquerRightFragment(const Model& model) {
 	auto seq = std::make_unique<Sequence>();
 
-	bool is_down = model.getUnit(0).pos.row > 70;
+	bool is_down = model.getUnit(0).pos.row > 39;
 	if (is_down) {
 		auto go_origin = std::make_unique<Converge>(Pos{71, 98});
 		auto diag_align = Alignment{Direction::kUp, Direction::kLeft};

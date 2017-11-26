@@ -473,7 +473,7 @@ void Gui::toggleZorroBegin() {
 void Gui::toggleZorroConquerLeft() {
 	auto seq = std::make_unique<Sequence>();
 
-	bool is_down = model_.getUnit(0).pos.row > 70;
+	bool is_down = model_.getUnit(0).pos.row > 39;
 	if (is_down) {
 		auto go_origin = std::make_unique<Converge>(Pos{79, 93});
 		auto diag_align = Alignment{Direction::kUp, Direction::kLeft};
@@ -499,7 +499,7 @@ void Gui::toggleZorroConquerLeft() {
 void Gui::toggleZorroConquerRight() {
 	auto seq = std::make_unique<Sequence>();
 
-	bool is_down = model_.getUnit(0).pos.row > 70;
+	bool is_down = model_.getUnit(0).pos.row > 39;
 	if (is_down) {
 		auto go_origin = std::make_unique<Converge>(Pos{71, 98});
 		auto diag_align = Alignment{Direction::kUp, Direction::kLeft};
