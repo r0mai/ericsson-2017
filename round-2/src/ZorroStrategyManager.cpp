@@ -54,13 +54,7 @@ bool ZorroStrategyManager::load(const std::string& filename) {
 
 	if (!level_strategies_.empty()) {
 		auto& last = level_strategies_.back();
-		if (last == 1) {
-			last = 0;
-		} else if (last == 0) {
-			last = 2;
-		} else {
-			++last;
-		}
+		++last;
 	}
 
 	return true;

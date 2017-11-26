@@ -256,7 +256,7 @@ bool SafeRouter::init(const Model& model) {
 
 	if (!found) {
 		next_direction_idx_ = 0;
-		assert(false);
+		// assert(false);
 		return false;
 	} else {
 		next_direction_idx_ = 1;

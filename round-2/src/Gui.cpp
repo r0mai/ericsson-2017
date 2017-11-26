@@ -85,10 +85,14 @@ void Gui::drawCell(const Pos& pos, const Cell& cell) {
 	auto color = owner_colors[cell.color];
 	drawCell(pos, color);
 
-	if (cell.color == 0 &&
-		(pos.col + pos.row == map_w - 1 ||
+	if (cell.color == 0 && (
+		pos.col + pos.row == map_h - 1 ||
+		pos.col + pos.row == map_w - 1 ||
 		pos.col == map_h - 2 ||
-		pos.col == 2 + map_w - map_h - 1))
+		pos.col == 2 + map_w - map_h - 1 ||
+		pos.col == pos.row ||
+		pos.col == pos.row + map_w - map_h
+		))
 	{
 		drawDot(pos, sf::Color(0xee, 0xee, 0xee));
 	}
