@@ -34,10 +34,11 @@ bool ZorroStrategyC::isDangerousOnRight(const Enemy& enemy, const Model& model) 
 }
 
 Alignment ZorroStrategyC::getAlign(const Model& model) const {
+#if 0
 	if (model.getLevel() == 84) {
-		// Hack for sunday.
 		return reverse_align_;
 	}
+#endif
 	return default_align_;
 }
 
