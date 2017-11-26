@@ -22,10 +22,9 @@ struct Strategy {
 
 std::vector<Strategy> strategy_varioations{
 	Strategy{&strategy_C, 0},
-	Strategy{&strategy_C, 30},
 	Strategy{&strategy_C, 60},
-	Strategy{&strategy_C, 90},
 	Strategy{&strategy_C, 120},
+	Strategy{&strategy_C, 180},
 	//
 	Strategy{&strategy_A, 0},
 	Strategy{&strategy_B, 0},

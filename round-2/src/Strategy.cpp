@@ -7,6 +7,8 @@
 namespace evil {
 namespace {
 
+constexpr const int kOuterWidth = 4;
+
 Pos reorient(const Pos& pos, const Alignment& align) {
 	assert(isVertical(align.axis0));
 	assert(isHorizontal(align.axis1));
@@ -94,15 +96,17 @@ FragmentPtr makeZorroFinishOutside(const Alignment& align) {
 	auto vdx = opposite(vd);
 	auto hdx = opposite(hd);
 
-	auto start1 = reorient(Pos{78, 25}, align);
+	auto k = kOuterWidth;
+
+	auto start1 = reorient(Pos{78, 22 + k}, align);
 	auto align1 = Alignment{vdx, hd};
 	auto f_start1 = std::make_unique<Converge>(start1);
-	auto f_diag1 = std::make_unique<Router>(makeDiagonal2(align1, 73));
+	auto f_diag1 = std::make_unique<Router>(makeDiagonal2(align1, 76 - k));
 
-	auto start2 = reorient(Pos{5, 98}, align);
+	auto start2 = reorient(Pos{2 + k, 98}, align);
 	auto align2 = Alignment{hdx, vd};
 	auto f_start2 = std::make_unique<Converge>(start2);
-	auto f_diag2 = std::make_unique<Router>(makeDiagonal2(align2, 73));
+	auto f_diag2 = std::make_unique<Router>(makeDiagonal2(align2, 76 - k));
 
 	auto cond = [start1, start2](const Model& model) -> bool {
 		auto& unit = model.getUnit(0);
@@ -196,7 +200,7 @@ bool isDangerousOutside(const Enemy& enemy, const Alignment& align, const Model&
 	}
 
 	auto delta_v = std::abs(enemy.pos.row - p1.row);
-	if (delta_v > 4) {
+	if (delta_v > kOuterWidth + 1) {
 		return true;
 	}
 
