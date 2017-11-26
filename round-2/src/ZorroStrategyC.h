@@ -14,9 +14,11 @@ public:
 	bool isRightConquered(const Model& model) override;
 	bool isDangerousOnLeft(const Enemy& enemy, const Model& model) override;
 	bool isDangerousOnRight(const Enemy& enemy, const Model& model) override;
+	Alignment getAlign(const Model& model) const;
 
 private:
-	Alignment align_{Direction::kDown, Direction::kRight};
+	Alignment reverse_align_{Direction::kDown, Direction::kLeft};
+	Alignment default_align_{Direction::kDown, Direction::kRight};
 };
 
 } // namespace evil

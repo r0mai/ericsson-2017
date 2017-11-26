@@ -6,31 +6,39 @@
 namespace evil {
 
 FragmentPtr ZorroStrategyC::createInitFragment(const Model& model) {
-	return makeZorroSlice(align_);
+	return makeZorroSlice(getAlign(model));
 }
 
 FragmentPtr ZorroStrategyC::createConquerLeftFragment(const Model& model) {
-	return makeZorroFinishInside(align_);
+	return makeZorroFinishInside(getAlign(model));
 }
 
 FragmentPtr ZorroStrategyC::createConquerRightFragment(const Model& model) {
-	return makeZorroFinishOutside(align_);
+	return makeZorroFinishOutside(getAlign(model));
 }
 
 bool ZorroStrategyC::isLeftConquered(const Model& model) {
-	return isZorroFinishedInside(align_, model);
+	return isZorroFinishedInside(getAlign(model), model);
 }
 
 bool ZorroStrategyC::isRightConquered(const Model& model) {
-	return isZorroFinishedOutside(align_, model);
+	return isZorroFinishedOutside(getAlign(model), model);
 }
 
 bool ZorroStrategyC::isDangerousOnLeft(const Enemy& enemy, const Model& model) {
-	return isDangerousInside(enemy, align_, model);
+	return isDangerousInside(enemy, getAlign(model), model);
 }
 
 bool ZorroStrategyC::isDangerousOnRight(const Enemy& enemy, const Model& model) {
-	return isDangerousOutside(enemy, align_, model);
+	return isDangerousOutside(enemy, getAlign(model), model);
+}
+
+Alignment ZorroStrategyC::getAlign(const Model& model) const {
+	if (model.getLevel() == 84) {
+		// Hack for sunday.
+		return reverse_align_;
+	}
+	return default_align_;
 }
 
 } // namespace evil
