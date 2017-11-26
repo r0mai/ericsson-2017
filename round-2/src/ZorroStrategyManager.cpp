@@ -20,7 +20,7 @@ struct Strategy {
 	int skip_ticks_at_start;
 };
 
-std::vector<Strategy> strategy_varioations{
+std::vector<Strategy> g_strategies{
 	Strategy{&strategy_C, 0},
 	Strategy{&strategy_C, 60},
 	Strategy{&strategy_C, 120},
@@ -61,10 +61,6 @@ bool ZorroStrategyManager::load(const std::string& filename) {
 }
 
 bool ZorroStrategyManager::save(const std::string& filename) {
-	if (levels_asked_ != level_strategies_.size()) {
-		return false;
-	}
-
 	std::ofstream outfile(filename);
 	if (outfile.fail()) {
 		return false;
@@ -79,13 +75,12 @@ bool ZorroStrategyManager::save(const std::string& filename) {
 }
 
 int ZorroStrategyManager::getSkipTicksNo(int level) {
-	return strategy_varioations[getStrategyIndexForLevel(level)].skip_ticks_at_start;
+	return g_strategies[getStrategyIndexForLevel(level)].skip_ticks_at_start;
 }
 
 ZorroStrategy* ZorroStrategyManager::getStrategy(int level) {
-	assert(level == levels_asked_);
-	++levels_asked_;
-	return strategy_varioations[getStrategyIndexForLevel(level)].strategy;
+
+	return g_strategies[getStrategyIndexForLevel(level)].strategy;
 }
 
 int ZorroStrategyManager::getStrategyIndexForLevel(int level) {
