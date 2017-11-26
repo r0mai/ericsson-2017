@@ -11,12 +11,12 @@ namespace evil {
 
 void ZorroPlayer::update(const Model& model) {
 	auto level = model.getLevel();
-	auto health = model.getHealth();
+	auto health = model.getUnit(0).health;
 
 	model_ = model;
 	if (level != last_level_) {
 		last_level_ = level;
-		last_health_ = 3;
+		last_health_ = health;
 		state_ = State::kNewMap;
 		setWaitingFragment();
 	} else if (last_health_ != health) {
