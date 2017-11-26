@@ -130,6 +130,10 @@ FragmentPtr makeZorroFinishOutside(const Alignment& align) {
 }
 
 bool isDangerousInside(const Enemy& enemy, const Alignment& align, const Model& model) {
+	if (model.getCell(enemy.pos).owner == 1) {
+		return false;
+	}
+
 	auto vd = align.axis0;
 	auto hd = align.axis1;
 	auto vdx = opposite(vd);
@@ -169,6 +173,10 @@ bool canZorroFinishInside(const Alignment& align, const Model& model) {
 }
 
 bool isDangerousOutside(const Enemy& enemy, const Alignment& align, const Model& model) {
+	if (model.getCell(enemy.pos).owner == 1) {
+		return false;
+	}
+
 	auto vd = align.axis0;
 	auto hd = align.axis1;
 	auto vdx = opposite(vd);
