@@ -5,6 +5,10 @@
 
 namespace evil {
 
+ZorroStrategyC::ZorroStrategyC(bool is_reverse)
+	: is_reverse_(is_reverse)
+{}
+
 FragmentPtr ZorroStrategyC::createInitFragment(const Model& model) {
 	return makeZorroSlice(getAlign(model));
 }
@@ -34,11 +38,9 @@ bool ZorroStrategyC::isDangerousOnRight(const Enemy& enemy, const Model& model) 
 }
 
 Alignment ZorroStrategyC::getAlign(const Model& model) const {
-#if 0
-	if (model.getLevel() == 84) {
+	if (is_reverse_) {
 		return reverse_align_;
 	}
-#endif
 	return default_align_;
 }
 

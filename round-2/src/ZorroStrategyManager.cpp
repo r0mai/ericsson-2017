@@ -14,6 +14,7 @@ namespace {
 ZorroStrategyA strategy_A;
 ZorroStrategyB strategy_B;
 ZorroStrategyC strategy_C;
+ZorroStrategyC strategy_C2(true);
 
 struct Strategy {
 	ZorroStrategy* strategy;
@@ -24,8 +25,10 @@ std::vector<Strategy> g_strategies{
 	Strategy{&strategy_C, 0},
 	Strategy{&strategy_C, 30},
 	Strategy{&strategy_C, 60},
+	Strategy{&strategy_C2, 0},
+	Strategy{&strategy_C, 90},
+	Strategy{&strategy_C2, 30},
 	Strategy{&strategy_C, 120},
-	Strategy{&strategy_C, 180},
 	//
 	Strategy{&strategy_A, 0},
 	Strategy{&strategy_B, 0},

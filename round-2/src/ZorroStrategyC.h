@@ -7,6 +7,7 @@ namespace evil {
 
 class ZorroStrategyC : public ZorroStrategy {
 public:
+	explicit ZorroStrategyC(bool is_reverse=false);
 	std::unique_ptr<Fragment> createInitFragment(const Model& model) override;
 	std::unique_ptr<Fragment> createConquerLeftFragment(const Model& model) override;
 	std::unique_ptr<Fragment> createConquerRightFragment(const Model& model) override;
@@ -17,6 +18,7 @@ public:
 	Alignment getAlign(const Model& model) const;
 
 private:
+	bool is_reverse_ = false;
 	Alignment reverse_align_{Direction::kDown, Direction::kLeft};
 	Alignment default_align_{Direction::kDown, Direction::kRight};
 };
