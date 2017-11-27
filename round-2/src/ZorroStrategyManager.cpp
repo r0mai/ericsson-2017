@@ -22,6 +22,7 @@ struct Strategy {
 
 std::vector<Strategy> g_strategies{
 	Strategy{&strategy_C, 0},
+	Strategy{&strategy_C, 30},
 	Strategy{&strategy_C, 60},
 	Strategy{&strategy_C, 120},
 	Strategy{&strategy_C, 180},
