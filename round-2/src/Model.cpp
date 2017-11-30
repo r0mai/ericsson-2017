@@ -146,6 +146,8 @@ Model Model::fromResponse(protocol::Response::Reader response) {
 			mat(row, col).owner = cell.getOwner();
 			if (cell.getAttack().isUnit()) {
 				mat(row, col).attacking_unit = cell.getAttack().getUnit();
+			} else if (cell.getAttack().isCan()) {
+				mat(row, col).can = cell.getAttack().getCan();
 			}
 			++col;
 		}
@@ -197,6 +199,8 @@ std::unique_ptr<capnp::MallocMessageBuilder> Model::toCapnp() const {
 			auto attack = cell.initAttack();
 			if (m_cell.isAttacked()) {
 				attack.setUnit(m_cell.attacking_unit);
+			} else {
+				attack.setCan(m_cell.can);
 			}
 		}
 	}

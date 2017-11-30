@@ -54,6 +54,8 @@ struct Cell {
 	int owner = 0;
 	int attacking_unit = -1;
 
+	bool can = true;
+
 	bool isAttacked() const { return attacking_unit >= 0; }
 
 	// algo
