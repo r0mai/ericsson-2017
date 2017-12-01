@@ -11,6 +11,7 @@ public:
 
 private:
 	Model model_;
+	std::vector<std::unique_ptr<Fragment>> fragments_;
 };
 
 } // namespace evil
