@@ -22,6 +22,8 @@ public:
 	TraversableAABB getTraversableAABB(
 		const Unit& unit, const AABB& other_aabb);
 
+	std::vector<Direction> getPathForAABB(const TraversableAABB& aabb);
+
 private:
 	Model model_;
 	std::unordered_map<int, std::unique_ptr<Sequence>> fragments_;

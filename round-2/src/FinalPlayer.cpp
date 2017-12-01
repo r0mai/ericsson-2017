@@ -108,6 +108,36 @@ FinalPlayer::TraversableAABB FinalPlayer::getTraversableAABB(
 	return result_aabb;
 }
 
+std::vector<Direction> FinalPlayer::getPathForAABB(const TraversableAABB& aabb) {
+	std::vector<Direction> path;
+	Direction v_dir, h_dir;
+	if (aabb.initial_pos.col < aabb.aabb.maxs.col) {
+		h_dir = Direction::kRight;
+	} else {
+		h_dir = Direction::kLeft;
+	}
+	if (aabb.initial_pos.row < aabb.aabb.maxs.row) {
+		v_dir = Direction::kDown;
+	} else {
+		v_dir = Direction::kUp;
+	}
+
+	for (int i = 0; i < aabb.aabb.size().col; ++i) {
+		path.push_back(h_dir);
+	}
+	for (int i = 0; i < aabb.aabb.size().row; ++i) {
+		path.push_back(v_dir);
+	}
+	for (int i = 0; i < aabb.aabb.size().col; ++i) {
+		path.push_back(opposite(h_dir));
+	}
+	for (int i = 0; i < aabb.aabb.size().row; ++i) {
+		path.push_back(opposite(v_dir));
+	}
+
+	return path;
+}
+
 bool FinalPlayer::isReady() const {
 	return true;
 }
