@@ -156,6 +156,7 @@ public:
 	// 0: notsafe
 	// 1: safe, ours
 	// 2: safe, not ours
+	// 3: safe, cannot conquered
 	Matrix<int> getColorizedGrid(int steps);
 	int potentialWin(const AABB& rect, const Matrix<int>& colorized_grid);
 

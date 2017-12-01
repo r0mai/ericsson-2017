@@ -1085,8 +1085,10 @@ Matrix<int> Model::getColorizedGrid(int steps) {
 		for (int col = 0; col < cgrid.cols(); ++col) {
 			auto& cell = getCell(Pos{row, col});
 			auto& colored_cell = cgrid.at(row, col);
-			if (colored_cell != -1 || cell.attacking_unit != -1 || (!cell.can && cell.owner != getOwns())) {
+			if (colored_cell != -1 || cell.attacking_unit != -1) {
 				colored_cell = 0;
+			} else if ((!cell.can && cell.owner != getOwns())) {
+				colored_cell = 3;
 			} else if (cell.owner == getOwns()) {
 				colored_cell = 1;
 			} else {
@@ -1097,6 +1099,7 @@ Matrix<int> Model::getColorizedGrid(int steps) {
 
 	return cgrid;
 }
+
 int Model::potentialWin(const AABB& rect, const Matrix<int>& colorized_grid) {
 	int sum = 0;
 	bool has_owned = false;
@@ -1107,7 +1110,7 @@ int Model::potentialWin(const AABB& rect, const Matrix<int>& colorized_grid) {
 				return 0;
 			} else if (cell == 1) {
 				has_owned = true;
-			} else {
+			} else if (cell == 2){
 				++sum;
 			}
 		}
