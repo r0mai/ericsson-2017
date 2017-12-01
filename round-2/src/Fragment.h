@@ -98,6 +98,9 @@ public:
 	virtual bool init(const Model& model) override;
 	virtual bool isFinished() const override;
 	virtual Direction getNext(const Model& model) override;
+	int size() const {
+		return fragments_.size();
+	}
 
 private:
 	bool initFirst(const Model& model);

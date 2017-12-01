@@ -16,7 +16,7 @@ public:
 
 private:
 	Model model_;
-	std::unordered_map<int, std::unique_ptr<Fragment>> fragments_;
+	std::unordered_map<int, std::unique_ptr<Sequence>> fragments_;
 };
 
 } // namespace evil
