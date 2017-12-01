@@ -1,6 +1,6 @@
 #include "Gui.h"
 #include "Shapes.h"
-#include "Strategy.h"
+// #include "Strategy.h"
 
 #include <iostream>
 #include <sstream>
@@ -516,6 +516,7 @@ void Gui::toggleZorroConquerLeft() {
 }
 
 void Gui::toggleZorroConquerRight() {
+#if 0
 	auto seq = std::make_unique<Sequence>();
 
 	bool is_down = model_.getUnit(0).pos.row > 39;
@@ -539,21 +540,28 @@ void Gui::toggleZorroConquerRight() {
 
 	seq->add(std::make_unique<SafeLibrate>());
 	setFragment(std::move(seq));
+#endif
 }
 
 void Gui::toggleZorroBegin2() {
+#if 0
 	auto align = Alignment{Direction::kDown, Direction::kRight};
 	setFragment(makeZorroSlice(align));
+#endif
 }
 
 void Gui::toggleZorroConquerLeft2() {
+#if 0
 	auto align = Alignment{Direction::kDown, Direction::kRight};
 	setFragment(makeZorroFinishInside(align));
+#endif
 }
 
 void Gui::toggleZorroConquerRight2() {
+#if 0
 	auto align = Alignment{Direction::kDown, Direction::kRight};
 	setFragment(makeZorroFinishOutside(align));
+#endif
 }
 
 sf::Color Gui::getTeamColor(int owner) {

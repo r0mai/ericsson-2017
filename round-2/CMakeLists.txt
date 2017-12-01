@@ -22,11 +22,11 @@ add_library(xonixLib
     src/Server.cpp
     src/Direction.cpp
     src/DumbPlayer.cpp
-    src/ZorroPlayer.cpp
-    src/ZorroStrategyA.cpp
-    src/ZorroStrategyB.cpp
-    src/ZorroStrategyC.cpp
-    src/ZorroStrategyManager.cpp
+    # src/ZorroPlayer.cpp
+    # src/ZorroStrategyA.cpp
+    # src/ZorroStrategyB.cpp
+    # src/ZorroStrategyC.cpp
+    # src/ZorroStrategyManager.cpp
     src/Trap.cpp
     src/Utils.cpp
     src/AABB.cpp
@@ -34,7 +34,7 @@ add_library(xonixLib
     src/Fragment.cpp
     src/Shapes.cpp
     src/Replayer.cpp
-    src/Strategy.cpp
+    # src/Strategy.cpp
     src/protocol/Common.capnp.c++
     src/protocol/Command.capnp.c++
     src/protocol/Response.capnp.c++

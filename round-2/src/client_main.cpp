@@ -7,7 +7,7 @@
 #include "Client.h"
 #include "DumbPlayer.h"
 #include "Replayer.h"
-#include "ZorroPlayer.h"
+// #include "ZorroPlayer.h"
 
 #include <iostream>
 #include <fstream>
@@ -157,6 +157,7 @@ int main(int argc, char* argv[]) {
 	evil::DumbPlayer dumb(&gui);
 	gui.init(stepping);
 
+#if 0
 	evil::ZorroPlayer zorro;
 	bool save_zorro_strategies = false;
 	if (vm.count("strategy")) {
@@ -164,7 +165,7 @@ int main(int argc, char* argv[]) {
 		zorro.LoadPreviousStrategies(filename);
 		save_zorro_strategies = true;
 	}
-
+#endif
 
 	auto model = login(connection);
 	auto model_ready = true;
@@ -185,8 +186,9 @@ int main(int argc, char* argv[]) {
 	} else if (player_string == "dumb") {
 		player = &dumb;
 	} else if (player_string == "zorro") {
+#if 0
 		player = &zorro;
-
+#endif
 	}
 
 	if (!player) {
@@ -209,10 +211,12 @@ int main(int argc, char* argv[]) {
 		}
 	} on_exit([&]{
 		std::cerr << "Saved moves to " << filename << std::endl;
+#if 0
 		if (save_zorro_strategies) {
 			auto filename = vm["strategy"].as<std::string>();
 			zorro.SaveStrategies(filename);
 		}
+#endif
 	});
 
 	auto enable_gui = !vm["no-gui"].as<bool>();
