@@ -155,11 +155,13 @@ Model Model::fromResponse(protocol::Response::Reader response) {
 	for (auto cells : response.getCells()) {
 		int col = 0;
 		for (auto cell : cells) {
-			mat(row, col).owner = cell.getOwner();
+			auto& m_cell = mat(row, col);
+			m_cell.owner = cell.getOwner();
+			m_cell.is_ours = m_cell.owner == m.owns_;
 			if (cell.getAttack().isUnit()) {
-				mat(row, col).attacking_unit = cell.getAttack().getUnit();
+				m_cell.attacking_unit = cell.getAttack().getUnit();
 			} else if (cell.getAttack().isCan()) {
-				mat(row, col).can = cell.getAttack().getCan();
+				m_cell.can = cell.getAttack().getCan();
 			}
 			++col;
 		}

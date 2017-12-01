@@ -63,10 +63,12 @@ struct Cell {
 	bool can = true;
 
 	bool isAttacked() const { return attacking_unit >= 0; }
+	bool isOurs() const { return is_ours; }
 
 	// algo
 	int color = 0;
 	int proximity = 0;
+	bool is_ours = false;
 };
 
 Direction fromDirection(protocol::Direction dir);
