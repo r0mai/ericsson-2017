@@ -29,7 +29,7 @@ void FinalPlayer::update(const Model& model) {
 void FinalPlayer::onNewMap() {
 	fragments_.clear();
 
-	int ear_size = 10;
+	int ear_size = 5;
 
 	auto our_units = model_.getOurUnits();
 	for (int i = 0; i < our_units.size(); ++i) {
