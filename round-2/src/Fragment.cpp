@@ -391,7 +391,7 @@ Direction If::getNext(const Model& model) {
 // SafeLibrateAround
 
 bool SafeLibrate::init(const Model& model) {
-	target_pos_ = model.getUnit(0).pos;
+	target_pos_ = model.getUnit(unit_idx_).pos;
 	return true;
 }
 
@@ -400,7 +400,7 @@ bool SafeLibrate::isFinished() const {
 }
 
 Direction SafeLibrate::getNext(const Model& model) {
-	auto& unit = model.getUnit(0);
+	auto& unit = model.getUnit(unit_idx_);
 	auto preferred_direction = model.directionTowards(unit.pos, target_pos_);
 	auto dir = model.SafeBlueMove(unit, preferred_direction);
 	if (dir == Direction::kNone) {

@@ -170,12 +170,14 @@ private:
 
 class SafeLibrate : public Fragment {
 public:
+	SafeLibrate(int unit_idx = 0) : unit_idx_(unit_idx) {}
 	// target_pos must be blue
 	virtual bool init(const Model& model) override;
 	virtual bool isFinished() const override;
 	virtual Direction getNext(const Model& model) override;
 private:
 
+	int unit_idx_ = 0;
 	Pos target_pos_;
 };
 
