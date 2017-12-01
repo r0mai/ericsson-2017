@@ -22,6 +22,7 @@ add_library(xonixLib
     src/Server.cpp
     src/Direction.cpp
     src/DumbPlayer.cpp
+    src/FinalPlayer.cpp
     # src/ZorroPlayer.cpp
     # src/ZorroStrategyA.cpp
     # src/ZorroStrategyB.cpp
