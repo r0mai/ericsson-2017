@@ -16,20 +16,19 @@ void FinalPlayer::update(const Model& model) {
 			auto corner = model.getSafeCorner();
 			corner = neighbor(
 				neighbor(corner, Direction::kLeft),
-				Direction::kRight);
+				Direction::kUp);
 
 			seq->add(std::make_unique<Converge>(unit.index, corner));
 			auto dirs = model.createEar(corner,
 				Direction::kLeft, Direction::kUp,
-				3, 3);
+				4, 4);
 
-			seq->add(std::make_unique<SafeRouter>(dirs, unit.index));
 			seq->add(std::make_unique<SafeRouter>(dirs, unit.index));
 			seq->add(std::make_unique<SafeLibrate>(unit.index));
 			//
 			fragments_.push_back(std::move(seq));
 		} else {
-			fragments_.push_back(std::make_unique<SafeLibrate>(unit.index));
+			fragments_.push_back(std::make_unique<Librate>(unit.index));
 		}
 	}
 }
