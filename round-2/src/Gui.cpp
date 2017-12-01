@@ -407,7 +407,7 @@ Model::Moves Gui::getMoves() {
 #endif
 
 	for (auto& unit : model_.getOurUnits()) {
-		SafeLibrate lib(unit.index);
+		Librate lib(unit.index);
 		if (lib.init(model_)) {
 			moves.push_back({unit.index, lib.getNext(model_)});
 		}
