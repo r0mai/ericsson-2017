@@ -265,6 +265,7 @@ void Model::colorize() {
 		getCell(pos).color = 3;
 	}
 
+#if 0
 	for (auto& enemy : enemies_) {
 		auto vd = enemy.v_dir;
 		auto hd = enemy.h_dir;
@@ -298,6 +299,7 @@ void Model::colorize() {
 		auto bounce4cba = trace(bounce3cb, vd, hd, 7);
 		auto bounce4cbb = trace(bounce3cb, vdx, hdx, 7);
 	}
+#endif
 
 	for (auto& enemy : enemies_) {
 		auto pos = enemy.pos;

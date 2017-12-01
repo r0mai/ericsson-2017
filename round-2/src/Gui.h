@@ -33,10 +33,10 @@ public:
 private:
 	using Clock = std::chrono::steady_clock;
 
-	static constexpr int map_w = 90;
-	static constexpr int map_h = 120;
-	static constexpr int window_w = 450 * 2;
-	static constexpr int window_h = 600 * 2;
+	static constexpr int map_w = 120;
+	static constexpr int map_h = 90;
+	static constexpr int window_w = map_w * 8 * 2;
+	static constexpr int window_h = map_h * 8 * 2;
 	static constexpr float cell_w = (float)window_w / map_w;
 	static constexpr float cell_h = (float)window_h / map_h;
 
