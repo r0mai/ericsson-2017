@@ -153,7 +153,11 @@ public:
 		const std::vector<EnemyState>& states,
 		int lookahead, int max_states = INT_MAX, bool* success = nullptr) const;
 
-	Matrix<int> getSafeGrid(int steps);
+	// 0: notsafe
+	// 1: safe, ours
+	// 2: safe, not ours
+	Matrix<int> getColorizedGrid(int steps);
+	int potentialWin(const AABB& rect, const Matrix<int>& colorized_grid);
 
 	bool IsSafeToMoveOutAndBack(const Pos& pos) const;
 

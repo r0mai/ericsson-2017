@@ -1079,7 +1079,7 @@ Pos Model::getSafeCorner() const {
 	return {};
 }
 
-Matrix<int> Model::getSafeGrid(int steps) {
+Matrix<int> Model::getColorizedGrid(int steps) {
 	auto cgrid = lookaheadEnemies(steps);
 	for (int row = 0; row < cgrid.rows(); ++row) {
 		for (int col = 0; col < cgrid.cols(); ++col) {
@@ -1087,13 +1087,33 @@ Matrix<int> Model::getSafeGrid(int steps) {
 			auto& colored_cell = cgrid.at(row, col);
 			if (colored_cell != -1 || cell.attacking_unit != -1 || (!cell.can && cell.owner != getOwns())) {
 				colored_cell = 0;
-			} else {
+			} else if (cell.owner == getOwns()) {
 				colored_cell = 1;
+			} else if {
+				colored_cell = 2;
 			}
 		}
 	}
 
 	return cgrid;
+}
+int Model::potentialWin(const AABB& rect, const Matrix<int>& colorized_grid) {
+	int sum = 0;
+	bool has_owned = false;
+	for (int row = rect.mins.row; row <= rect.maxs.row; ++row) {
+		for (int col = rect.mins.col; col <= rect.maxs.col; ++col) {
+			auto& cell = colorized_grid.at(row, col);
+			if (cell == 0) {
+				return 0;
+			} else if (cell == 1) {
+				has_owned = true;
+			} else {
+				++sum;
+			}
+		}
+	}
+
+	return has_owned ? sum : 0;
 }
 
 } // namespace evil
