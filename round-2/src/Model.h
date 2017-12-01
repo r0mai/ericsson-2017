@@ -141,6 +141,7 @@ public:
 	Direction SafeBlueMove(const Pos& pos, Direction dir) const;
 
 	void addBorder(int owner = 1, int thickness = 2);
+	void addStartingPoint(int owner, Pos origin);
 	bool stepAsServer(std::mt19937& rng_engine);
 	void stepEnemy(Enemy& enemy, std::mt19937& rng_engine);
 	void stepUnit(int unit_idx);

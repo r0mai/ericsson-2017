@@ -328,6 +328,57 @@ void Model::addBorder(int owner, int thickness) {
 	}
 }
 
+void Model::addStartingPoint(int owner, Pos origin) {
+	for (int r = origin.row; r < origin.row + 4; ++r) {
+		for (int c = origin.col; c < origin.col + 4; ++c) {
+			auto& cell = grid_(r, c);
+			cell.owner = owner;
+			cell.can = true;
+		}
+	}
+
+	for (int r = origin.row + 1; r < origin.row + 3; ++r) {
+		for (int c = origin.col + 1; c < origin.col + 3; ++c) {
+			auto& cell = grid_(r, c);
+			cell.can = false;
+		}
+	}
+
+	Unit u1;
+	u1.owner = owner;
+	u1.health = 3;
+	u1.killer = 3;
+	u1.dir = Direction::kDown;
+
+	Unit u2 = u1;
+
+	u1.pos = origin;
+	u2.pos = origin;
+
+	u1.pos.row += 1;
+	u1.pos.col += 1;
+
+	u2.pos.row += 1;
+	u2.pos.col += 2;
+
+	units_.push_back(u1);
+	units_.push_back(u2);
+
+	Enemy e1;
+	e1.h_dir = Direction::kRight;
+	e1.v_dir = Direction::kDown;
+	e1.pos = origin;
+
+	Enemy e2;
+	e2.h_dir = Direction::kLeft;
+	e2.v_dir = Direction::kDown;
+	e2.pos = origin;
+	e2.pos.col += 4;
+
+	enemies_.push_back(e1);
+	enemies_.push_back(e2);
+}
+
 bool Model::stepAsServer(std::mt19937& rng_engine) {
 	status_ = {};
 

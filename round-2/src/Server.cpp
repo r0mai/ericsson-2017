@@ -158,70 +158,15 @@ void Server::Run() {
 void Server::InitModel(int enemies_in, int enemies_out, int border_thickness) {
 	model_ = {};
 
-	model_.addBorder(1, border_thickness);
 	model_.setTick(1);
 	model_.setLevel(0);
 
-	{
-		Unit unit;
-		unit.health = 6;
-		unit.killer = 3;
-		unit.owner = 1;
-		unit.pos = {0, 0};
-		unit.dir = Direction::kDown;
+	model_.addStartingPoint(1, {10, 10});
+	model_.addStartingPoint(2, {100, 10});
+	model_.addStartingPoint(3, {100, 70});
+	model_.addStartingPoint(4, {10, 70});
 
-		model_.getUnits().push_back(unit);
-	};
-
-	auto& grid = model_.getGrid();
-	auto& enemies = model_.getEnemies();
-
-	for (int i = 0; i < enemies_in; ++i) {
-		Enemy enemy;
-		enemy.pos.row = GetRandom(border_thickness, grid.rows() - border_thickness - 1);
-		enemy.pos.col = GetRandom(border_thickness, grid.cols() - border_thickness - 1);
-		std::tie(enemy.v_dir, enemy.h_dir) = GetRandomDirection();
-		enemies.push_back(enemy);
-	}
-
-	for (int i = 0; i < enemies_out; ++i) {
-		int row = 0;
-		int col = 0;
-		switch (GetRandom(0, 3)) {
-			case 0:
-				row = GetRandom(0, grid.rows() - 1);
-				col = GetRandom(0, border_thickness - 1);
-				break;
-			case 1:
-				row = GetRandom(0, border_thickness - 1);
-				col = GetRandom(0, grid.cols() - 1);
-				break;
-			case 2:
-				row = GetRandom(0, grid.rows() - 1);
-				col = GetRandom(grid.cols() - border_thickness, grid.cols() - 1);
-				break;
-			case 3:
-				row = GetRandom(grid.rows() - border_thickness, grid.rows() - 1);
-				col = GetRandom(0, grid.cols() - 1);
-				break;
-		}
-		int row_idx = GetRandom(0, border_thickness - 1);
-		int col_idx = GetRandom(0, border_thickness - 1);
-		if (GetRandom(0, 1)) { row_idx = grid.rows() - row_idx - 1; }
-		if (GetRandom(0, 1)) { col_idx = grid.cols() - col_idx - 1; }
-
-		Enemy enemy;
-		enemy.pos.row = row;
-		enemy.pos.col = col;
-		std::tie(enemy.v_dir, enemy.h_dir) = GetRandomDirection();
-		enemies.push_back(enemy);
-	}
-
-	if (draw_col_ >= 0) {
-		for (int r = 0; r < model_.getGrid().rows(); ++r) {
-			model_.getGrid()(r, draw_col_).owner = 1;
-		}
-	}
+	return;
 }
 
 bool Server::RunGame() {
