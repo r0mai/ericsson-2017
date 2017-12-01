@@ -73,6 +73,16 @@ const std::vector<Unit>& Model::getAllUnits() const {
 	return units_;
 }
 
+std::vector<Unit> Model::getOurUnits() const {
+	std::vector<Unit> units;
+	for (auto& unit : getAllUnits()) {
+		if (unit.owner == getOwns()) {
+			units.push_back(unit);
+		}
+	}
+	return units;
+}
+
 std::vector<Enemy>& Model::getEnemies() {
 	return enemies_;
 }
@@ -163,9 +173,12 @@ Model Model::fromResponse(protocol::Response::Reader response) {
 		m.enemies_.push_back(e);
 	}
 
+	int index = 0;
 	for (auto unit : response.getUnits()) {
 		auto pos = unit.getPosition();
 		Unit u;
+		u.index = index;
+		++index;
 		u.pos = Pos{pos.getRow(), pos.getCol()};
 		u.dir = fromDirection(unit.getDirection());
 		u.health = unit.getHealth();

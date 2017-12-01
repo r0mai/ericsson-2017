@@ -25,6 +25,7 @@ std::ostream& operator<<(std::ostream& out, const Matrix<T>& mat) {
 }
 
 struct Unit {
+	int index = -1;
 	int owner = -1;
 	int health = -1;
 	int killer = -1; // ???
@@ -92,6 +93,7 @@ public:
 	const Grid& getGrid() const;
 	std::vector<Unit>& getAllUnits();
 	const std::vector<Unit>& getAllUnits() const;
+	std::vector<Unit> getOurUnits() const;
 	std::vector<Enemy>& getEnemies();
 	const std::vector<Enemy>& getEnemies() const;
 	const Cell& getCell(const Pos& pos) const;
