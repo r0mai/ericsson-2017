@@ -78,8 +78,8 @@ public:
 	using Grid = Matrix<Cell>;
 	using Moves = std::vector<std::pair<int, Direction>>;
 
-	static constexpr int kMaxRows = 80;
-	static constexpr int kMaxCols = 100;
+	static constexpr int kMaxRows = 120;
+	static constexpr int kMaxCols = 90;
 
 	static Model fromResponse(protocol::Response::Reader response);
 	std::unique_ptr<capnp::MallocMessageBuilder> toCapnp() const;
