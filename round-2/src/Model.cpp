@@ -116,19 +116,17 @@ void Model::setLevel(int level) {
 }
 
 std::vector<EnemyState> Model::getInsideEnemies() const {
-	std::vector<EnemyState> states;
-	for (auto& enemy : enemies_) {
-		if (getCell(enemy.pos).owner == 0) {
-			states.push_back(enemy);
-		}
-	}
-	return states;
+	return getEnemiesUnderOwner(0);
 }
 
 std::vector<EnemyState> Model::getOutsideEnemies() const {
+	return getEnemiesUnderOwner(1);
+}
+
+std::vector<EnemyState> Model::getEnemiesUnderOwner(int owner) const {
 	std::vector<EnemyState> states;
 	for (auto& enemy : enemies_) {
-		if (getCell(enemy.pos).owner == 1) {
+		if (getCell(enemy.pos).owner == owner) {
 			states.push_back(enemy);
 		}
 	}

@@ -116,6 +116,8 @@ public:
 	std::vector<EnemyState> getInsideEnemies() const;
 	std::vector<EnemyState> getOutsideEnemies() const;
 
+	std::vector<EnemyState> getEnemiesUnderOwner(int owner) const;
+
 	// after a step
 	std::vector<EnemyState> possibleEnemyStates(const EnemyState& enemy) const;
 	// after a step for all enemies
