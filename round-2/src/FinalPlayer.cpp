@@ -4,7 +4,16 @@
 namespace evil {
 
 void FinalPlayer::update(const Model& model) {
+	auto old_level = model_.getLevel();
 	model_ = model;
+
+	if (old_level != model_.getLevel()) {
+		onNewMap();
+		return;
+	}
+}
+
+void FinalPlayer::onNewMap() {
 	if (!fragments_.empty()) {
 		return;
 	}
@@ -13,13 +22,13 @@ void FinalPlayer::update(const Model& model) {
 		auto& unit = our_units[i];
 		if (i == 0) {
 			auto seq = std::make_unique<Sequence>();
-			auto corner = model.getSafeCorner();
+			auto corner = model_.getSafeCorner();
 			corner = neighbor(
 				neighbor(corner, Direction::kLeft),
 				Direction::kUp);
 
 			seq->add(std::make_unique<Converge>(unit.index, corner));
-			auto dirs = model.createEar(corner,
+			auto dirs = model_.createEar(corner,
 				Direction::kLeft, Direction::kUp,
 				5, 5);
 
@@ -29,13 +38,13 @@ void FinalPlayer::update(const Model& model) {
 			fragments_.push_back(std::move(seq));
 		} else {
 			auto seq = std::make_unique<Sequence>();
-			auto corner = model.getSafeCorner();
+			auto corner = model_.getSafeCorner();
 			corner = neighbor(
 				neighbor(corner, Direction::kRight, 2),
 				Direction::kDown, 2);
 
 			seq->add(std::make_unique<Converge>(unit.index, corner));
-			auto dirs = model.createEar(corner,
+			auto dirs = model_.createEar(corner,
 				Direction::kRight, Direction::kDown,
 				5, 5);
 

@@ -10,6 +10,8 @@ public:
 	virtual bool isReady() const override;
 	virtual Model::Moves getMoves() override;
 
+	void onNewMap();
+
 private:
 	Model model_;
 	std::vector<std::unique_ptr<Fragment>> fragments_;
