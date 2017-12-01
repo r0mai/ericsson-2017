@@ -34,7 +34,7 @@ void FinalPlayer::onNewMap() {
 			seq->add(std::make_unique<SafeRouter>(dirs, unit.index));
 			seq->add(std::make_unique<SafeLibrate>(unit.index));
 			//
-			fragments_.push_back(std::move(seq));
+			fragments_.emplace(unit.index, std::move(seq));
 		} else {
 			auto seq = std::make_unique<Sequence>();
 			auto corner = model_.getSafeCorner();
@@ -50,7 +50,7 @@ void FinalPlayer::onNewMap() {
 			seq->add(std::make_unique<SafeRouter>(dirs, unit.index));
 			seq->add(std::make_unique<SafeLibrate>(unit.index));
 			//
-			fragments_.push_back(std::move(seq));
+			fragments_.emplace(unit.index, std::move(seq));
 		}
 	}
 }
@@ -62,11 +62,11 @@ bool FinalPlayer::isReady() const {
 Model::Moves FinalPlayer::getMoves() {
 	Model::Moves moves;
 
-	auto our_units = model_.getOurUnits();
-	for (int i = 0; i < our_units.size() && i < fragments_.size(); ++i) {
-		auto dir = fragments_[i]->getNext(model_);
-		auto& unit = our_units[i];
-		moves.push_back({our_units[i].index, dir});
+	for (auto& pair : fragments_) {
+		auto index = pair.first;
+		auto& fragment = pair.second;
+		auto dir = fragment->getNext(model_);
+		moves.push_back({index, dir});
 	}
 	return moves;
 }
