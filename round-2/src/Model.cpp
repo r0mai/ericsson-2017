@@ -65,11 +65,11 @@ const Model::Grid& Model::getGrid() const {
 	return grid_;
 }
 
-std::vector<Unit>& Model::getUnits() {
+std::vector<Unit>& Model::getAllUnits() {
 	return units_;
 }
 
-const std::vector<Unit>& Model::getUnits() const {
+const std::vector<Unit>& Model::getAllUnits() const {
 	return units_;
 }
 
@@ -232,7 +232,7 @@ std::unique_ptr<capnp::MallocMessageBuilder> Model::toCapnp() const {
 }
 
 bool Model::isValid() const {
-	return getUnits().size() > 0;
+	return getAllUnits().size() > 0;
 }
 
 void Model::colorize() {

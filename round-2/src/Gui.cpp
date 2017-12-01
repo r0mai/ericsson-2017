@@ -261,7 +261,7 @@ void Gui::draw() {
 		}
 	}
 
-	for (auto& unit : model_.getUnits()) {
+	for (auto& unit : model_.getAllUnits()) {
 		if (unit.pos != unit.next_pos) {
 			drawCell(unit.next_pos, sf::Color(255, 220, 5, 150));
 		}

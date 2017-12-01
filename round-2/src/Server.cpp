@@ -185,7 +185,7 @@ bool Server::RunGame() {
 		}
 
 		for (auto c : cmd.getCommands().getMoves()) {
-			auto& units = model_.getUnits();
+			auto& units = model_.getAllUnits();
 			if (c.getUnit() < units.size()) {
 				units[c.getUnit()].dir = fromDirection(c.getDirection());
 			} else {

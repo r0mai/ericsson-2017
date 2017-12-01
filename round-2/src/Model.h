@@ -90,8 +90,8 @@ public:
 
 	Grid& getGrid();
 	const Grid& getGrid() const;
-	std::vector<Unit>& getUnits();
-	const std::vector<Unit>& getUnits() const;
+	std::vector<Unit>& getAllUnits();
+	const std::vector<Unit>& getAllUnits() const;
 	std::vector<Enemy>& getEnemies();
 	const std::vector<Enemy>& getEnemies() const;
 	const Cell& getCell(const Pos& pos) const;
