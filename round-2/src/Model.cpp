@@ -580,14 +580,18 @@ std::vector<EnemyState> Model::possibleEnemyStates(const EnemyState& enemy) cons
 	auto rb_p        = between(backwards_p, right_p);
 	auto lb_p        = between(backwards_p, left_p);
 
-	bool forward_b = isValid(forward_p) && old_cell.owner == getCell(forward_p).owner;
-	bool backwards_b = isValid(backwards_p) && old_cell.owner == getCell(backwards_p).owner;
-	bool right_b = isValid(right_p) && old_cell.owner == getCell(right_p).owner;
-	bool left_b = isValid(left_p) && old_cell.owner == getCell(left_p).owner;
-	bool rf_b = isValid(rf_p) && old_cell.owner == getCell(rf_p).owner;
-	bool lf_b = isValid(lf_p) && old_cell.owner == getCell(lf_p).owner;
-	bool rb_b = isValid(rb_p) && old_cell.owner == getCell(rb_p).owner;
-	bool lb_b = isValid(lb_p) && old_cell.owner == getCell(lb_p).owner;
+	auto pos_ok = [&](const Pos& p) {
+		return isValid(p) && old_cell.owner == getCell(p).owner && getCell(p).can;
+	};
+
+	bool forward_b = pos_ok(forward_p);
+	bool backwards_b = pos_ok(backwards_p);
+	bool right_b = pos_ok(right_p);
+	bool left_b = pos_ok(left_p);
+	bool rf_b = pos_ok(rf_p);
+	bool lf_b = pos_ok(lf_p);
+	bool rb_b = pos_ok(rb_p);
+	bool lb_b = pos_ok(lb_p);
 
 	// case 1
 	// can we continue moving forward
