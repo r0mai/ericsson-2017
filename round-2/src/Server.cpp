@@ -27,7 +27,7 @@ bool ServerConnection::Bind() {
 
 	sockaddr_in serv_addr{};
 
-	int portno = 11224;
+	int portno = 11222;
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_addr.s_addr = INADDR_ANY;
 	serv_addr.sin_port = htons(portno);
