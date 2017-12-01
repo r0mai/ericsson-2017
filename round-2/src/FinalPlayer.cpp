@@ -27,6 +27,7 @@ void FinalPlayer::update(const Model& model) {
 }
 
 void FinalPlayer::onNewMap() {
+	std::cerr << "FinalPlayer: onNewMap" << std::endl;
 	fragments_.clear();
 
 	int ear_size = 5;
