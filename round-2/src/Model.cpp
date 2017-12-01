@@ -1080,7 +1080,7 @@ Pos Model::getSafeCorner() const {
 }
 
 Matrix<int> Model::getColorizedGrid(int steps) {
-	auto cgrid = lookaheadEnemies(steps);
+	auto cgrid = lookaheadEnemies(getEnemiesUnderOwner(0), steps);
 	for (int row = 0; row < cgrid.rows(); ++row) {
 		for (int col = 0; col < cgrid.cols(); ++col) {
 			auto& cell = getCell(Pos{row, col});
