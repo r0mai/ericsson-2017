@@ -978,7 +978,7 @@ std::vector<Direction> Model::createEar(
 	Direction d1,
 	Direction d2,
 	int length_1,
-	int length_2)
+	int length_2) const
 {
 	auto od1 = opposite(d1);
 	auto od2 = opposite(d2);

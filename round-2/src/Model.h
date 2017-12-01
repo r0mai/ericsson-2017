@@ -170,7 +170,7 @@ public:
 		Direction d1,
 		Direction d2,
 		int length_1,
-		int length_2);
+		int length_2) const;
 
 	Pos getSafeCorner() const;
 
