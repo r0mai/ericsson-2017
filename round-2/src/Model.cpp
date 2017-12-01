@@ -386,15 +386,33 @@ void Model::addStartingPoint(int owner, Pos origin) {
 	e1.h_dir = Direction::kRight;
 	e1.v_dir = Direction::kDown;
 	e1.pos = origin;
+	e1.pos.row += 0;
+	e1.pos.col += 1;
 
 	Enemy e2;
 	e2.h_dir = Direction::kLeft;
 	e2.v_dir = Direction::kDown;
 	e2.pos = origin;
-	e2.pos.col += 4;
+	e2.pos.row += 1;
+	e2.pos.col += 3;
+
+	Enemy e3;
+	e3.h_dir = Direction::kLeft;
+	e3.v_dir = Direction::kDown;
+	e3.pos = origin;
+	e3.pos.row += 3;
+	e3.pos.col += 2;
+
+	Enemy e4;
+	e4.h_dir = Direction::kLeft;
+	e4.v_dir = Direction::kDown;
+	e4.pos.row += 2;
+	e4.pos.col += 0;
 
 	enemies_.push_back(e1);
 	enemies_.push_back(e2);
+	enemies_.push_back(e3);
+	enemies_.push_back(e4);
 }
 
 bool Model::stepAsServer(std::mt19937& rng_engine) {
