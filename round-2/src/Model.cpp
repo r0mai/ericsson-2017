@@ -1121,4 +1121,23 @@ int Model::potentialWin(const AABB& rect, const Matrix<int>& colorized_grid) {
 	return has_owned ? sum : 0;
 }
 
+Pos Model::getNiceCorner() const {
+	Pos safe = getSafeCorner();
+	Pos best = safe;
+	for (int row = 0; row < kMaxRows; ++row) {
+		for (int col = 0; col < kMaxCols; ++col) {
+			auto pos = Pos{row, col};
+			auto& cell = getCell(pos);
+			if (cell.isOurs()) {
+				auto dst = taxicabDistance(safe, pos);
+				auto last_dst = taxicabDistance(safe, best);
+				if (dst > last_dst) {
+					best = pos;
+				}
+			}
+		}
+	}
+	return best;
+}
+
 } // namespace evil

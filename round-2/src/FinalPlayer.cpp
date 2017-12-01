@@ -37,10 +37,10 @@ void FinalPlayer::onNewMap() {
 		auto& unit = our_units[i];
 		if (i == 0) {
 			auto seq = std::make_unique<Sequence>();
-			auto corner = model_.getSafeCorner();
-			corner = neighbor(
-				neighbor(corner, Direction::kLeft),
-				Direction::kUp);
+			auto corner = model_.getNiceCorner();
+			// corner = neighbor(
+			// 	neighbor(corner, Direction::kLeft),
+			// 	Direction::kUp);
 
 			seq->add(std::make_unique<Converge>(unit.index, corner));
 			auto dirs = model_.createEar(corner,

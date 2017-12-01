@@ -193,6 +193,7 @@ public:
 		int length_2) const;
 
 	Pos getSafeCorner() const;
+	Pos getNiceCorner() const;
 
 	// Time until enemy bounces at position. Negative for outsiders.
 	std::pair<int, Pos> getEnemyBounce(const Enemy& enemy) const;
