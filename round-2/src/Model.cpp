@@ -1089,7 +1089,7 @@ Matrix<int> Model::getColorizedGrid(int steps) {
 				colored_cell = 0;
 			} else if (cell.owner == getOwns()) {
 				colored_cell = 1;
-			} else if {
+			} else {
 				colored_cell = 2;
 			}
 		}
