@@ -29,6 +29,8 @@ void FinalPlayer::update(const Model& model) {
 void FinalPlayer::onNewMap() {
 	fragments_.clear();
 
+	int ear_size = 10;
+
 	auto our_units = model_.getOurUnits();
 	for (int i = 0; i < our_units.size(); ++i) {
 		auto& unit = our_units[i];
@@ -42,7 +44,7 @@ void FinalPlayer::onNewMap() {
 			seq->add(std::make_unique<Converge>(unit.index, corner));
 			auto dirs = model_.createEar(corner,
 				Direction::kLeft, Direction::kUp,
-				5, 5);
+				ear_size, ear_size);
 
 			seq->add(std::make_unique<SafeRouter>(dirs, unit.index));
 			seq->add(std::make_unique<SafeLibrate>(unit.index));
@@ -58,7 +60,7 @@ void FinalPlayer::onNewMap() {
 			seq->add(std::make_unique<Converge>(unit.index, corner));
 			auto dirs = model_.createEar(corner,
 				Direction::kRight, Direction::kDown,
-				5, 5);
+				ear_size, ear_size);
 
 			seq->add(std::make_unique<SafeRouter>(dirs, unit.index));
 			seq->add(std::make_unique<SafeLibrate>(unit.index));
