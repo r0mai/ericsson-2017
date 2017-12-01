@@ -971,6 +971,34 @@ std::string Model::getTickInfo() const {
 	return ss.str();
 }
 
+std::vector<Direction> Model::createEar(
+	const Pos& initial_pos,
+	Direction d1,
+	Direction d2,
+	int length_1,
+	int length_2)
+{
+	auto od1 = opposite(d1);
+	auto od2 = opposite(d2);
+
+	std::vector<Direction> dirs;
+
+	for (int i = 0; i < length_1; ++i) {
+		dirs.push_back(d1);
+	}
+	for (int i = 0; i < length_2; ++i) {
+		dirs.push_back(d2);
+	}
+	for (int i = 0; i < length_1; ++i) {
+		dirs.push_back(od1);
+	}
+	for (int i = 0; i < length_2; ++i) {
+		dirs.push_back(od2);
+	}
+
+	return dirs;
+}
+
 Pos Model::size() const {
 	return Pos(grid_.rows(), grid_.cols());
 }

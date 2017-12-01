@@ -163,6 +163,13 @@ public:
 	void killUnit(int unit_idx);
 	void attackFinished(int unit, const Pos& last_attack_pos);
 
+	std::vector<Direction> createEar(
+		const Pos& initial_pos,
+		Direction d1,
+		Direction d2,
+		int length_1,
+		int length_2);
+
 	// Time until enemy bounces at position. Negative for outsiders.
 	std::pair<int, Pos> getEnemyBounce(const Enemy& enemy) const;
 
