@@ -8,6 +8,12 @@ namespace evil {
 
 Converge::Converge(const Pos& target)
 	: target_(target)
+	, unit_idx_(0)
+{}
+
+Converge::Converge(int unit_idx, const Pos& target)
+	: target_(target)
+	, unit_idx_(unit_idx)
 {}
 
 bool Converge::init(const Model& model) {

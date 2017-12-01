@@ -39,6 +39,7 @@ public:
 	// Note: this does not work well if target is set to the unit's
 	// current position.
 	Converge(const Pos& target);
+	Converge(int unit_idx, const Pos& target);
 	virtual bool init(const Model& model) override;
 	virtual bool isFinished() const override;
 	virtual Direction getNext(const Model& model) override;
