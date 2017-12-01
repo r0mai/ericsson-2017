@@ -285,13 +285,27 @@ Direction SafeRouter::getNext(const Model& model) {
 	bool current_on_blue = model.getCell(current_pos).owner == unit.owner;
 	bool next_on_blue = model.getCell(next_pos).owner == unit.owner;
 
-	if (can_go_fast_) {
-		++next_direction_idx_;
-		return next_direction;
+	if (next_on_blue) {
+		auto la = model.lookaheadEnemies(model.getEnemiesUnderOwner(unit.owner), 1);
+		if (la(next_pos.row, next_pos.col) == 1) {
+			if (next_direction_idx_ == 0) {
+				std::cerr << "Can't backtrace in SafeRouter :(" << std::endl;
+				// yolo
+				++next_direction_idx_;
+				return next_direction;
+			} else {
+				auto last_direction = directions_[next_direction_idx_ - 1];
+				--next_direction_idx_;
+				return opposite(last_direction);
+			}
+		} else {
+			// staying on blue safely
+			++next_direction_idx_;
+			return next_direction;
+		}
 	}
 
-	if (next_on_blue) {
-		// staying on blue
+	if (can_go_fast_) {
 		++next_direction_idx_;
 		return next_direction;
 	}
