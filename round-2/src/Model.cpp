@@ -445,7 +445,7 @@ bool Model::stepAsServer(std::mt19937& rng_engine) {
 	return true;
 }
 
-void Model::attackFinished(int unit, const Pos& last_attack_pos) {
+void Model::attackFinished(int unit_idx, const Pos& last_attack_pos) {
 	enum class AttackState {
 		kUnknonwn,
 		kAttacked,
@@ -457,7 +457,7 @@ void Model::attackFinished(int unit, const Pos& last_attack_pos) {
 
 	auto attacked_grid = floodFill(grid_, last_attack_pos,
 		[&](const Pos& pos) {
-			return getCell(pos).attacking_unit == unit;
+			return getCell(pos).attacking_unit == unit_idx;
 		}
 	);
 
@@ -472,13 +472,14 @@ void Model::attackFinished(int unit, const Pos& last_attack_pos) {
 		}
 	}
 
+	auto& unit = getUnit(unit_idx);
 	for (auto attacked : attacked_poss) {
 		auto f = [&](const Pos& p) {
 			if (attack_grid(p.row, p.col) == AttackState::kUnknonwn) {
 				auto try_capture_grid = floodFill(grid_, p,
 					[&](const Pos& pos) {
 						auto& cell = getCell(pos);
-						return !cell.isAttacked() && cell.owner == 0;
+						return !cell.isAttacked() && cell.owner != unit.owner;
 					}
 				);
 				for (int r = 0; r < grid_.rows(); ++r) {
@@ -516,9 +517,9 @@ void Model::attackFinished(int unit, const Pos& last_attack_pos) {
 	for (int r = 0; r < grid_.rows(); ++r) {
 		for (int c = 0; c < grid_.cols(); ++c) {
 			if (attack_grid(r, c) == AttackState::kCaptured) {
-				grid_(r, c).owner = 1;
+				grid_(r, c).owner = unit.owner;
 			} else if (attack_grid(r, c) == AttackState::kAttacked) {
-				grid_(r, c).owner = 1;
+				grid_(r, c).owner = unit.owner;
 				grid_(r, c).attacking_unit = -1;
 			}
 		}
