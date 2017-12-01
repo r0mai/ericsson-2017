@@ -1066,7 +1066,8 @@ Pos Model::getSafeCorner() const {
 	for (int row = 0; row < kMaxRows; ++row) {
 		for (int col = 0; col < kMaxCols; ++col) {
 			auto pos = Pos{row, col};
-			if (getCell(pos).owner == model_.getOwns() && !cell.can) {
+			auto& cell = getCell(pos);
+			if (cell.isOurs() && !cell.can) {
 				return pos;
 			}
 		}
