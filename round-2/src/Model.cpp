@@ -915,7 +915,7 @@ Direction Model::directionTowards(const Pos& source_pos, const Pos& target_pos) 
 	auto dst_matrix = distanceFill(target_pos, size(),
 		[&](const Pos& p) -> bool {
 			auto& cell = getCell(p);
-			return cell.owner == 1;
+			return cell.isOurs();
 		});
 
 	auto dst = dst_matrix.at(source_pos);
