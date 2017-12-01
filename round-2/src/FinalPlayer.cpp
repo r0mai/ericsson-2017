@@ -12,7 +12,22 @@ void FinalPlayer::update(const Model& model) {
 	for (int i = 0; i < our_units.size(); ++i) {
 		auto& unit = our_units[i];
 		if (i == 0) {
-			fragments_.push_back(std::make_unique<SafeLibrate>(unit.index));
+			auto seq = std::make_unique<Sequence>();
+			auto corner = model.getSafeCorner();
+			corner = neighbor(
+				neighbor(corner, Direction::kLeft),
+				Direction::kRight);
+
+			seq->add(std::make_unique<Converge>(unit.index, corner));
+			auto dirs = model.createEar(corner,
+				Direction::kLeft, Direction::kUp,
+				3, 3);
+
+			seq->add(std::make_unique<SafeRouter>(dirs, unit.index));
+			seq->add(std::make_unique<SafeRouter>(dirs, unit.index));
+			seq->add(std::make_unique<SafeLibrate>(unit.index));
+			//
+			fragments_.push_back(std::move(seq));
 		} else {
 			fragments_.push_back(std::make_unique<SafeLibrate>(unit.index));
 		}
