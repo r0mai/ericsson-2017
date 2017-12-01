@@ -1110,8 +1110,10 @@ int Model::potentialWin(const AABB& rect, const Matrix<int>& colorized_grid) {
 				return 0;
 			} else if (cell == 1) {
 				has_owned = true;
-			} else if (cell == 2){
+			} else if (cell == 2) {
 				++sum;
+			} else if (cell == 3) {
+				return 0;
 			}
 		}
 	}
