@@ -20,8 +20,15 @@ void FinalPlayer::update(const Model& model) {
 				continue;
 			}
 			if (old_unit.health != unit.health) {
+				std::cerr << "FinalPlayer: Unit " << unit.index << " died" << std::endl;
 				onUnitDied(unit.index);
 			}
+		}
+	}
+
+	for (auto& pair : fragments_) {
+		if (pair.second->isFinished()) {
+			onUnitDied(pair.first);
 		}
 	}
 }
@@ -30,54 +37,28 @@ void FinalPlayer::onNewMap() {
 	std::cerr << "FinalPlayer: onNewMap" << std::endl;
 	fragments_.clear();
 
-	int ear_size = 5;
-
 	auto our_units = model_.getOurUnits();
 	for (int i = 0; i < our_units.size(); ++i) {
 		auto& unit = our_units[i];
-		if (i == 0) {
-			auto seq = std::make_unique<Sequence>();
-			auto corner = model_.getSafeCorner();
-			corner = neighbor(
-				neighbor(corner, Direction::kLeft),
-				Direction::kUp);
-
-			seq->add(std::make_unique<Converge>(unit.index, corner));
-			auto dirs = model_.createEar(corner,
-				Direction::kLeft, Direction::kUp,
-				ear_size, ear_size);
-
-			dirs = getPathForAABB(getTraversableAABB(corner, {}));
-
-			seq->add(std::make_unique<SafeRouter>(dirs, unit.index));
-			seq->add(std::make_unique<SafeLibrate>(unit.index));
-			//
-			fragments_.emplace(unit.index, std::move(seq));
-		} else {
-			auto seq = std::make_unique<Sequence>();
-			auto corner = model_.getSafeCorner();
-			corner = neighbor(
-				neighbor(corner, Direction::kRight, 2),
-				Direction::kDown, 2);
-
-			seq->add(std::make_unique<Converge>(unit.index, corner));
-			auto dirs = model_.createEar(corner,
-				Direction::kRight, Direction::kDown,
-				ear_size, ear_size);
-
-			dirs = getPathForAABB(getTraversableAABB(corner, {}));
-
-			seq->add(std::make_unique<SafeRouter>(dirs, unit.index));
-			seq->add(std::make_unique<SafeLibrate>(unit.index));
-			//
-			fragments_.emplace(unit.index, std::move(seq));
-		}
+		onUnitDied(unit.index);
 	}
 }
 
 void FinalPlayer::onUnitDied(int unit_idx) {
 	// TODO
-	std::cerr << "FinalPlayer: Unit " << unit_idx << " died" << std::endl;
+	std::cerr << "Restarting " << unit_idx << std::endl;
+
+	auto seq = std::make_unique<Sequence>();
+	auto corner = model_.getSafeCorner();
+
+	auto& unit = model_.getUnit(unit_idx);
+	seq->add(std::make_unique<Converge>(unit.index, corner));
+
+	auto dirs = getPathForAABB(getTraversableAABB(corner, {}));
+
+	seq->add(std::make_unique<SafeRouter>(dirs, unit.index));
+	//
+	fragments_[unit.index] = std::move(seq);
 }
 
 FinalPlayer::TraversableAABB FinalPlayer::getTraversableAABB(
