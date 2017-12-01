@@ -14,9 +14,8 @@ void FinalPlayer::update(const Model& model) {
 }
 
 void FinalPlayer::onNewMap() {
-	if (!fragments_.empty()) {
-		return;
-	}
+	fragments_.clear();
+
 	auto our_units = model_.getOurUnits();
 	for (int i = 0; i < our_units.size(); ++i) {
 		auto& unit = our_units[i];
