@@ -44,6 +44,11 @@ struct EnemyState {
 	Direction v_dir;
 };
 
+struct UnitState {
+	Pos pos;
+	int owner = -1;
+};
+
 struct Enemy : EnemyState {
 	Enemy() = default;
 	Enemy(const EnemyState& state) : EnemyState(state) {}
@@ -124,11 +129,21 @@ public:
 	// after a step for all enemies
 	std::vector<EnemyState> allPossibleEnemyStates() const;
 
+
+
 	// returned vector size is (step + 1)
 	std::vector<std::vector<EnemyState>> allPossibleEnemyStates(
 		int step, int max_states = INT_MAX, bool* success = nullptr) const;
 	std::vector<std::vector<EnemyState>> allPossibleEnemyStates(
 		const std::vector<EnemyState>& states,
+		int step, int max_states = INT_MAX, bool* success = nullptr) const;
+
+	bool unitCanStepOn(const Pos& pos, int owner) const;
+	std::vector<UnitState> possibleUnitStates(const UnitState& unit) const;
+
+	std::vector<std::vector<UnitState>> allPossibleUnitStates(int step, int max_states = INT_MAX, bool* success = nullptr) const;
+	std::vector<std::vector<UnitState>> allPossibleUnitStates(
+		const std::vector<UnitState>& states,
 		int step, int max_states = INT_MAX, bool* success = nullptr) const;
 
 	// Enemy lookahead n steps

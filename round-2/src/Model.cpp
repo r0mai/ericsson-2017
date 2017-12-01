@@ -769,6 +769,23 @@ Matrix<int> Model::lookaheadEnemies(
 		}
 	}
 
+	for (int row = 0; row < grid_.rows(); ++row) {
+		for (int col = 0; col < grid_.cols(); ++col) {
+			for (auto& unit : getAllUnits()) {
+				if (unit.owner == getOwns()) {
+					continue;
+				}
+
+				Pos p{row, col};
+				auto d = taxicabDistance(p, unit.pos);
+				if (d <= lookahead) {
+					int& cell = lookahead_matrix(p.row, p.col);
+					cell = lookahead;
+				}
+			}
+		}
+	}
+
 	return lookahead_matrix;
 }
 
@@ -985,5 +1002,42 @@ std::pair<int, Pos> Model::getEnemyBounce(const Enemy& enemy) const {
 	return {t, last};
 }
 
+std::vector<UnitState> Model::possibleUnitStates(const UnitState& unit) const {
+	std::vector<UnitState> states;
+
+	states.reserve(4);
+	auto pos = unit.pos;
+	for (int vert = -1; vert <= 1; vert+=2) {
+		auto new_pos = pos;
+		pos.row += vert;
+		if (unitCanStepOn(new_pos, unit.owner)) {
+			states.push_back(UnitState{new_pos, unit.owner});
+		}
+	}
+	for (int hor = -1; hor <= 1; hor+=2) {
+		auto new_pos = pos;
+		pos.col += hor;
+		if (unitCanStepOn(new_pos, unit.owner)) {
+			states.push_back(UnitState{new_pos, unit.owner});
+		}
+	}
+
+	return states;
+
+}
+bool Model::unitCanStepOn(const Pos& pos, int owner) const {
+	auto& cell = grid_.at(pos);
+	return (pos.row >= 0 && pos.row < grid_.rows() && pos.col >= 0 && pos.col < grid_.cols()) && (cell.can || cell.owner == owner);
+}
+
+std::vector<std::vector<UnitState>> Model::allPossibleUnitStates(int step, int max_states, bool* success) const {
+
+}
+
+std::vector<std::vector<UnitState>> Model::allPossibleUnitStates(const std::vector<UnitState>& states, int step,
+	int max_states, bool* success) const
+{
+
+}
 
 } // namespace evil
