@@ -86,6 +86,7 @@ Model::Moves FinalPlayer::getMoves() {
 		auto dir = fragment->getNext(model_);
 		moves.push_back({index, dir});
 	}
+
 	return moves;
 }
 
