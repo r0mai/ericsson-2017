@@ -69,6 +69,7 @@ std::unique_ptr<Model> Connection::communicate(
 			evil::Model::fromResponse(protocol::Response::Reader{response}));
 	} catch(kj::Exception& ex) {
 		std::cerr << "Remote closed connection." << std::endl;
+		std::cerr << "> " << ex.getDescription().cStr() << std::endl;
 		return {};
 	}
 }
