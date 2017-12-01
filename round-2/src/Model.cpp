@@ -1079,4 +1079,21 @@ Pos Model::getSafeCorner() const {
 	return {};
 }
 
+Matrix<int> Model::getSafeGrid(int steps) {
+	auto cgrid = lookaheadEnemies(steps);
+	for (int row = 0; row < cgrid.rows(); ++row) {
+		for (int col = 0; col < cgrid.cols(); ++col) {
+			auto& cell = getCell(Pos{row, col});
+			auto& colored_cell = cgrid.at(row, col);
+			if (colored_cell != -1 || cell.attacking_unit != -1 || (!cell.can && cell.owner != getOwns())) {
+				colored_cell = 0;
+			} else {
+				colored_cell = 1;
+			}
+		}
+	}
+
+	return cgrid;
+}
+
 } // namespace evil
