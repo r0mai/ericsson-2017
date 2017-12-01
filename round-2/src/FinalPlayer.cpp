@@ -5,11 +5,24 @@ namespace evil {
 
 void FinalPlayer::update(const Model& model) {
 	auto old_level = model_.getLevel();
+	auto old_units = model_.getOurUnits();
+
 	model_ = model;
 
 	if (old_level != model_.getLevel()) {
 		onNewMap();
 		return;
+	}
+
+	for (auto& unit : model_.getOurUnits()) {
+		for (auto& old_unit : old_units) {
+			if (unit.index != old_unit.index) {
+				continue;
+			}
+			if (old_unit.health != unit.health) {
+				onUnitDied(unit.index);
+			}
+		}
 	}
 }
 
@@ -53,6 +66,11 @@ void FinalPlayer::onNewMap() {
 			fragments_.emplace(unit.index, std::move(seq));
 		}
 	}
+}
+
+void FinalPlayer::onUnitDied(int unit_idx) {
+	// TODO
+	std::cerr << "FinalPlayer: Unit " << unit_idx << " died" << std::endl;
 }
 
 bool FinalPlayer::isReady() const {

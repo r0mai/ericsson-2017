@@ -12,6 +12,7 @@ public:
 	virtual Model::Moves getMoves() override;
 
 	void onNewMap();
+	void onUnitDied(int unit_idx);
 
 private:
 	Model model_;
