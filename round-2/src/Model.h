@@ -154,6 +154,21 @@ Pos getNiceCorner(int idx = 0) const {
        return best;
 }
 
+	Pos getRandomPos() const {
+		std::vector<Pos> p;
+
+       for (int row = 0; row < kMaxRows; ++row) {
+               for (int col = 0; col < kMaxCols; ++col) {
+                       auto pos = Pos{row, col};
+                       auto& cell = getCell(pos);
+                       if (cell.isOurs()) {
+							p.push_back(pos);
+					   }
+			   }
+	   }
+	   return p[rand() % p.size()];
+	}
+
 	std::vector<EnemyState> getInsideEnemies() const;
 	std::vector<EnemyState> getOutsideEnemies() const;
 

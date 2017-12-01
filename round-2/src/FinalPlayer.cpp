@@ -49,7 +49,7 @@ void FinalPlayer::onUnitDied(int unit_idx) {
 	std::cerr << "Restarting " << unit_idx << std::endl;
 
 	auto seq = std::make_unique<Sequence>();
-	auto corner = model_.getNiceCorner();
+	auto corner = model_.getRandomPos();
 
 	auto& unit = model_.getUnit(unit_idx);
 	seq->add(std::make_unique<Converge>(unit.index, corner));
@@ -85,7 +85,7 @@ FinalPlayer::TraversableAABB FinalPlayer::getTraversableAABB(
 		if (hasOverlap(aabb, other_aabb)) {
 			continue;
 		}
-		int win = model_.potentialWin(aabb, colors);
+		int win = 0;
 		if (win > best_win) {
 			best_win = win;
 			best_aabb = aabb;
@@ -95,6 +95,11 @@ FinalPlayer::TraversableAABB FinalPlayer::getTraversableAABB(
 	if (best_win == 0) {
 		best_aabb = aabbs[k++ % 4];
 	}
+
+	best_aabb.mins.row = std::min(std::max(best_aabb.mins.row, 0), model_.size().row - 1);
+	best_aabb.mins.col = std::min(std::max(best_aabb.mins.col, 0), model_.size().col - 1);
+	best_aabb.maxs.row = std::min(std::max(best_aabb.maxs.row, 0), model_.size().row - 1);
+	best_aabb.maxs.col = std::min(std::max(best_aabb.maxs.col, 0), model_.size().col - 1);
 
 	TraversableAABB result_aabb;
 	result_aabb.aabb = best_aabb;
