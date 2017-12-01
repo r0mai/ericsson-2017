@@ -35,7 +35,7 @@ Direction Converge::getNext(const Model& model) {
 
 	auto dir = model.directionTowards(unit.pos, target_);
 	assert(dir != Direction::kNone);
-	dir = model.SafeBlueMove(unit.pos, dir);
+	dir = model.SafeBlueMove(unit, dir);
 
 	is_finished_ = neighbor(unit.pos, dir) == target_;
 	return dir;
@@ -393,7 +393,7 @@ bool SafeLibrate::isFinished() const {
 Direction SafeLibrate::getNext(const Model& model) {
 	auto& unit = model.getUnit(0);
 	auto preferred_direction = model.directionTowards(unit.pos, target_pos_);
-	auto dir = model.SafeBlueMove(unit.pos, preferred_direction);
+	auto dir = model.SafeBlueMove(unit, preferred_direction);
 	if (dir == Direction::kNone) {
 		dir = Direction::kRight;
 	}

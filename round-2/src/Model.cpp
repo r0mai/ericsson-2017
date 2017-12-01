@@ -766,8 +766,8 @@ bool Model::IsSafeToMoveOutAndBack(const Pos& pos) const {
 	return true;
 }
 
-Direction Model::SafeBlueMove(const Pos& pos, Direction dir) const {
-	auto la = lookaheadEnemies(getOutsideEnemies(), 1);
+Direction Model::SafeBlueMove(const Unit& unit, Direction dir) const {
+	auto la = lookaheadEnemies(getEnemiesUnderOwner(unit.owner), 1);
 
 	std::vector<Direction> directions;
 	directions.reserve(4);
@@ -782,8 +782,8 @@ Direction Model::SafeBlueMove(const Pos& pos, Direction dir) const {
 	directions.push_back(opposite(dir));
 
 	for (auto d : directions) {
-		auto p = neighbor(pos, d);
-		if (isValid(p) && getCell(p).owner == 1 && la(p.row, p.col) != 1) {
+		auto p = neighbor(unit.pos, d);
+		if (isValid(p) && getCell(p).owner == unit.owner && la(p.row, p.col) != 1) {
 			return d;
 		}
 	}

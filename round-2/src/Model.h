@@ -143,7 +143,7 @@ public:
 
 	bool IsSafeToMoveOutAndBack(const Pos& pos) const;
 
-	Direction SafeBlueMove(const Pos& pos, Direction dir) const;
+	Direction SafeBlueMove(const Unit& unit, Direction dir) const;
 
 	void addBorder(int owner = 1, int thickness = 2);
 	void addStartingPoint(int owner, Pos origin);
