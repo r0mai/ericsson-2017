@@ -115,6 +115,10 @@ void Model::setLevel(int level) {
 	level_ = level;
 }
 
+void Model::setOwns(int owns) {
+	owns_ = owns;
+}
+
 std::vector<EnemyState> Model::getInsideEnemies() const {
 	return getEnemiesUnderOwner(0);
 }

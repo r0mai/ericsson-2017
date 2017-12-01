@@ -160,6 +160,7 @@ void Server::InitModel(int enemies_in, int enemies_out, int border_thickness) {
 
 	model_.setTick(1);
 	model_.setLevel(0);
+	model_.setOwns(2);
 
 	int i = 1;
 	for (int r = 0; r < 3; ++r) {

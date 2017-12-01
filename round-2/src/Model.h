@@ -112,6 +112,7 @@ public:
 
 	void setTick(int tick);
 	void setLevel(int level);
+	void setOwns(int owns);
 
 	std::vector<EnemyState> getInsideEnemies() const;
 	std::vector<EnemyState> getOutsideEnemies() const;
