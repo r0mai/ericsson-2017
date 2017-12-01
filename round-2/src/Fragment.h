@@ -53,9 +53,14 @@ private:
 
 class Librate : public Fragment {
 public:
+	Librate() = default;
+	Librate(int unit_idx) : unit_idx_(unit_idx) {}
+
 	virtual bool init(const Model& model) override;
 	virtual bool isFinished() const override;
 	virtual Direction getNext(const Model& model) override;
+private:
+	int unit_idx_ = 0;
 };
 
 

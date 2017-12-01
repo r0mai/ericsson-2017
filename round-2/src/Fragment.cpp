@@ -58,7 +58,7 @@ bool Librate::init(const Model& model) {
 }
 
 Direction Librate::getNext(const Model& model) {
-	return opposite(model.getUnit(0).dir);
+	return opposite(model.getUnit(unit_idx_).dir);
 }
 
 bool Librate::isFinished() const {
@@ -248,12 +248,13 @@ SafeRouter::SafeRouter(std::vector<Direction> dirs, int unit_idx)
 
 bool SafeRouter::init(const Model& model) {
 	// find a safe spot around the starting area to retreat to if needed
-	auto pos = model.getUnit(unit_idx_).pos;
+	auto& unit = model.getUnit(unit_idx_);
+	auto pos = unit.pos;
 	last_pos_ = render(pos, directions_).back();
 
 	bool found = false;
 	for (auto dir : getDirections(pos, model.size())) {
-		if (model.getCell(neighbor(pos, dir)).owner == 1) {
+		if (model.getCell(neighbor(pos, dir)).owner == unit.owner) {
 			directions_.insert(begin(directions_), opposite(dir));
 			found = true;
 			break;
@@ -276,12 +277,13 @@ bool SafeRouter::init(const Model& model) {
 }
 
 Direction SafeRouter::getNext(const Model& model) {
+	auto& unit = model.getUnit(unit_idx_);
 	auto next_direction = directions_[next_direction_idx_];
-	auto current_pos = model.getUnit(unit_idx_).pos;
+	auto current_pos = unit.pos;
 	auto next_pos = neighbor(current_pos, next_direction);
 
-	bool current_on_blue = model.getCell(current_pos).owner == 1;
-	bool next_on_blue = model.getCell(next_pos).owner == 1;
+	bool current_on_blue = model.getCell(current_pos).owner == unit.owner;
+	bool next_on_blue = model.getCell(next_pos).owner == unit.owner;
 
 	if (can_go_fast_) {
 		++next_direction_idx_;
@@ -306,7 +308,8 @@ Direction SafeRouter::getNext(const Model& model) {
 }
 
 bool SafeRouter::lastIsBlue(const Model& model) const {
-	return model.getCell(last_pos_).owner == 1;
+	auto& unit = model.getUnit(unit_idx_);
+	return model.getCell(last_pos_).owner == unit.owner;
 }
 
 bool SafeRouter::canGoFast(const Model& model) const {
