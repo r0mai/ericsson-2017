@@ -684,7 +684,10 @@ std::vector<EnemyState> Model::possibleEnemyStates(const EnemyState& enemy) cons
 		possible_states.push_back({rf_p, cw_h, cw_v});
 	}
 
-	assert(!possible_states.empty());
+	if (possible_states.empty()) {
+		std::cerr << "Possible states empty "
+			<< enemy.pos << ", " << enemy.h_dir << ", " << enemy.v_dir << std::endl;
+	}
 
 	return possible_states;
 }
