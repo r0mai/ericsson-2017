@@ -394,8 +394,9 @@ bool Gui::isReady() {
 
 Model::Moves Gui::getMoves() {
 	Model::Moves moves;
-	auto dir = dir_;
 
+#if 0
+	auto dir = dir_;
 	if (fragment_) {
 		dir = fragment_->getNext(model_);
 		if (fragment_->isFinished()) {
@@ -403,10 +404,19 @@ Model::Moves Gui::getMoves() {
 		}
 		dir_ = dir;
 	}
+#endif
 
-	dir = model_.adjustDirection(0, dir);
+	for (auto& unit : model_.getOurUnits()) {
+		SafeLibrate lib(unit.index);
+		if (lib.init(model_)) {
+			moves.push_back({unit.index, lib.getNext(model_)});
+		}
+	}
 
-	return {{0, dir}};
+	for (auto& move : moves) {
+		move.second = model_.adjustDirection(move.first, move.second);
+	}
+	return moves;
 }
 
 void Gui::toggleCycle() {
