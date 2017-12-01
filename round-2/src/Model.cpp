@@ -41,10 +41,6 @@ std::ostream& operator<<(std::ostream& out, Direction dir) {
 	return out;
 }
 
-bool operator==(const Pos& lhs, const Pos& rhs) {
-	return lhs.row == rhs.row && lhs.col == rhs.col;
-}
-
 bool operator!=(const Pos& lhs, const Pos& rhs) {
 	return !(lhs == rhs);
 }
@@ -741,6 +737,10 @@ std::vector<std::vector<EnemyState>> Model::allPossibleEnemyStates(
 				next_states.begin(), next_states.end()
 			);
 		}
+		std::sort(current_states.begin(), current_states.end());
+		auto it = std::unique(current_states.begin(), current_states.end());
+		current_states.erase(it, current_states.end());
+
 	}
 	if (success) { *success = true; }
 	return states;
@@ -749,7 +749,7 @@ std::vector<std::vector<EnemyState>> Model::allPossibleEnemyStates(
 Matrix<int> Model::lookaheadEnemies(
 	int lookahead, int max_states, bool* success) const
 {
-	std::vector<EnemyState> initial_states(enemies_.size());
+	std::vector<EnemyState> initial_states;
 	for (int i = 0; i < enemies_.size(); ++i) {
 		initial_states.push_back(enemies_[i]);
 	}

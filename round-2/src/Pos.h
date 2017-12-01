@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ostream>
+#include <tuple>
 
 namespace evil {
 
@@ -11,6 +12,20 @@ struct Pos {
 	int row = 0;
 	int col = 0;
 };
+
+inline
+bool operator<(const Pos& lhs, const Pos& rhs) {
+	return
+		std::tie(lhs.row, lhs.col) <
+		std::tie(rhs.row, rhs.col);
+}
+
+inline
+bool operator==(const Pos& lhs, const Pos& rhs) {
+	return
+		std::tie(lhs.row, lhs.col) ==
+		std::tie(rhs.row, rhs.col);
+}
 
 inline
 Pos operator+(const Pos& lhs, const Pos& rhs) {

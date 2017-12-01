@@ -44,6 +44,20 @@ struct EnemyState {
 	Direction v_dir;
 };
 
+inline
+bool operator<(const EnemyState& lhs, const EnemyState& rhs) {
+	return
+		std::tie(lhs.pos, lhs.h_dir, lhs.v_dir) <
+		std::tie(rhs.pos, rhs.h_dir, rhs.v_dir);
+}
+
+inline
+bool operator==(const EnemyState& lhs, const EnemyState& rhs) {
+	return
+		std::tie(lhs.pos, lhs.h_dir, lhs.v_dir) ==
+		std::tie(rhs.pos, rhs.h_dir, rhs.v_dir);
+}
+
 struct UnitState {
 	Pos pos;
 	int owner = -1;
@@ -74,7 +88,6 @@ struct Cell {
 Direction fromDirection(protocol::Direction dir);
 protocol::Direction toProtocolDirection(Direction dir);
 
-bool operator==(const Pos& lhs, const Pos& rhs);
 bool operator!=(const Pos& lhs, const Pos& rhs);
 bool operator==(const Alignment& lhs, const Alignment& rhs);
 bool operator!=(const Alignment& lhs, const Alignment& rhs);

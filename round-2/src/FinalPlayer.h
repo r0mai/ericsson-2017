@@ -20,7 +20,7 @@ public:
 	};
 
 	TraversableAABB getTraversableAABB(
-		const Unit& unit, const AABB& other_aabb);
+		const Pos& pos, const AABB& other_aabb);
 
 	std::vector<Direction> getPathForAABB(const TraversableAABB& aabb);
 

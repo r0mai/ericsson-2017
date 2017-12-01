@@ -47,6 +47,8 @@ void FinalPlayer::onNewMap() {
 				Direction::kLeft, Direction::kUp,
 				ear_size, ear_size);
 
+			dirs = getPathForAABB(getTraversableAABB(corner, {}));
+
 			seq->add(std::make_unique<SafeRouter>(dirs, unit.index));
 			seq->add(std::make_unique<SafeLibrate>(unit.index));
 			//
@@ -63,6 +65,8 @@ void FinalPlayer::onNewMap() {
 				Direction::kRight, Direction::kDown,
 				ear_size, ear_size);
 
+			dirs = getPathForAABB(getTraversableAABB(corner, {}));
+
 			seq->add(std::make_unique<SafeRouter>(dirs, unit.index));
 			seq->add(std::make_unique<SafeLibrate>(unit.index));
 			//
@@ -77,14 +81,14 @@ void FinalPlayer::onUnitDied(int unit_idx) {
 }
 
 FinalPlayer::TraversableAABB FinalPlayer::getTraversableAABB(
-	const Unit& unit, const AABB& other_aabb)
+	const Pos& pos, const AABB& other_aabb)
 {
 	int width = 5;
 	int height = 5;
 	auto colors = model_.getColorizedGrid((width + height) * 2 + 10);
 
-	auto ur = unit.pos.row;
-	auto uc = unit.pos.col;
+	auto ur = pos.row;
+	auto uc = pos.col;
 
 	std::vector<AABB> aabbs;
 	aabbs.push_back({{ur, uc}, {ur + height, uc + width}});
@@ -104,7 +108,7 @@ FinalPlayer::TraversableAABB FinalPlayer::getTraversableAABB(
 
 	TraversableAABB result_aabb;
 	result_aabb.aabb = best_aabb;
-	result_aabb.initial_pos = unit.pos;
+	result_aabb.initial_pos = pos;
 	return result_aabb;
 }
 
