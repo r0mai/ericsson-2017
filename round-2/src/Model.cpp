@@ -1023,21 +1023,12 @@ std::vector<UnitState> Model::possibleUnitStates(const UnitState& unit) const {
 	}
 
 	return states;
-
 }
+
 bool Model::unitCanStepOn(const Pos& pos, int owner) const {
 	auto& cell = grid_.at(pos);
 	return (pos.row >= 0 && pos.row < grid_.rows() && pos.col >= 0 && pos.col < grid_.cols()) && (cell.can || cell.owner == owner);
 }
 
-std::vector<std::vector<UnitState>> Model::allPossibleUnitStates(int step, int max_states, bool* success) const {
-
-}
-
-std::vector<std::vector<UnitState>> Model::allPossibleUnitStates(const std::vector<UnitState>& states, int step,
-	int max_states, bool* success) const
-{
-
-}
 
 } // namespace evil

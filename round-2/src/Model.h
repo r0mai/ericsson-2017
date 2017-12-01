@@ -141,11 +141,6 @@ public:
 	bool unitCanStepOn(const Pos& pos, int owner) const;
 	std::vector<UnitState> possibleUnitStates(const UnitState& unit) const;
 
-	std::vector<std::vector<UnitState>> allPossibleUnitStates(int step, int max_states = INT_MAX, bool* success = nullptr) const;
-	std::vector<std::vector<UnitState>> allPossibleUnitStates(
-		const std::vector<UnitState>& states,
-		int step, int max_states = INT_MAX, bool* success = nullptr) const;
-
 	// Enemy lookahead n steps
 	// -1 means no reachable/don't know
 	// 0 means enemy is there at the current tick
