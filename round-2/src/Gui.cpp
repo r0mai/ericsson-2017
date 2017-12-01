@@ -406,7 +406,17 @@ Model::Moves Gui::getMoves() {
 	}
 #endif
 
+	bool first = true;
 	for (auto& unit : model_.getOurUnits()) {
+		if (first) {
+			if (unit.health == 0) {
+				continue;
+			}
+			first = false;
+			moves.push_back({unit.index, dir_});
+			continue;
+		}
+
 		Librate lib(unit.index);
 		if (lib.init(model_)) {
 			moves.push_back({unit.index, lib.getNext(model_)});
