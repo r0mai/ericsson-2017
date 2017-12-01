@@ -99,6 +99,9 @@ FinalPlayer::TraversableAABB FinalPlayer::getTraversableAABB(
 	int best_win = -2;
 	AABB best_aabb;
 	for (auto& aabb : aabbs) {
+		if (hasOverlap(aabb, other_aabb)) {
+			continue;
+		}
 		int win = model_.potentialWin(aabb, colors);
 		if (win > best_win) {
 			best_win = win;
