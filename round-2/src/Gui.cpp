@@ -11,6 +11,27 @@ namespace evil {
 
 namespace {
 
+sf::Color own_color = sf::Color(0, 0, 128);
+sf::Color unit_color = sf::Color(128, 0, 0);
+sf::Color enemy_color = sf::Color(255, 255, 255);
+
+sf::Color team_colors[] = {
+	sf::Color(0, 0, 0),
+	sf::Color(128, 128, 128),
+	sf::Color(230, 25, 75)	,
+	sf::Color(60, 180, 75),
+	sf::Color(255, 225, 25)	,
+	sf::Color(0, 130, 200)	,
+	sf::Color(245, 130, 48)	,
+	sf::Color(145, 30, 180)	,
+	sf::Color(70, 240, 240),
+	sf::Color(240, 50, 230)	,
+	sf::Color(210, 245, 60)	,
+	sf::Color(250, 190, 190),
+	sf::Color(0, 128, 128),
+	sf::Color(170, 110, 40),
+};
+
 sf::Color owner_colors[] = {
 	sf::Color::White,
 	sf::Color(60, 90, 180),
@@ -21,6 +42,7 @@ sf::Color owner_colors[] = {
 	sf::Color(255, 240, 240),
 	sf::Color(255, 248, 248),
 };
+
 
 } // anonymous namespace
 
@@ -82,21 +104,18 @@ void Gui::drawDot(const Pos& pos, sf::Color color, float scale) {
 }
 
 void Gui::drawCell(const Pos& pos, const Cell& cell) {
-	auto color = owner_colors[cell.color];
+	auto color = getTeamColor(cell.owner);
+	if (cell.can) {
+		color.a = 200;
+	}
 	drawCell(pos, color);
 
-	if (cell.color == 0 && (
-		pos.col + pos.row == map_h - 1 ||
-		pos.col + pos.row == map_w - 1 ||
-		pos.col == map_h - 2 ||
-		pos.col == 2 + map_w - map_h - 1 ||
-		pos.col == pos.row ||
-		pos.col == pos.row + map_w - map_h
-		))
-	{
-		drawDot(pos, sf::Color(0xee, 0xee, 0xee));
+	if (cell.attacking_unit > -1) {
+		auto attack_owner = model_.getUnit(cell.attacking_unit).owner;
+		auto attack_color = getTeamColor(attack_owner);
+		attack_color.a = 180;
+		drawCell(pos, attack_color);
 	}
-
 }
 
 bool Gui::init(bool stepping) {
@@ -262,34 +281,38 @@ void Gui::draw() {
 	}
 
 	for (auto& unit : model_.getAllUnits()) {
-		if (unit.pos != unit.next_pos) {
-			drawCell(unit.next_pos, sf::Color(255, 220, 5, 150));
+		if (unit.owner == model_.getOwns()) {
+			drawCell(unit.pos, own_color);
+			drawDot(neighbor(unit.next_pos, dir_), sf::Color::Red);
+		} else {
+			drawCell(unit.pos, unit_color);
+			drawDot(unit.pos, getTeamColor(unit.owner));
 		}
-		drawDot(neighbor(unit.next_pos, dir_), sf::Color::Red);
 	}
 
 	for (auto& enemy : model_.getEnemies()) {
+		drawDot(enemy.pos, enemy_color);
 		drawDirection(enemy.pos, enemy.h_dir, enemy.v_dir);
 	}
 
-	if (mode_ == Mode::kDiagonal) {
-		auto align = getAlignment();
-		for (auto pos : render(mouse_pos_, makeDiagonal(align, diag_w_))) {
-			drawCell(pos, sf::Color(50, 230, 250, 100));
-		}
-	} else if (mode_ == Mode::kClamp) {
-		auto align = getAlignment();
-		drawCells(
-			render(mouse_pos_, reverse_if(makeClamp2(align, clamp_w_), reverse_)),
-			sf::Color(50, 230, 250, 100));
-	} else if (mode_ == Mode::kInverse) {
-		auto align = getAlignment();
-		drawCells(
-			render(mouse_pos_, reverse_if(makeInverseTrap(align), reverse_)),
-			sf::Color(50, 230, 250, 100));
-	} else {
-		drawCell(mouse_pos_, sf::Color(50, 230, 250, 100));
-	}
+//	if (mode_ == Mode::kDiagonal) {
+//		auto align = getAlignment();
+//		for (auto pos : render(mouse_pos_, makeDiagonal(align, diag_w_))) {
+//			drawCell(pos, sf::Color(50, 230, 250, 100));
+//		}
+//	} else if (mode_ == Mode::kClamp) {
+//		auto align = getAlignment();
+//		drawCells(
+//			render(mouse_pos_, reverse_if(makeClamp2(align, clamp_w_), reverse_)),
+//			sf::Color(50, 230, 250, 100));
+//	} else if (mode_ == Mode::kInverse) {
+//		auto align = getAlignment();
+//		drawCells(
+//			render(mouse_pos_, reverse_if(makeInverseTrap(align), reverse_)),
+//			sf::Color(50, 230, 250, 100));
+//	} else {
+//		drawCell(mouse_pos_, sf::Color(50, 230, 250, 100));
+//	}
 	window_.display();
 }
 
@@ -535,6 +558,14 @@ void Gui::toggleZorroConquerLeft2() {
 void Gui::toggleZorroConquerRight2() {
 	auto align = Alignment{Direction::kDown, Direction::kRight};
 	setFragment(makeZorroFinishOutside(align));
+}
+
+sf::Color Gui::getTeamColor(int owner) {
+	if (owner == model_.getOwns()) {
+		return own_color;
+	} else {
+		return team_colors[owner + 1];
+	}
 }
 
 } // namespace evil

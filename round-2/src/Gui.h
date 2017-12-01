@@ -58,6 +58,8 @@ private:
 	bool isReady();
 	Model::Moves getMoves();
 
+	sf::Color getTeamColor(int owner);
+
 	void drawCell(const Pos& pos, const Cell& cell);
 	void drawCell(const Pos& pos, sf::Color color);
 	void drawCells(const std::vector<Pos>& vec, sf::Color color);
