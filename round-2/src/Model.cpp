@@ -943,8 +943,13 @@ std::string Model::getTickInfo() const {
 	ss << "L " << level_ << " ";
 	ss << "T " << tick_ << " ";
 	ss << "C " << getCoverage() << " ";
-	ss << "H " << units_[0].health << " ";
-	ss << units_[0].dir << " ";
+	ss << "H";
+	for (auto& unit : getOurUnits()) {
+		ss << " " << unit.health;
+		ss << " " << unit.dir;
+	}
+
+	ss << " ";
 	ss << status_;
 	return ss.str();
 }
