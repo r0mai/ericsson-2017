@@ -181,6 +181,7 @@ Model Model::fromResponse(protocol::Response::Reader response) {
 		u.dir = fromDirection(unit.getDirection());
 		u.health = unit.getHealth();
 		u.next_pos = u.pos;
+		u.owner = unit.getOwner();
 		m.units_.push_back(u);
 	}
 

@@ -20,7 +20,7 @@ sf::Color team_colors[] = {
 	sf::Color(128, 128, 128),
 	sf::Color(230, 25, 75)	,
 	sf::Color(60, 180, 75),
-	sf::Color(255, 225, 25)	,
+	sf::Color(255, 222, 10)	,
 	sf::Color(0, 130, 200)	,
 	sf::Color(245, 130, 48)	,
 	sf::Color(145, 30, 180)	,
@@ -106,7 +106,7 @@ void Gui::drawDot(const Pos& pos, sf::Color color, float scale) {
 void Gui::drawCell(const Pos& pos, const Cell& cell) {
 	auto color = getTeamColor(cell.owner);
 	if (cell.can) {
-		color.a = 200;
+		color.a = 180;
 	}
 	drawCell(pos, color);
 
@@ -265,7 +265,7 @@ Pos Gui::windowToPos(int x, int y) const {
 }
 
 void Gui::draw() {
-	window_.clear(sf::Color::Black);
+	window_.clear(sf::Color::White);
 
 	auto& grid = model_.getGrid();
 
@@ -274,24 +274,20 @@ void Gui::draw() {
 			Pos pos{r, c};
 			auto& cell = grid(r, c);
 			drawCell(pos, cell);
-			if (cell.proximity <= 0) {
-				drawDot(pos, sf::Color::White);
-			}
 		}
 	}
 
 	for (auto& unit : model_.getAllUnits()) {
+		drawCell(unit.pos, unit_color);
+		drawDot(unit.pos, getTeamColor(unit.owner));
+
 		if (unit.owner == model_.getOwns()) {
-			drawCell(unit.pos, own_color);
 			drawDot(neighbor(unit.next_pos, dir_), sf::Color::Red);
-		} else {
-			drawCell(unit.pos, unit_color);
-			drawDot(unit.pos, getTeamColor(unit.owner));
 		}
 	}
 
 	for (auto& enemy : model_.getEnemies()) {
-		drawDot(enemy.pos, enemy_color);
+		drawCell(enemy.pos, enemy_color);
 		drawDirection(enemy.pos, enemy.h_dir, enemy.v_dir);
 	}
 
@@ -321,7 +317,7 @@ void Gui::drawDirection(const Pos& pos, Direction h_dir, Direction v_dir) {
 	auto size = sf::Vector2f((cell_w + cell_h) / 3, (cell_w + cell_h) / 8.0);
 
 	rectangle.setSize(size);
-	rectangle.setFillColor(sf::Color::White);
+	rectangle.setFillColor(sf::Color::Black);
 	rectangle.setPosition((pos.col + 0.5) * cell_w, (pos.row + 0.5) * cell_h);
 	rectangle.setOrigin(0, size.y / 2.0);
 
