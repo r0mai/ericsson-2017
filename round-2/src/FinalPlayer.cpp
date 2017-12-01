@@ -66,7 +66,7 @@ FinalPlayer::TraversableAABB FinalPlayer::getTraversableAABB(
 {
 	int width = 5;
 	int height = 5;
-	auto colors = model_.getColorizedGrid((width + height) * 2 + 10);
+	auto colors = model_.getColorizedGrid((width + height) * 2 + 1);
 
 	auto ur = pos.row;
 	auto uc = pos.col;
@@ -76,6 +76,8 @@ FinalPlayer::TraversableAABB FinalPlayer::getTraversableAABB(
 	aabbs.push_back({{ur, uc}, {ur - height, uc - width}});
 	aabbs.push_back({{ur, uc}, {ur + height, uc - width}});
 	aabbs.push_back({{ur, uc}, {ur - height, uc + width}});
+
+	static int k = 0;
 
 	int best_win = -2;
 	AABB best_aabb;
@@ -88,6 +90,10 @@ FinalPlayer::TraversableAABB FinalPlayer::getTraversableAABB(
 			best_win = win;
 			best_aabb = aabb;
 		}
+	}
+
+	if (best_win == 0) {
+		best_aabb = aabbs[k++ % 4];
 	}
 
 	TraversableAABB result_aabb;

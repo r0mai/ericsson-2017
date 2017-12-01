@@ -134,7 +134,8 @@ public:
 	void setLevel(int level);
 	void setOwns(int owns);
 
-Pos getNiceCorner() const {
+Pos getNiceCorner(int idx = 0) const {
+	bool special = idx % 2;
        Pos safe = getSafeCorner();
        Pos best = safe;
        for (int row = 0; row < kMaxRows; ++row) {
