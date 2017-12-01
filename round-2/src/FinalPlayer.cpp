@@ -21,7 +21,7 @@ void FinalPlayer::update(const Model& model) {
 			seq->add(std::make_unique<Converge>(unit.index, corner));
 			auto dirs = model.createEar(corner,
 				Direction::kLeft, Direction::kUp,
-				4, 4);
+				5, 5);
 
 			seq->add(std::make_unique<SafeRouter>(dirs, unit.index));
 			seq->add(std::make_unique<SafeLibrate>(unit.index));
@@ -37,7 +37,7 @@ void FinalPlayer::update(const Model& model) {
 			seq->add(std::make_unique<Converge>(unit.index, corner));
 			auto dirs = model.createEar(corner,
 				Direction::kRight, Direction::kDown,
-				4, 4);
+				5, 5);
 
 			seq->add(std::make_unique<SafeRouter>(dirs, unit.index));
 			seq->add(std::make_unique<SafeLibrate>(unit.index));
