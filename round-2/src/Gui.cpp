@@ -11,7 +11,7 @@ namespace evil {
 
 namespace {
 
-sf::Color own_color = sf::Color(0, 0, 128);
+sf::Color own_color = sf::Color(60, 180, 75);
 sf::Color unit_color = sf::Color(128, 0, 0);
 sf::Color enemy_color = sf::Color(255, 255, 255);
 
@@ -19,12 +19,12 @@ sf::Color team_colors[] = {
 	sf::Color(0, 0, 0),
 	sf::Color(128, 128, 128),
 	sf::Color(230, 25, 75)	,
-	sf::Color(60, 180, 75),
 	sf::Color(255, 222, 10)	,
 	sf::Color(0, 130, 200)	,
 	sf::Color(245, 130, 48)	,
 	sf::Color(145, 30, 180)	,
 	sf::Color(70, 240, 240),
+	sf::Color(0, 0, 128),
 	sf::Color(240, 50, 230)	,
 	sf::Color(210, 245, 60)	,
 	sf::Color(250, 190, 190),
