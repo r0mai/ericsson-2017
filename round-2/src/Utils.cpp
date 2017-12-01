@@ -34,4 +34,11 @@ AABB getBoundingBox(const Matrix<bool>& matrix) {
 	return {mins, maxs};
 }
 
+bool hasOverlap(const AABB& a, const AABB& b) {
+	auto x_overlap = std::max(0, std::min(a.maxs.col, b.maxs.col) - std::max(a.mins.col, b.mins.col));
+	auto y_overlap = std::max(0, std::min(a.maxs.row, b.maxs.row) - std::max(a.mins.row, b.mins.row));
+	auto overlapArea = x_overlap * y_overlap;
+	return overlapArea != 0;
+}
+
 } // namespace evil

@@ -33,6 +33,8 @@ int taxicabDistance(const Pos& a, const Pos& b);
 int getArea(const Matrix<bool>& matrix);
 AABB getBoundingBox(const Matrix<bool>& matrix);
 
+bool hasOverlap(const AABB& a, const AABB& b);
+
 template<typename T, typename U, typename F>
 void mergeMatrices(Matrix<T>& a, const Matrix<U>& b, F f) {
 	assert(a.rows() == b.rows());
