@@ -533,6 +533,17 @@ void Model::killUnit(int unit_idx) {
 	unit.pos = {0, 0};
 	unit.dir = Direction::kDown;
 
+	for (int r = 0; r < grid_.rows(); ++r) {
+		for (int c = 0; c < grid_.cols(); ++c) {
+			auto& cell = grid_(r, c);
+			if (!cell.can && cell.owner == unit.owner) {
+				unit.pos = {r, c};
+				goto after_loop;
+			}
+		}
+	}
+after_loop:
+
 	for (auto& cell : grid_) {
 		if (cell.attacking_unit == unit_idx) {
 			cell.attacking_unit = -1;
