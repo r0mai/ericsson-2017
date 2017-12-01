@@ -49,7 +49,7 @@ void FinalPlayer::onUnitDied(int unit_idx) {
 	std::cerr << "Restarting " << unit_idx << std::endl;
 
 	auto seq = std::make_unique<Sequence>();
-	auto corner = model_.getSafeCorner();
+	auto corner = model_.getNiceCorner();
 
 	auto& unit = model_.getUnit(unit_idx);
 	seq->add(std::make_unique<Converge>(unit.index, corner));
