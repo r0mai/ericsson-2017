@@ -161,10 +161,14 @@ void Server::InitModel(int enemies_in, int enemies_out, int border_thickness) {
 	model_.setTick(1);
 	model_.setLevel(0);
 
-	model_.addStartingPoint(1, {10, 10});
-	model_.addStartingPoint(2, {70, 10});
-	model_.addStartingPoint(3, {70, 70});
-	model_.addStartingPoint(4, {10, 70});
+	int i = 1;
+	for (int r = 0; r < 3; ++r) {
+		for (int c = 0; c < 4; ++c) {
+			int row = 10 + r*25;
+			int col = 10 + c*25;
+			model_.addStartingPoint(i++, {row, col});
+		}
+	}
 
 	return;
 }
