@@ -14,6 +14,14 @@ public:
 	void onNewMap();
 	void onUnitDied(int unit_idx);
 
+	struct TraversableAABB {
+		Pos initial_pos; // on our area
+		AABB aabb;
+	};
+
+	TraversableAABB getTraversableAABB(
+		const Unit& unit, const AABB& other_aabb);
+
 private:
 	Model model_;
 	std::unordered_map<int, std::unique_ptr<Sequence>> fragments_;

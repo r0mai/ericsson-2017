@@ -2,7 +2,12 @@
 
 namespace evil {
 
-AABB::AABB(const Pos& mins, const Pos& maxs) : mins(mins), maxs(maxs) {}
+AABB::AABB(const Pos& mins, const Pos& maxs) : mins(mins), maxs(maxs) {
+	this->mins.row = std::min(mins.row, maxs.row);
+	this->mins.col = std::min(mins.col, maxs.col);
+	this->maxs.row = std::max(mins.row, maxs.row);
+	this->maxs.col = std::max(mins.col, maxs.col);
+}
 
 Pos AABB::size() const {
 	return {

@@ -76,6 +76,38 @@ void FinalPlayer::onUnitDied(int unit_idx) {
 	std::cerr << "FinalPlayer: Unit " << unit_idx << " died" << std::endl;
 }
 
+FinalPlayer::TraversableAABB FinalPlayer::getTraversableAABB(
+	const Unit& unit, const AABB& other_aabb)
+{
+	int width = 5;
+	int height = 5;
+	auto colors = model_.getColorizedGrid((width + height) * 2 + 10);
+
+	auto ur = unit.pos.row;
+	auto uc = unit.pos.col;
+
+	std::vector<AABB> aabbs;
+	aabbs.push_back({{ur, uc}, {ur + height, uc + width}});
+	aabbs.push_back({{ur, uc}, {ur - height, uc - width}});
+	aabbs.push_back({{ur, uc}, {ur + height, uc - width}});
+	aabbs.push_back({{ur, uc}, {ur - height, uc + width}});
+
+	int best_win = -2;
+	AABB best_aabb;
+	for (auto& aabb : aabbs) {
+		int win = model_.potentialWin(aabb, colors);
+		if (win > best_win) {
+			best_win = win;
+			best_aabb = aabb;
+		}
+	}
+
+	TraversableAABB result_aabb;
+	result_aabb.aabb = best_aabb;
+	result_aabb.initial_pos = unit.pos;
+	return result_aabb;
+}
+
 bool FinalPlayer::isReady() const {
 	return true;
 }
