@@ -6,6 +6,7 @@
 #include "Model.h"
 #include "Client.h"
 #include "DumbPlayer.h"
+#include "FinalPlayer.h"
 #include "Replayer.h"
 // #include "ZorroPlayer.h"
 
@@ -155,6 +156,7 @@ int main(int argc, char* argv[]) {
 
 	evil::Gui gui;
 	evil::DumbPlayer dumb(&gui);
+	evil::FinalPlayer final_player;
 	gui.init(stepping);
 
 #if 0
@@ -189,6 +191,8 @@ int main(int argc, char* argv[]) {
 #if 0
 		player = &zorro;
 #endif
+	} else if (player_string == "final") {
+		player = &final_player;
 	}
 
 	if (!player) {
