@@ -11,3 +11,7 @@ The team took 1st place in the semi-finals and 3rd in the finals.
 
 Code at the end of the semi-finals is tagged as ([round-2-end](https://github.com/r0mai/ericsson-2017/tree/round-2-end)).
 Code at the end of the finals is tagged as ([final-end](https://github.com/r0mai/ericsson-2017/tree/final-end)).
+
+Video about our strategy in the semi-finals:
+
+[![](https://img.youtube.com/vi/78JJlD5GHNI/0.jpg)](https://www.youtube.com/watch?v=78JJlD5GHNI)
